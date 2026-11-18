@@ -80,7 +80,8 @@ export default function Home() {
             <p className="lead">Small experiments in sensing, signals, interfaces, and intelligent systems. Change a parameter. See what happens.</p>
             <p className="secondary">This console reduces a brightness field to a 4×4 grid of output levels — the core idea behind the MED-T prototype, rebuilt as a simplified browser model.</p>
             <div className="lab-links">
-              <Link to="/lab/vision-matrix" className="btn btn-ghost">Open full experiment <Arrow /></Link>
+              <Link to="/lab" className="btn btn-primary">Explore the 3D lab <Arrow /></Link>
+              <Link to="/lab/vision-matrix" className="btn btn-ghost">Open full experiment</Link>
             </div>
             <Link to="/lab/signal-playground" className="lab-next">
               <SignalPreview />

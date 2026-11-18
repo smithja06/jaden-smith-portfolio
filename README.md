@@ -21,11 +21,33 @@ npm run preview    # serve the production build locally
 | `/` | Hero + Signal Field, selected work, live 4×4 lab console, about teaser, contact |
 | `/work` | Every project, with working category filters (`?filter=embedded` etc.) |
 | `/work/:slug` | Case study template (problem → role → system → decisions → implementation → outcome) |
-| `/lab` | Experiment index |
+| `/lab` | **3D Lab**: an explorable WebGL facility (hub + 5 stations: Projects, Experience, Skills, Education, Contact). `?station=<id>` deep-links a station, `?exp=<id>` opens an experiment workspace, `?view=list` shows the accessible list view |
 | `/lab/vision-matrix` | Experiment A: Vision → 4×4 LED matrix (presets, threshold / 4-level, smoothing, gain, ramp, local image) |
 | `/lab/signal-playground` | Experiment B: waveform + noise + moving-average filter with computed readouts |
 | `/about` | Narrative, timeline, practice areas, tools, approach |
 | `/contact` | Redirects to `/#contact` |
+
+## 3D Lab
+
+`/lab` is built with three.js, React Three Fiber and drei, from procedural geometry only (no external models or textures). It lives in `src/lab3d/`:
+
+```
+lab3d/
+  LabWorld.tsx            page: toolbar, station list, panels, workspace, fallbacks (no three.js imports)
+  LabScene.tsx            the Canvas (lazy chunk): environment, hub, paths, stations, camera, bloom
+  LabCameraController.tsx guided ~950 ms eased camera moves; orbit is disabled while moving
+  CentralHub.tsx, SignalPaths.tsx, LabEnvironment.tsx, Station.tsx
+  stations/               five installations: projects gallery, experience racks, skills workstation, education desk, comms dish
+  ui/                     StationPanel, StationNavigation, LabToolbar, ExperimentWorkspace, LabFallback, StationContent
+  config/stations.ts      station metadata shared by the 3D world and the HTML list
+  materials/labMaterials.ts shared materials + palette
+```
+
+- **Navigation:** click a model, or use the station list (keyboard and touch). Esc closes, and clicking the hub returns to the overview. Desktop allows limited drag-to-orbit; zoom is via the toolbar.
+- **Content:** panels reuse `src/content/`, so projects, timeline and contact links stay in one place.
+- **Experiments:** open full-size over the paused scene (the render loop stops while a workspace is open).
+- **Fallbacks:** without WebGL, or if the scene errors, `/lab` renders the list view. The list is always one click away and never loads three.js.
+- **Performance:** `PerformanceMonitor` lowers resolution when frame rate drops (nothing is displayed). "Effects: Low" disables bloom and contact shadows, and is the default on touch and small screens. Reduced-motion freezes ambient animation and makes camera moves instant.
 
 ## Editing content
 

@@ -1,4 +1,5 @@
 import { TODO_USER_CONTENT, type Maybe } from './types';
+import { education } from './education';
 
 export interface TimelineEntry {
   kind: 'education' | 'work' | 'team';
@@ -7,6 +8,8 @@ export interface TimelineEntry {
   /** Only real dates. Hidden while TODO. */
   period: Maybe<string>;
   description: string;
+  /** Case-study slug for related work, if any. */
+  project?: string;
 }
 
 /**
@@ -15,11 +18,10 @@ export interface TimelineEntry {
 export const timeline: TimelineEntry[] = [
   {
     kind: 'education',
-    title: 'Electrical & Biomedical Engineering',
-    org: 'McMaster University — iBioMed',
-    period: TODO_USER_CONTENT,
-    description:
-      'Engineering studies that combine electrical systems, software, and biomedical design — the base for most of the work on this site.',
+    title: education.program,
+    org: education.school,
+    period: education.period,
+    description: education.summary,
   },
   {
     kind: 'work',
@@ -28,6 +30,7 @@ export const timeline: TimelineEntry[] = [
     period: TODO_USER_CONTENT,
     description:
       'Professional software work focused on developer tooling and AI-assisted engineering workflows. Described here at a public, non-confidential level.',
+    project: 'ai-developer-tooling',
   },
   {
     kind: 'team',
@@ -36,6 +39,7 @@ export const timeline: TimelineEntry[] = [
     period: TODO_USER_CONTENT,
     description:
       'Involvement and leadership on the system-control side of a sensory-substitution prototype: turning image-derived states into a small LED/tactile output.',
+    project: 'med-t-sensory-substitution',
   },
   {
     kind: 'team',
@@ -44,6 +48,7 @@ export const timeline: TimelineEntry[] = [
     period: TODO_USER_CONTENT,
     description:
       'Software contributions to an ACL-rehabilitation technology project exploring sensor data pipelines and companion-app concepts.',
+    project: 'bmett-acl-rehabilitation',
   },
 ];
 
@@ -64,13 +69,6 @@ export const practiceAreas = [
     title: 'Biomedical applications',
     body: 'Human-centered prototypes for rehabilitation, posture, and sensory substitution.',
   },
-];
-
-/** Only tools tied to projects described on this site. Extend with real ones. */
-export const toolGroups = [
-  { group: 'Software', items: ['TypeScript', 'React', 'AI-assisted workflows', 'Developer tooling'] },
-  { group: 'Embedded', items: ['ESP32', 'Serial communication', 'LED / actuator control'] },
-  { group: 'Sensing & signals', items: ['Image processing', 'IMU', 'EMG', 'Signal filtering'] },
 ];
 
 export const approach = [

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
-import { approach, practiceAreas, timeline, toolGroups } from '../content/experience';
+import { approach, practiceAreas, timeline } from '../content/experience';
+import { skillCategories } from '../content/skills';
 import { Arrow } from '../components/Icons';
 import { Reveal } from '../components/Reveal';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -29,7 +30,7 @@ export default function About() {
         </div>
       </div>
 
-      <Reveal as="section" className="about-block" aria-labelledby="exp">
+      <Reveal as="section" id="experience" className="about-block" aria-labelledby="exp">
         <h2 id="exp" className="h-sub block-title">Experience &amp; education</h2>
         <ol className="timeline">
           {timeline.map((t) => (
@@ -60,9 +61,9 @@ export default function About() {
       <Reveal as="section" className="about-block" aria-labelledby="tools">
         <h2 id="tools" className="h-sub block-title">Tools, by what they’re for</h2>
         <div className="toolgroups">
-          {toolGroups.map((g) => (
-            <div key={g.group}>
-              <h3 className="mono muted tg-title">{g.group}</h3>
+          {skillCategories.map((g) => (
+            <div key={g.id}>
+              <h3 className="mono muted tg-title">{g.label}</h3>
               <ul className="tags">{g.items.map((i) => <li key={i} className="tag">{i}</li>)}</ul>
             </div>
           ))}

@@ -6,7 +6,7 @@ import NotFound from './pages/NotFound';
 
 const Work = lazy(() => import('./pages/Work'));
 const CaseStudy = lazy(() => import('./pages/CaseStudy'));
-const Lab = lazy(() => import('./pages/Lab'));
+const LabWorld = lazy(() => import('./lab3d/LabWorld'));
 const VisionMatrixPage = lazy(() => import('./pages/VisionMatrixPage'));
 const SignalPlaygroundPage = lazy(() => import('./pages/SignalPlaygroundPage'));
 const About = lazy(() => import('./pages/About'));
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/work', element: <Work /> },
       { path: '/work/:slug', element: <CaseStudy /> },
-      { path: '/lab', element: <Lab /> },
+      { path: '/lab', element: <LabWorld /> },
       { path: '/lab/vision-matrix', element: <VisionMatrixPage /> },
       { path: '/lab/signal-playground', element: <SignalPlaygroundPage /> },
       { path: '/about', element: <About /> },
@@ -26,8 +26,16 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
-]);
+], {
+  future: {
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_skipActionErrorRevalidation: true,
+  },
+});
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} future={{ v7_startTransition: true }} />;
 }

@@ -74,11 +74,8 @@ export function Nav() {
         </ul>
 
         <div className="nav-cta">
-          {hasResume ? (
-            <a className="btn btn-ghost btn-sm" href={site.resumeUrl as string} download>Résumé</a>
-          ) : (
-            <Link className="btn btn-ghost btn-sm" to="/#contact">Let’s talk</Link>
-          )}
+          {hasResume && <a className="btn btn-ghost btn-sm" href={site.resumeUrl as string} download>Résumé</a>}
+          <Link className="btn btn-primary btn-sm nav-lab-cta" to="/lab"><span className="nav-lab-dot" aria-hidden="true" />Enter the Lab</Link>
         </div>
 
         <button
@@ -102,7 +99,8 @@ export function Nav() {
             </li>
           ))}
         </ul>
-        {hasResume && <a className="btn btn-primary" href={site.resumeUrl as string} download>Download résumé</a>}
+        <Link className="btn btn-primary" to="/lab">Enter the 3D Lab</Link>
+        {hasResume && <a className="btn btn-ghost" href={site.resumeUrl as string} download>Download résumé</a>}
       </div>
     </header>
   );
