@@ -37,6 +37,7 @@ export default function LabWorld() {
   const [hovered, setHovered] = useState<StationId | null>(null);
   const [zoom, setZoom] = useState(1);
   const [flying, setFlying] = useState<StationId | null>(null);
+  const [flyingHome, setFlyingHome] = useState(false);
   const [highQuality, setHighQuality] = useState(() =>
     window.matchMedia('(min-width: 900px) and (pointer: fine)').matches,
   );
@@ -45,13 +46,23 @@ export default function LabWorld() {
   /** Fly to the station, then open its full page. */
   const open = useCallback((id: StationId) => {
     window.clearTimeout(timer.current);
+    setFlyingHome(false);
     setFlying(id);
     timer.current = window.setTimeout(() => navigate(stationPath(id)), reduced ? 0 : FLY_MS);
+  }, [navigate, reduced]);
+
+  /** Fly to the hub, then open the homepage — same feel as a station. */
+  const goHome = useCallback(() => {
+    window.clearTimeout(timer.current);
+    setFlying(null);
+    setFlyingHome(true);
+    timer.current = window.setTimeout(() => navigate('/'), reduced ? 0 : FLY_MS);
   }, [navigate, reduced]);
 
   const reset = useCallback(() => {
     window.clearTimeout(timer.current);
     setFlying(null);
+    setFlyingHome(false);
     setZoom(1);
   }, []);
 
@@ -86,7 +97,8 @@ export default function LabWorld() {
               hovered={hovered}
               onHover={setHovered}
               onSelect={open}
-              onReset={reset}
+              onHome={goHome}
+              hubSelected={flyingHome}
               reduced={reduced}
               highQuality={highQuality}
               zoom={zoom}
@@ -98,7 +110,7 @@ export default function LabWorld() {
       </div>
 
       <LabToolbar
-        atOverview={!flying && zoom === 1}
+        atOverview={!flying && !flyingHome && zoom === 1}
         onOverview={reset}
         zoom={zoom}
         onZoom={setZoom}

@@ -14,7 +14,8 @@ const UP = new THREE.Vector3(0, 1, 0);
 const DURATION = 950; // ms — within the 700–1100ms brief
 
 interface Props {
-  focusIndex: number | null;
+  /** Station index, 'hub' for the central hub, or null for the overview. */
+  focusIndex: number | 'hub' | null;
   zoom: number;
   reduced: boolean;
   /** Desktop: shift the framing so the station sits left of the side panel. */
@@ -25,7 +26,7 @@ interface Props {
   listOnLeft: boolean;
 }
 
-function goalFor(focusIndex: number | null, zoom: number, aspect: number, panelOnRight: boolean, panelBelow: boolean, listOnLeft: boolean) {
+function goalFor(focusIndex: number | 'hub' | null, zoom: number, aspect: number, panelOnRight: boolean, panelBelow: boolean, listOnLeft: boolean) {
   const target = new THREE.Vector3();
   const right = new THREE.Vector3().crossVectors(VIEW_DIR.clone().negate(), UP).normalize();
   let dist: number;
@@ -37,6 +38,10 @@ function goalFor(focusIndex: number | null, zoom: number, aspect: number, panelO
     target.add(new THREE.Vector3(VIEW_DIR.x, 0, VIEW_DIR.z).normalize().multiplyScalar(listOnLeft ? 1.6 : -1.2));
     // Fit the whole ring: wide screens are height-limited, tall screens width-limited.
     dist = Math.max(29, (listOnLeft ? 22 : 18.5) / (0.63 * aspect)) * zoom;
+  } else if (focusIndex === 'hub') {
+    target.set(0, 1.0, 0);
+    if (listOnLeft) target.addScaledVector(right, -1.0);
+    dist = Math.max(13, 8 / (0.63 * aspect)) * zoom;
   } else {
     const [x, , z] = stationPosition(focusIndex);
     target.set(x, 1.3, z);

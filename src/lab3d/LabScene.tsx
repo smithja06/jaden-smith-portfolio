@@ -37,7 +37,9 @@ export interface LabSceneProps {
   hovered: StationId | null;
   onHover: (id: StationId | null) => void;
   onSelect: (id: StationId) => void;
-  onReset: () => void;
+  onHome: () => void;
+  /** True while flying to the hub on the way home. */
+  hubSelected: boolean;
   reduced: boolean;
   highQuality: boolean;
   zoom: number;
@@ -48,7 +50,7 @@ export interface LabSceneProps {
 export default function LabScene(p: LabSceneProps) {
   const maxDpr = p.highQuality ? Math.min(1.75, window.devicePixelRatio || 1) : 1;
   const [dpr, setDpr] = useState(maxDpr);
-  const focusIndex = p.selected ? stations.findIndex((s) => s.id === p.selected) : null;
+  const focusIndex = p.hubSelected ? 'hub' as const : p.selected ? stations.findIndex((s) => s.id === p.selected) : null;
 
   return (
     <Canvas
@@ -65,7 +67,7 @@ export default function LabScene(p: LabSceneProps) {
       {/* Real measurement: lowers resolution when the frame rate drops. Nothing is displayed. */}
       <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(maxDpr)} />
       <LabEnvironment highQuality={p.highQuality} />
-      <CentralHub reduced={p.reduced} onReset={p.onReset} showLabel={p.isDesktop} />
+      <CentralHub reduced={p.reduced} onHome={p.onHome} showLabel={p.isDesktop} />
       <SignalPaths selected={p.selected} hovered={p.hovered} reduced={p.reduced} />
 
       {stations.map((s, i) => {

@@ -7,7 +7,8 @@ import { stations, stationPosition } from './config/stations';
 
 interface Props {
   reduced: boolean;
-  onReset: () => void;
+  /** Fly to the hub, then open the site's homepage. */
+  onHome: () => void;
   showLabel: boolean;
 }
 
@@ -16,9 +17,9 @@ const SEGMENTS = 10;
 /**
  * The heart of the Lab: a layered platform, a faceted glass shell around a
  * pulsing core, a slowly turning segmented halo, and docking notches where
- * each signal path arrives. Click to return to the overview.
+ * each signal path arrives. Clicking it flies the camera in, then opens the homepage.
  */
-export function CentralHub({ reduced, onReset, showLabel }: Props) {
+export function CentralHub({ reduced, onHome, showLabel }: Props) {
   const [hovered, setHovered] = useState(false);
   const core = useRef<THREE.Mesh>(null);
   const shell = useRef<THREE.Group>(null);
@@ -46,7 +47,7 @@ export function CentralHub({ reduced, onReset, showLabel }: Props) {
 
   const over = (e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; };
   const out = () => { setHovered(false); document.body.style.cursor = ''; };
-  const click = (e: ThreeEvent<MouseEvent>) => { if (e.delta > 6) return; e.stopPropagation(); onReset(); };
+  const click = (e: ThreeEvent<MouseEvent>) => { if (e.delta > 6) return; e.stopPropagation(); onHome(); };
 
   return (
     <group onPointerOver={over} onPointerOut={out} onClick={click}>
@@ -114,7 +115,7 @@ export function CentralHub({ reduced, onReset, showLabel }: Props) {
         <Html position={[2.3, 0.25, 2.3]} center zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
           <div className={`lab3d-label lab3d-hub-label ${hovered ? 'is-hovered' : ''}`} aria-hidden="true">
             <span className="lab3d-dot" />COBALT LAB / SYSTEM ONLINE
-            {hovered && <span className="lab3d-label-tip">Return to overview</span>}
+            {hovered && <span className="lab3d-label-tip">Back to home</span>}
           </div>
         </Html>
       )}
