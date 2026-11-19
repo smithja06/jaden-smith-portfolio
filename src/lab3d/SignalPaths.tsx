@@ -65,6 +65,14 @@ export function SignalPaths({ selected, hovered, reduced }: Props) {
           >
             <planeGeometry args={[p.length, p.id === selected ? 0.07 : 0.045]} />
           </mesh>
+          {/* dock plate where the path meets the station pad */}
+          <mesh
+            position={[p.dir.x * (HUB_EDGE + p.length - 0.05), 0.016, p.dir.z * (HUB_EDGE + p.length - 0.05)]}
+            rotation={[-Math.PI / 2, 0, -p.angle]}
+            material={lineMats[i]}
+          >
+            <planeGeometry args={[0.2, 0.16]} />
+          </mesh>
           <mesh ref={(el) => { pulses.current[i] = el; }} material={pulseMat} visible={false}>
             <sphereGeometry args={[0.055, 10, 8]} />
           </mesh>

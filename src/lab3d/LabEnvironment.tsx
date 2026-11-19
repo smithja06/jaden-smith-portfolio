@@ -10,16 +10,18 @@ export function LabEnvironment({ highQuality }: { highQuality: boolean }) {
       <color attach="background" args={[palette.bg]} />
       <fog attach="fog" args={[palette.bg, 48, 120]} />
 
-      {/* Lighting: soft hemisphere fill, one cool key, one cobalt rim. */}
-      <hemisphereLight args={['#2c4a8c', '#03060f', 0.28]} />
-      <directionalLight position={[9, 15, 7]} intensity={0.85} color="#d6e4ff" />
-      <directionalLight position={[-12, 7, -9]} intensity={0.7} color={palette.signal} />
+      {/* Lighting: soft ambient fill, a clear cool key, a camera-side fill so
+          silhouettes read from the overview, and a cobalt rim from behind. */}
+      <hemisphereLight args={['#3a5ea8', '#03060f', 0.32]} />
+      <directionalLight position={[8, 16, 5]} intensity={1.35} color="#e2ecff" />
+      <directionalLight position={[14, 8, 14]} intensity={0.3} color="#a9c6ff" />
+      <directionalLight position={[-12, 7, -9]} intensity={0.8} color={palette.signal} />
 
       {/* Locally generated reflections for the metallic surfaces — no network fetch. */}
       <Environment resolution={64} frames={1}>
-        <Lightformer form="rect" intensity={0.9} color="#9cc3ff" position={[0, 8, 0]} rotation-x={Math.PI / 2} scale={[14, 14, 1]} />
-        <Lightformer form="rect" intensity={0.7} color={palette.cobalt} position={[-10, 2, 0]} rotation-y={Math.PI / 2} scale={[20, 4, 1]} />
-        <Lightformer form="rect" intensity={0.35} color="#ffffff" position={[10, 3, 6]} rotation-y={-Math.PI / 2} scale={[10, 3, 1]} />
+        <Lightformer form="rect" intensity={1.3} color="#9cc3ff" position={[0, 8, 0]} rotation-x={Math.PI / 2} scale={[14, 14, 1]} />
+        <Lightformer form="rect" intensity={0.9} color={palette.cobalt} position={[-10, 2, 0]} rotation-y={Math.PI / 2} scale={[20, 4, 1]} />
+        <Lightformer form="rect" intensity={0.55} color="#ffffff" position={[10, 3, 6]} rotation-y={-Math.PI / 2} scale={[10, 3, 1]} />
       </Environment>
 
       <mesh rotation-x={-Math.PI / 2} position-y={-0.01} material={mats.floor}>
@@ -41,7 +43,7 @@ export function LabEnvironment({ highQuality }: { highQuality: boolean }) {
       />
       <GridNodes />
       {highQuality && (
-        <ContactShadows position={[0, 0.006, 0]} scale={36} resolution={512} blur={2.6} opacity={0.6} far={4.5} frames={1} color="#00030c" />
+        <ContactShadows position={[0, 0.006, 0]} scale={36} resolution={512} blur={2.2} opacity={0.7} far={3.5} frames={1} color="#00030c" />
       )}
     </>
   );

@@ -10,6 +10,8 @@ export interface Education {
   coursework: string[];
   /** Real awards, scholarships, dean's list, etc. Empty = section shows a pending note. */
   achievements: string[];
+  /** Short labelled facts, e.g. { label: 'GPA', value: '…' }. Only real values. */
+  stats: { label: string; value: string }[];
 }
 
 export const education: Education = {
@@ -22,4 +24,6 @@ export const education: Education = {
   coursework: [],
   // TODO_USER_CONTENT: add actual achievements.
   achievements: [],
+  // TODO_USER_CONTENT: e.g. GPA, Dean's List — only if you want them public.
+  stats: [],
 };

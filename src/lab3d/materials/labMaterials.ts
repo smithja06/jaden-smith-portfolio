@@ -17,10 +17,23 @@ const hot = (hex: string, k: number) => new THREE.Color(hex).multiplyScalar(k);
  * reused by every station, so they are intentionally never disposed.
  */
 export const mats = {
-  floor: new THREE.MeshStandardMaterial({ color: '#050b1c', metalness: 0.2, roughness: 0.92 }),
-  structure: new THREE.MeshStandardMaterial({ color: '#15284f', metalness: 0.78, roughness: 0.36 }),
-  structureDark: new THREE.MeshStandardMaterial({ color: '#081128', metalness: 0.55, roughness: 0.6 }),
-  structureLight: new THREE.MeshStandardMaterial({ color: '#2a4478', metalness: 0.7, roughness: 0.3 }),
+  floor: new THREE.MeshStandardMaterial({ color: '#040918', metalness: 0.1, roughness: 0.95 }),
+  /** Main body: dark matte metal. */
+  structure: new THREE.MeshStandardMaterial({ color: '#1a2f5c', metalness: 0.62, roughness: 0.46 }),
+  /** Bases and recesses. */
+  structureDark: new THREE.MeshStandardMaterial({ color: '#0a1430', metalness: 0.5, roughness: 0.62 }),
+  /** Highlights / trims: lighter brushed metal. */
+  structureLight: new THREE.MeshStandardMaterial({ color: '#3a5893', metalness: 0.72, roughness: 0.3 }),
+  /** Pad tops: dark, low-sheen so platforms never outshine the stations. */
+  padTop: new THREE.MeshStandardMaterial({ color: '#0b1631', metalness: 0.3, roughness: 0.7 }),
+  /** Slightly glossy blue-black panels (screens off, tabletops, covers). */
+  panel: new THREE.MeshPhysicalMaterial({ color: '#0c1733', metalness: 0.35, roughness: 0.22, clearcoat: 0.6, clearcoatRoughness: 0.25 }),
+  /** Soft matte "plastic" parts (books, cable sheaths, keycaps). */
+  matte: new THREE.MeshStandardMaterial({ color: '#22396b', metalness: 0.1, roughness: 0.75 }),
+  /** Translucent glass (screen covers, enclosures). */
+  glass: new THREE.MeshPhysicalMaterial({
+    color: '#9cc3ff', metalness: 0, roughness: 0.08, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide,
+  }),
   edge: new THREE.MeshBasicMaterial({ color: hot(palette.ice, 1.5), toneMapped: false }),
   edgeSoft: new THREE.MeshBasicMaterial({ color: palette.ice, transparent: true, opacity: 0.3, toneMapped: false, depthWrite: false }),
   core: new THREE.MeshBasicMaterial({ color: hot(palette.signal, 1.6), toneMapped: false }),

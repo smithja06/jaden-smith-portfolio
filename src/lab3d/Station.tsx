@@ -4,6 +4,7 @@ import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import type { StationDef, StationId } from './config/stations';
 import { damp, makeAccent, makeRing, mats } from './materials/labMaterials';
+import { StationPad, type PadVariant } from './StationPad';
 
 export interface StationVisualProps {
   accent: THREE.MeshStandardMaterial;
@@ -14,6 +15,7 @@ export interface StationVisualProps {
 interface Props {
   def: StationDef;
   position: [number, number, number];
+  pad: PadVariant;
   hovered: boolean;
   selected: boolean;
   anySelected: boolean;
@@ -31,7 +33,7 @@ interface Props {
  * part of one architectural model.
  */
 export function Station({
-  def, position, hovered, selected, anySelected, reduced, compactLabels, onHover, onSelect, children,
+  def, position, pad, hovered, selected, anySelected, reduced, compactLabels, onHover, onSelect, children,
 }: Props) {
   const accent = useMemo(makeAccent, []);
   const ring = useMemo(makeRing, []);
@@ -39,7 +41,7 @@ export function Station({
 
   useFrame((_, dt) => {
     const glow = selected ? 1.25 : hovered ? 0.95 : anySelected ? 0.18 : 0.38;
-    const edge = selected ? 0.9 : hovered ? 0.7 : anySelected ? 0.1 : 0.2;
+    const edge = selected ? 0.95 : hovered ? 0.8 : anySelected ? 0.15 : 0.38;
     accent.emissiveIntensity = reduced ? glow : damp(accent.emissiveIntensity, glow, 7, dt);
     ring.opacity = reduced ? edge : damp(ring.opacity, edge, 7, dt);
   });
@@ -56,9 +58,7 @@ export function Station({
   return (
     <group position={position} rotation-y={Math.PI / 4}>
       <group onPointerOver={over} onPointerOut={out} onClick={click}>
-        <mesh position-y={0.07} material={mats.structureDark}><cylinderGeometry args={[2.05, 2.2, 0.14, 64]} /></mesh>
-        <mesh position-y={0.142} rotation-x={Math.PI / 2} material={ring}><torusGeometry args={[2.05, 0.016, 6, 96]} /></mesh>
-        <mesh position-y={0.145} rotation-x={-Math.PI / 2} material={mats.structure}><ringGeometry args={[1.55, 1.62, 64]} /></mesh>
+        <StationPad variant={pad} ring={ring} />
         {children({ accent, reduced, active: selected || hovered })}
         {/* Generous invisible hit volume so small details aren't required targets. */}
         <mesh position-y={1.3} material={mats.hit}><cylinderGeometry args={[2.2, 2.2, 2.6, 16]} /></mesh>

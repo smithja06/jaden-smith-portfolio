@@ -1,11 +1,10 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { stationById, type StationId } from './config/stations';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { stationPath, type StationId } from './config/stations';
 import { useLabNavigation } from './hooks/useLabNavigation';
 import { StationNavigation } from './ui/StationNavigation';
-import { StationPanel } from './ui/StationPanel';
 import { LabToolbar } from './ui/LabToolbar';
 import { LabFallback } from './ui/LabFallback';
-import { ExperimentWorkspace } from './ui/ExperimentWorkspace';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -14,6 +13,9 @@ import './lab3d.css';
 
 // three.js, R3F and drei live only in this chunk.
 const LabScene = lazy(() => import('./LabScene'));
+
+/** Camera flight time before the section page opens (matches LabCameraController). */
+const FLY_MS = 950;
 
 function detectWebGL() {
   try {
@@ -25,36 +27,39 @@ function detectWebGL() {
 }
 
 export default function LabWorld() {
-  usePageTitle('Lab', 'An explorable 3D engineering lab: projects, experience, skills, education and contact arranged around a central hub.');
+  usePageTitle('Lab', 'An explorable 3D engineering lab: experience, projects, skills, education and contact arranged around a central hub.');
   const nav = useLabNavigation();
+  const navigate = useNavigate();
   const reduced = useReducedMotion();
   const isDesktop = useMediaQuery('(min-width: 900px)');
   const [webgl] = useState(detectWebGL);
   const [failed, setFailed] = useState(false);
   const [hovered, setHovered] = useState<StationId | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [flying, setFlying] = useState<StationId | null>(null);
   const [highQuality, setHighQuality] = useState(() =>
     window.matchMedia('(min-width: 900px) and (pointer: fine)').matches,
   );
+  const timer = useRef<number>();
 
-  const station = stationById(nav.selected);
+  /** Fly to the station, then open its full page. */
+  const open = useCallback((id: StationId) => {
+    window.clearTimeout(timer.current);
+    setFlying(id);
+    timer.current = window.setTimeout(() => navigate(stationPath(id)), reduced ? 0 : FLY_MS);
+  }, [navigate, reduced]);
 
-  const close = useCallback(() => {
-    const prev = nav.selected;
-    nav.reset();
-    // Return focus to the station's list button so keyboard users keep their place.
-    if (prev) requestAnimationFrame(() => document.getElementById(`lab-station-${prev}`)?.focus({ preventScroll: true }));
-  }, [nav]);
+  const reset = useCallback(() => {
+    window.clearTimeout(timer.current);
+    setFlying(null);
+    setZoom(1);
+  }, []);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      if (nav.experiment) nav.closeExperiment();
-      else if (nav.selected) close();
-    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') reset(); };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [nav, close]);
+    return () => { document.removeEventListener('keydown', onKey); window.clearTimeout(timer.current); };
+  }, [reset]);
 
   // Never leave a pointer cursor behind when leaving the page.
   useEffect(() => () => { document.body.style.cursor = ''; }, []);
@@ -64,37 +69,37 @@ export default function LabWorld() {
   if (failed) return <LabFallback reason="error" />;
 
   return (
-    <div className={`lab3d ${station ? 'has-panel' : ''}`}>
+    <div className="lab3d">
       <h1 className="sr-only">Cobalt Lab — interactive 3D engineering lab</h1>
       <p className="sr-only" id="lab3d-desc">
         A miniature engineering facility seen from above. A glowing central hub sits in the middle of a dark grid floor,
-        connected by thin light paths to five stations: a projects gallery of floating displays, server racks with a
-        holographic career timeline for experience, a robotic workstation for skills, a research desk for education,
-        and a communication dish for contact. Use the station list to open each one.
+        connected by thin light paths to five stations: server racks with a holographic career timeline for experience,
+        a gallery of floating displays for projects, a robotic workstation for skills, a research desk for education,
+        and a communication dish for contact. Choosing a station opens its page.
       </p>
 
       <div className="lab3d-stage" aria-describedby="lab3d-desc">
         <ErrorBoundary onError={() => setFailed(true)} fallback={null}>
           <Suspense fallback={<div className="lab3d-loading" role="status"><span className="live-dot" aria-hidden="true" /> Building the lab…</div>}>
             <LabScene
-              selected={nav.selected}
+              selected={flying}
               hovered={hovered}
               onHover={setHovered}
-              onSelect={nav.select}
-              onReset={close}
+              onSelect={open}
+              onReset={reset}
               reduced={reduced}
               highQuality={highQuality}
               zoom={zoom}
               isDesktop={isDesktop}
-              paused={!!nav.experiment}
+              paused={false}
             />
           </Suspense>
         </ErrorBoundary>
       </div>
 
       <LabToolbar
-        atOverview={!station && zoom === 1}
-        onOverview={() => { setZoom(1); close(); }}
+        atOverview={!flying && zoom === 1}
+        onOverview={reset}
         zoom={zoom}
         onZoom={setZoom}
         highQuality={highQuality}
@@ -102,10 +107,8 @@ export default function LabWorld() {
         onListView={() => nav.setView('list')}
       />
 
-      <StationNavigation selected={nav.selected} hovered={hovered} onSelect={nav.select} onHover={setHovered} />
-
-      {station && <StationPanel station={station} onClose={close} onOpenExperiment={nav.openExperiment} />}
-      {nav.experiment && <ExperimentWorkspace id={nav.experiment} onClose={nav.closeExperiment} />}
+      <StationNavigation selected={flying} hovered={hovered} onSelect={open} onHover={setHovered} />
+      {flying && <p className="sr-only" role="status">Opening {flying}…</p>}
     </div>
   );
 }

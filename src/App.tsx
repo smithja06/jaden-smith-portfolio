@@ -10,6 +10,7 @@ const LabWorld = lazy(() => import('./lab3d/LabWorld'));
 const VisionMatrixPage = lazy(() => import('./pages/VisionMatrixPage'));
 const SignalPlaygroundPage = lazy(() => import('./pages/SignalPlaygroundPage'));
 const About = lazy(() => import('./pages/About'));
+const LabSection = lazy(() => import('./pages/lab/LabSectionPage'));
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,11 @@ const router = createBrowserRouter([
       { path: '/work', element: <Work /> },
       { path: '/work/:slug', element: <CaseStudy /> },
       { path: '/lab', element: <LabWorld /> },
+      { path: '/lab/experience', element: <LabSection id="experience" /> },
+      { path: '/lab/projects', element: <LabSection id="projects" /> },
+      { path: '/lab/skills', element: <LabSection id="skills" /> },
+      { path: '/lab/education', element: <LabSection id="education" /> },
+      { path: '/lab/contact', element: <LabSection id="contact" /> },
       { path: '/lab/vision-matrix', element: <VisionMatrixPage /> },
       { path: '/lab/signal-playground', element: <SignalPlaygroundPage /> },
       { path: '/about', element: <About /> },

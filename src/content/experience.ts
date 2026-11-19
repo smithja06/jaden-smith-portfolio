@@ -10,6 +10,8 @@ export interface TimelineEntry {
   description: string;
   /** Case-study slug for related work, if any. */
   project?: string;
+  /** Specific, verified responsibilities/outcomes. Rendered as bullets when provided. */
+  highlights?: string[];
 }
 
 /**

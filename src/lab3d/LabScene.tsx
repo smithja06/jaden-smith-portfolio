@@ -8,12 +8,21 @@ import { LabEnvironment } from './LabEnvironment';
 import { CentralHub } from './CentralHub';
 import { SignalPaths } from './SignalPaths';
 import { Station, type StationVisualProps } from './Station';
+import type { PadVariant } from './StationPad';
 import { LabCameraController, OVERVIEW_AZIMUTH, OVERVIEW_POLAR } from './LabCameraController';
 import { ProjectsStation } from './stations/ProjectsStation';
 import { ExperienceStation } from './stations/ExperienceStation';
 import { SkillsStation } from './stations/SkillsStation';
 import { EducationStation } from './stations/EducationStation';
 import { ContactStation } from './stations/ContactStation';
+
+const pads: Record<StationId, PadVariant> = {
+  experience: 'octagon',
+  projects: 'hexagon',
+  skills: 'square',
+  education: 'tiered',
+  contact: 'radar',
+};
 
 const visuals: Record<StationId, ComponentType<StationVisualProps>> = {
   projects: ProjectsStation,
@@ -49,7 +58,7 @@ export default function LabScene(p: LabSceneProps) {
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 0.92;
+        gl.toneMappingExposure = 1.0;
       }}
       aria-hidden="true"
     >
@@ -66,6 +75,7 @@ export default function LabScene(p: LabSceneProps) {
             key={s.id}
             def={s}
             position={stationPosition(i)}
+            pad={pads[s.id]}
             hovered={p.hovered === s.id}
             selected={p.selected === s.id}
             anySelected={p.selected !== null}
@@ -97,9 +107,9 @@ export default function LabScene(p: LabSceneProps) {
         focusIndex={focusIndex}
         zoom={p.zoom}
         reduced={p.reduced}
-        panelOnRight={p.isDesktop && p.selected !== null}
+        panelOnRight={false}
         listOnLeft={p.isDesktop}
-        panelBelow={!p.isDesktop && p.selected !== null}
+        panelBelow={false}
       />
 
       {p.highQuality && (

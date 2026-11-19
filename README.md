@@ -21,7 +21,8 @@ npm run preview    # serve the production build locally
 | `/` | Hero + Signal Field, selected work, live 4×4 lab console, about teaser, contact |
 | `/work` | Every project, with working category filters (`?filter=embedded` etc.) |
 | `/work/:slug` | Case study template (problem → role → system → decisions → implementation → outcome) |
-| `/lab` | **3D Lab**: an explorable WebGL facility (hub + 5 stations: Projects, Experience, Skills, Education, Contact). `?station=<id>` deep-links a station, `?exp=<id>` opens an experiment workspace, `?view=list` shows the accessible list view |
+| `/lab` | **3D Lab**: an explorable WebGL facility (hub + 5 stations). Choosing a station flies the camera there, then opens its page. `?view=list` shows the accessible list view |
+| `/lab/experience` · `/lab/projects` · `/lab/skills` · `/lab/education` · `/lab/contact` | Full-page sections with a 01–05 pager; Esc returns to the lab |
 | `/lab/vision-matrix` | Experiment A: Vision → 4×4 LED matrix (presets, threshold / 4-level, smoothing, gain, ramp, local image) |
 | `/lab/signal-playground` | Experiment B: waveform + noise + moving-average filter with computed readouts |
 | `/about` | Narrative, timeline, practice areas, tools, approach |
@@ -36,16 +37,15 @@ lab3d/
   LabWorld.tsx            page: toolbar, station list, panels, workspace, fallbacks (no three.js imports)
   LabScene.tsx            the Canvas (lazy chunk): environment, hub, paths, stations, camera, bloom
   LabCameraController.tsx guided ~950 ms eased camera moves; orbit is disabled while moving
-  CentralHub.tsx, SignalPaths.tsx, LabEnvironment.tsx, Station.tsx
+  CentralHub.tsx, SignalPaths.tsx, LabEnvironment.tsx, Station.tsx, StationPad.tsx (per-station platform shapes)
   stations/               five installations: projects gallery, experience racks, skills workstation, education desk, comms dish
-  ui/                     StationPanel, StationNavigation, LabToolbar, ExperimentWorkspace, LabFallback, StationContent
+  ui/                     StationNavigation, LabToolbar, LabFallback (list view)
   config/stations.ts      station metadata shared by the 3D world and the HTML list
   materials/labMaterials.ts shared materials + palette
 ```
 
-- **Navigation:** click a model, or use the station list (keyboard and touch). Esc closes, and clicking the hub returns to the overview. Desktop allows limited drag-to-orbit; zoom is via the toolbar.
-- **Content:** panels reuse `src/content/`, so projects, timeline and contact links stay in one place.
-- **Experiments:** open full-size over the paused scene (the render loop stops while a workspace is open).
+- **Navigation:** click a model, or use the station list (keyboard and touch). The camera flies to the station (~950 ms), then its page opens at `/lab/<id>`. Desktop allows limited drag-to-orbit; zoom is via the toolbar.
+- **Section pages:** `src/pages/lab/LabSectionPage.tsx` renders all five from `src/content/` (experience, projects, skills, education, site), so each fact lives in one place.
 - **Fallbacks:** without WebGL, or if the scene errors, `/lab` renders the list view. The list is always one click away and never loads three.js.
 - **Performance:** `PerformanceMonitor` lowers resolution when frame rate drops (nothing is displayed). "Effects: Low" disables bloom and contact shadows, and is the default on touch and small screens. Reduced-motion freezes ambient animation and makes camera moves instant.
 

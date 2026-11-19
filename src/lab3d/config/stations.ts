@@ -3,14 +3,15 @@
  * non-WebGL fallback. No three.js imports here, so it stays out of the
  * homepage bundle.
  *
- * Each station owns one kind of content, so nothing is repeated between them:
- * projects live only in Projects, roles only in Experience, and so on.
+ * Each station owns one kind of content and opens its own full page at
+ * /lab/<id>, so nothing is repeated between them.
  */
 
 export type StationId = 'experience' | 'projects' | 'skills' | 'education' | 'contact';
 
 export interface StationDef {
   id: StationId;
+  /** Two-digit index shown in labels and the section pager, e.g. '01'. */
   letter: string;
   title: string;
   category: string;
@@ -22,32 +23,32 @@ export interface StationDef {
 
 export const stations: StationDef[] = [
   {
-    id: 'projects',
-    letter: 'A',
-    title: 'Projects',
-    category: 'Gallery',
-    tooltip: 'Prototypes, case studies and live demos',
-    summary: 'Every project with a full case study, plus the interactive prototypes you can run right here.',
-  },
-  {
     id: 'experience',
-    letter: 'B',
+    letter: '01',
     title: 'Experience',
     category: 'Career timeline',
     tooltip: 'Professional roles and student teams',
-    summary: 'Where I’ve worked and the student design teams I’ve contributed to, and what I was responsible for.',
+    summary: 'Where I’ve worked, the student design teams I’ve contributed to, and what I was responsible for.',
+  },
+  {
+    id: 'projects',
+    letter: '02',
+    title: 'Projects',
+    category: 'Gallery',
+    tooltip: 'Prototypes, case studies and live demos',
+    summary: 'Every project with a full case study, plus interactive prototypes that run in your browser.',
   },
   {
     id: 'skills',
-    letter: 'C',
+    letter: '03',
     title: 'Skills',
     category: 'Workstation',
     tooltip: 'Technologies, grouped by what they’re for',
-    summary: 'Tools and techniques grouped by capability. Pick a category to inspect it.',
+    summary: 'Tools and techniques, grouped by capability.',
   },
   {
     id: 'education',
-    letter: 'D',
+    letter: '04',
     title: 'Education',
     category: 'Research desk',
     tooltip: 'McMaster studies, coursework and achievements',
@@ -55,13 +56,16 @@ export const stations: StationDef[] = [
   },
   {
     id: 'contact',
-    letter: 'E',
+    letter: '05',
     title: 'Contact',
     category: 'Comms terminal',
     tooltip: 'Contact links and résumé',
-    summary: 'A short introduction, and the quickest ways to get in touch.',
+    summary: 'The quickest ways to get in touch.',
   },
 ];
+
+/** Full-page route for each station. */
+export const stationPath = (id: StationId) => `/lab/${id}`;
 
 export const stationById = (id: string | null | undefined) => stations.find((s) => s.id === id) ?? null;
 
