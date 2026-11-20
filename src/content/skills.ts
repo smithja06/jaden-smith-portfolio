@@ -42,8 +42,8 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: 'frontend',
-    label: 'Frontend & mobile',
-    summary: 'Interfaces for web, 3D and iOS.',
+    label: 'Frontend, mobile & product development',
+    summary: 'Interfaces for web, 3D and iOS, and the design work behind them.',
     skills: [
       { name: 'React' },
       { name: 'React Native' },
@@ -56,11 +56,13 @@ export const skillGroups: SkillGroup[] = [
       { name: 'iOS development' },
       { name: 'Augmented reality' },
       { name: 'Shopify' },
+      { name: 'UI / UX design' },
+      { name: 'Accessible web design' },
     ],
   },
   {
     id: 'backend',
-    label: 'Backend, data & infrastructure',
+    label: 'Backend, cloud & infrastructure',
     summary: 'APIs, services, databases and the plumbing between systems.',
     skills: [
       { name: 'FastAPI' },
@@ -80,8 +82,8 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: 'ai',
-    label: 'AI, ML & agentic systems',
-    summary: 'Agents, retrieval and ways of measuring how AI is used.',
+    label: 'AI, machine learning & computer vision',
+    summary: 'Agents and retrieval, vision pipelines, and turning sensor data into decisions.',
     skills: [
       { name: 'AI agents' },
       { name: 'Devin Cloud' },
@@ -91,13 +93,6 @@ export const skillGroups: SkillGroup[] = [
       { name: 'Spec Kit' },
       { name: 'AI maturity assessment' },
       { name: 'Machine learning' },
-    ],
-  },
-  {
-    id: 'vision-data',
-    label: 'Computer vision & data analysis',
-    summary: 'Turning images and sensor streams into decisions.',
-    skills: [
       { name: 'OpenCV' },
       { name: 'K-means clustering' },
       { name: 'MediaPipe' },
@@ -113,8 +108,8 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: 'embedded',
-    label: 'Embedded systems & protocols',
-    summary: 'Microcontrollers, sensors, the hardware they drive and how the parts talk.',
+    label: 'Embedded systems & electronics',
+    summary: 'Microcontrollers, sensors and protocols, and the circuits underneath.',
     skills: [
       { name: 'ESP32' },
       { name: 'Raspberry Pi' },
@@ -129,68 +124,60 @@ export const skillGroups: SkillGroup[] = [
       { name: 'UART' },
       { name: 'I²C' },
       { name: 'BLE' },
-    ],
-  },
-  {
-    id: 'electronics',
-    label: 'Electronics & engineering tools',
-    summary: 'Circuits, measurement and analysis.',
-    skills: [
       { name: 'Circuit analysis' },
       { name: 'Op-amp circuits' },
       { name: 'Rectifiers & power supplies' },
       { name: 'CMOS transmission gates' },
       { name: 'LTspice' },
       { name: 'Analog Discovery 3' },
-      { name: 'CAD' },
     ],
   },
   {
-    id: 'product',
-    label: 'Product design & leadership',
-    summary: 'Designing for people and leading the teams that build.',
+    id: 'tools-leadership',
+    label: 'Engineering tools, design & leadership',
+    summary: 'Designing for people, building prototypes and leading the teams that build.',
     skills: [
-      { name: 'Human-centered design' },
+      { name: 'CAD' },
       { name: 'Prototyping & integration' },
-      { name: 'UI / UX design' },
-      { name: 'Accessible web design' },
+      { name: 'Human-centered design' },
       { name: 'Project management' },
       { name: 'Team leadership & recruiting' },
       { name: 'Technical teaching' },
       { name: 'Technical presentation' },
     ],
   },
-  {
-    id: 'spoken',
-    label: 'Spoken languages & certifications',
-    summary: 'Languages I work in.',
-    skills: [
-      { name: 'English', note: 'fluent' },
-      { name: 'French', note: 'DELF B2 · 83%' },
-    ],
-  },
+];
+
+/** The three directions the work falls into; each line summarizes documented projects and roles. */
+export const focusAreas: { id: string; title: string; text: string }[] = [
+  { id: 'software', title: 'Software Engineering', text: 'Full-stack development: frontend applications and backend systems.' },
+  { id: 'ai', title: 'AI & Machine Learning', text: 'AI agents, engineering automation, machine learning and computer vision.' },
+  { id: 'embedded', title: 'Embedded & Biomedical Systems', text: 'Firmware, sensor integration, device communication and physical interfaces.' },
+];
+
+/** Spoken languages and language certification, kept apart from programming languages. */
+export const spokenLanguages: Skill[] = [
+  { name: 'English', note: 'fluent' },
+  { name: 'French', note: 'DELF B2 · 83%' },
 ];
 
 /**
- * The short list shown first on the Skills page — the technologies behind the
- * strongest projects. Every other skill stays one click away in its group.
+ * The short list shown first on the Skills page: technologies with the
+ * strongest linked evidence, spanning software, AI and embedded work.
+ * Every other skill stays in the full catalogue.
  */
 export const coreSkills = [
   'Python',
   'TypeScript',
   'React',
   'Java',
-  'Spring Boot',
   'FastAPI',
-  'MongoDB Atlas',
   'AI agents',
-  'RAG',
-  'ESP32',
   'OpenCV',
-  'C / C++',
+  'ESP32',
 ];
 
-export const allSkills: Skill[] = skillGroups.flatMap((g) => g.skills);
+export const allSkills: Skill[] = [...skillGroups.flatMap((g) => g.skills), ...spokenLanguages];
 
 /** URL-safe id for a skill name, used in /lab/skills?skill=<id>. */
 export function skillId(name: string): string {

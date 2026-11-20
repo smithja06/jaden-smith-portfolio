@@ -106,9 +106,9 @@ export function stationPosition(index: number): [number, number, number] {
   return [Math.cos(angle) * STATION_RADIUS, 0, Math.sin(angle) * STATION_RADIUS];
 }
 
-export type ExperimentId = 'vision-matrix' | 'signal-playground';
+export type ExperimentId = 'vision-matrix' | 'signal-playground' | 'neural-network';
 
-export const experiments: { id: ExperimentId; title: string; blurb: string; route: string; project: string }[] = [
+export const experiments: { id: ExperimentId; title: string; blurb: string; route: string; project?: string }[] = [
   {
     id: 'vision-matrix',
     title: 'Vision → 4×4 Matrix',
@@ -122,5 +122,11 @@ export const experiments: { id: ExperimentId; title: string; blurb: string; rout
     blurb: 'Add noise to a waveform, filter it with a moving average, and compare raw vs smoothed with computed readouts.',
     route: '/lab/signal-playground',
     project: 'BMETT / SpineAlign sensing',
+  },
+  {
+    id: 'neural-network',
+    title: 'Toy Neural Network',
+    blurb: 'Drive three inputs through a 3→4→2 network with hand-set weights and watch the activations propagate. Not trained.',
+    route: '/lab/neural-network',
   },
 ];

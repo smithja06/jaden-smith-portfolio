@@ -151,7 +151,7 @@ export function ProjectsHub() {
           {experiments.map((e) => (
             <article key={e.id} className="sec-card sec-project">
               <h3 className="sec-card-title">{e.title}</h3>
-              <p className="sec-badge mono"><span className="sec-badge-dot" aria-hidden="true" />Runs in your browser · {e.project}</p>
+              <p className="sec-badge mono"><span className="sec-badge-dot" aria-hidden="true" />Runs in your browser{e.project ? ` · ${e.project}` : ''}</p>
               <p className="sec-text">{e.blurb}</p>
               <Link to={e.route} className="sec-card-link text-link">Open experiment <Arrow /><span className="sr-only">: {e.title}</span></Link>
             </article>

@@ -7,7 +7,7 @@ import { usePageTitle } from '../../hooks/usePageTitle';
 /**
  * Full-page view for one Lab station: section bar with a 01–05 pager,
  * an indexed heading, and the same section content as the homepage plus
- * Lab-only extras (filters, prototypes, toy network). Esc returns to the 3D lab.
+ * Lab-only extras (filters, search, evidence explorer). Esc returns to the 3D lab.
  */
 export default function LabSectionPage({ id }: { id: StationId }) {
   const index = stations.findIndex((s) => s.id === id);

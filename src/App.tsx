@@ -9,6 +9,7 @@ const ExperienceDetail = lazy(() => import('./pages/ExperienceDetail'));
 const LabWorld = lazy(() => import('./lab3d/LabWorld'));
 const VisionMatrixPage = lazy(() => import('./pages/VisionMatrixPage'));
 const SignalPlaygroundPage = lazy(() => import('./pages/SignalPlaygroundPage'));
+const NeuralNetworkPage = lazy(() => import('./pages/NeuralNetworkPage'));
 const About = lazy(() => import('./pages/About'));
 const LabSection = lazy(() => import('./pages/lab/LabSectionPage'));
 
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: '/lab/contact', element: <LabSection id="contact" /> },
       { path: '/lab/vision-matrix', element: <VisionMatrixPage /> },
       { path: '/lab/signal-playground', element: <SignalPlaygroundPage /> },
+      { path: '/lab/neural-network', element: <NeuralNetworkPage /> },
       { path: '/about', element: <About /> },
       { path: '/contact', element: <Navigate to="/#contact" replace /> },
       { path: '*', element: <NotFound /> },

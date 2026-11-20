@@ -5,7 +5,6 @@ import { experience, experienceGroupLabels, experienceGroupOrder, experienceHref
 import { awards, coursework, schools } from '../../content/education';
 import { site } from '../../content/site';
 import { isProvided, type ExperienceGroup } from '../../content/types';
-import { NetworkToy } from '../../lab/NetworkToy';
 import { ExperienceItem, ExperienceRow } from '../content/ExperienceItem';
 import { ProjectsHub } from '../content/ProjectsHub';
 import { SkillExplorer } from '../content/SkillExplorer';
@@ -75,13 +74,8 @@ export function ProjectsSection() {
 /* ---------- Skills ---------- */
 
 export function SkillsSection() {
-  return (
-    <>
-      <SkillExplorer />
-      <h2 className="sec-subhead mono">Hands-on · Toy network</h2>
-      <div className="sec-toy"><NetworkToy /></div>
-    </>
-  );
+  // The toy network now lives with the other experiments at /lab/neural-network.
+  return <SkillExplorer />;
 }
 
 /* ---------- Education ---------- */

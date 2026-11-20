@@ -5,7 +5,9 @@ import {
 } from './projects';
 import { EXPERIENCE_HUB, experience, experienceHref, getExperience, hasExperiencePage, roleAnchor } from './experience';
 import { awards, coursework, schools } from './education';
-import { allSkills } from './skills';
+import { allSkills, focusAreas, skillGroups, spokenLanguages } from './skills';
+import { experienceUsing } from './relations';
+import { experiments } from '../lab3d/config/stations';
 import { featuredCards, featuredRefs, homepageCards, homepageExperienceIds } from './featured';
 import { coreSkills } from './skills';
 import { projectsUsing, unknownTech } from './relations';
@@ -196,9 +198,9 @@ describe('featured', () => {
     for (const id of homepageExperienceIds) expect(getExperience(id)?.group).toBe('technical');
   });
 
-  it('core skills are 8–12 listed skills', () => {
-    expect(coreSkills.length).toBeGreaterThanOrEqual(8);
-    expect(coreSkills.length).toBeLessThanOrEqual(12);
+  it('core skills are 6–8 listed skills', () => {
+    expect(coreSkills.length).toBeGreaterThanOrEqual(6);
+    expect(coreSkills.length).toBeLessThanOrEqual(8);
     for (const n of coreSkills) expect(allSkills.some((s) => s.name === n)).toBe(true);
   });
 });
@@ -268,6 +270,29 @@ describe('skills', () => {
     const agents = projectsUsing('AI agents').map((p) => p.id);
     expect(agents).toContain('custodyos');
     expect(agents).not.toContain('rbc-agent-readiness-framework');
+  });
+
+  it('every core technology has linked evidence', () => {
+    for (const n of coreSkills) expect(projectsUsing(n).length + experienceUsing(n).length, n).toBeGreaterThan(0);
+  });
+
+  it('keeps all 82 skills: six technical categories plus spoken languages', () => {
+    expect(skillGroups).toHaveLength(6);
+    expect(allSkills).toHaveLength(82);
+    expect(skillGroups.flatMap((g) => g.skills).map((s) => s.name)).not.toContain('English');
+    expect(spokenLanguages.map((s) => s.name)).toEqual(['English', 'French']);
+  });
+
+  it('keeps in-progress integrations labelled', () => {
+    for (const n of ['IBM MQ', 'Microsoft Entra ID']) expect(allSkills.find((s) => s.name === n)?.note).toMatch(/in progress/);
+  });
+
+  it('has three focus areas', () => {
+    expect(focusAreas.map((f) => f.title)).toEqual(['Software Engineering', 'AI & Machine Learning', 'Embedded & Biomedical Systems']);
+  });
+
+  it('lists the toy network with the other browser experiments', () => {
+    expect(experiments.map((e) => e.route)).toContain('/lab/neural-network');
   });
 });
 

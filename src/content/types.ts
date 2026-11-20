@@ -97,7 +97,7 @@ export type Ownership = 'sole' | 'lead' | 'major' | 'team' | 'contributor';
 export type ArtKey = 'medt' | 'tooling' | 'bmett' | 'brthday' | 'spinealign' | 'custody' | 'cobalt';
 
 /** Interactive experiments that already run on this site. */
-export type ExperimentId = 'vision-matrix' | 'signal-playground';
+export type ExperimentId = 'vision-matrix' | 'signal-playground' | 'neural-network';
 
 /**
  * Long-form case-study content. Every field is optional; empty fields are
