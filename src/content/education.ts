@@ -74,13 +74,22 @@ export type CourseTopic =
   | string
   | {
       title: string;
-      /** Official course code, e.g. 'ENGINEER 1P13'. */
+      /**
+       * Official course code, shown after the title. Never invent one: until
+       * the official list arrives these are placeholders in the form
+       * 'MOCK ####' (see MOCK_CODE), which a test reports.
+       */
       code?: string;
       /** One short line, if it adds something the title doesn't. */
       description?: string;
-      /** Omit for completed coursework. */
+      /** Omit for completed coursework. 'planned' is kept in data but not displayed. */
       status?: 'in-progress' | 'planned';
+      /** Kept as a record but not shown in Relevant coursework. */
+      hidden?: boolean;
     };
+
+/** Placeholder course codes, to be replaced with official ones. */
+export const MOCK_CODE = /^MOCK \d{4}$/;
 
 export interface CourseArea {
   id: string;
@@ -98,16 +107,21 @@ export const coursework: CourseArea[] = [
   {
     id: 'software',
     label: 'Software & algorithms',
-    topics: ['Data Structures and Algorithms', 'Python programming', 'Data integration'],
+    topics: [
+      { title: 'Data Structures and Algorithms', code: 'MOCK 1001' },
+      { title: 'Python programming', code: 'MOCK 1002' },
+      { title: 'Data integration', code: 'MOCK 1003' },
+    ],
   },
   {
     // Formerly two areas: "Electrical engineering" and "Electronics & circuits".
     id: 'electrical',
     label: 'Electrical engineering & circuits',
     topics: [
-      'Circuits & Systems',
-      'Microelectronics',
-      'Microcontroller systems and serial communication',
+      { title: 'Circuits & Systems', code: 'MOCK 2001' },
+      { title: 'Microelectronics', code: 'MOCK 2002' },
+      { title: 'Microcontroller systems and serial communication', code: 'MOCK 2003' },
+      // Lab topics below move to their project archive entries once the official list arrives.
       'CMOS transmission gates and CD4007 switching',
       'Op-amp integrators and differentiators',
       'Rectifier and power-supply design',
@@ -119,8 +133,8 @@ export const coursework: CourseArea[] = [
     id: 'math',
     label: 'Mathematics & statistics',
     topics: [
-      'Probability and statistics: distributions, sampling, confidence intervals, hypothesis tests, power, chi-square, regression, ANOVA',
-      'Numerical methods in MATLAB',
+      { title: 'Probability and statistics', code: 'MOCK 3001' },
+      { title: 'Numerical methods in MATLAB', code: 'MOCK 3002' },
     ],
   },
   {
@@ -128,21 +142,13 @@ export const coursework: CourseArea[] = [
     id: 'biomedical',
     label: 'Biomedical engineering & design',
     topics: [
-      'iBioMed design projects (DP-3, DP-4)',
-      'Prototyping and CAD',
-      'Assistive technology',
-      'Rehabilitation',
-      'Designing for patient needs',
-      'Implant design',
+      { title: 'iBioMed design projects (DP-3, DP-4)', code: 'MOCK 4001' },
+      { title: 'Prototyping and CAD', code: 'MOCK 4002' },
+      { title: 'Assistive technology', code: 'MOCK 4003' },
+      { title: 'Rehabilitation', code: 'MOCK 4004' },
+      { title: 'Designing for patient needs', code: 'MOCK 4005' },
+      { title: 'Implant design', code: 'MOCK 4006' },
     ],
     projects: ['spinealign-posture-feedback', 'cycle-buddy', 'hip-implant-design-case', 'ostoflow'],
-  },
-  {
-    id: 'analysis',
-    label: 'Other engineering analysis',
-    topics: [
-      'Materials testing',
-      'Cost accounting, budgeting and financial statements (course exposure)',
-    ],
   },
 ];

@@ -548,7 +548,7 @@ button.skx-chip:hover { border-color: rgba(50, 126, 255, 0.55); background: var(
 .course-topics { list-style: none; display: grid; gap: 6px; color: var(--text-secondary); font-size: 14.5px; line-height: 1.5; max-width: 60ch; }
 .course-item { display: grid; gap: 2px; }
 .course-name { overflow-wrap: anywhere; }
-.course-code { font-size: 12px; color: var(--blue-soft); margin-right: 8px; letter-spacing: 0.04em; }
+.course-code { font-size: 12px; color: var(--blue-soft); margin-left: 10px; letter-spacing: 0.04em; white-space: nowrap; }
 .course-status { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-left: 8px; }
 .course-desc { font-size: 13.5px; color: var(--text-muted); }
 .course-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13.5px; margin-top: 2px; }

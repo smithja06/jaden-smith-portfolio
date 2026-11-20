@@ -4,7 +4,7 @@ import {
   workRedirect, modulesOf, caseStudiesByIds, projectHref, coreTechOf,
 } from './projects';
 import { EXPERIENCE_HUB, experience, experienceHref, getExperience, hasExperiencePage, roleAnchor } from './experience';
-import { awards, coursework, schools } from './education';
+import { MOCK_CODE, awards, coursework, schools } from './education';
 import { allSkills, focusAreas, skillGroups, spokenLanguages } from './skills';
 import { experienceUsing } from './relations';
 import { experiments } from '../lab3d/config/stations';
@@ -299,7 +299,9 @@ describe('skills', () => {
 describe('education & contact', () => {
   it('keeps every coursework topic and project link after consolidation', () => {
     const titles = coursework.flatMap((c) => c.topics.map((t) => (typeof t === 'string' ? t : t.title)));
-    expect(titles).toHaveLength(20);
+    // 20 originally; Materials testing removed (not taken).
+    expect(titles).toHaveLength(19);
+    expect(titles).not.toContain('Materials testing');
     expect(new Set(titles).size).toBe(titles.length);
     const linked = coursework.flatMap((c) => c.projects ?? []);
     expect(new Set(linked).size).toBe(linked.length);
@@ -308,6 +310,18 @@ describe('education & contact', () => {
       'op-amp-integrator-differentiator', 'ostoflow', 'spinealign-posture-feedback',
     ]);
     for (const id of linked) expect(getProject(id), id).toBeDefined();
+  });
+
+  it('hides cost accounting from the coursework list but keeps the record', () => {
+    const t = coursework.flatMap((c) => c.topics).find((x) => typeof x !== 'string' && x.title.startsWith('Cost accounting'));
+    expect(t && typeof t !== 'string' && t.hidden).toBe(true);
+  });
+
+  it('reports placeholder course codes until official ones replace them', () => {
+    const mocks = coursework.flatMap((c) => c.topics).filter((t) => typeof t !== 'string' && t.code && MOCK_CODE.test(t.code));
+    // Not a failure: a visible count so placeholders aren't forgotten. Replace with official codes, then this drops to 0.
+    console.info(`Placeholder course codes still in use: ${mocks.length}`);
+    for (const t of coursework.flatMap((c) => c.topics)) if (typeof t !== 'string' && t.code) expect(t.code.trim()).not.toBe('');
   });
 
   it('separates university awards from high-school ones', () => {

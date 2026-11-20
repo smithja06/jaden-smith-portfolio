@@ -131,7 +131,7 @@ function AwardsList() {
   );
 }
 
-const statusLabel = { 'in-progress': 'In progress', planned: 'Planned' } as const;
+const statusLabel = { 'in-progress': 'In progress' } as const;
 
 /** One coursework entry; only populated fields are shown. */
 function CourseItem({ topic }: { topic: CourseTopic }) {
@@ -139,9 +139,9 @@ function CourseItem({ topic }: { topic: CourseTopic }) {
   return (
     <li className="course-item">
       <span className="course-name">
-        {t.code && <span className="course-code mono">{t.code}</span>}
         {t.title}
-        {t.status && <span className="course-status mono">{statusLabel[t.status]}</span>}
+        {t.code && <span className="course-code mono">{t.code}</span>}
+        {t.status === 'in-progress' && <span className="course-status mono">{statusLabel[t.status]}</span>}
       </span>
       {t.description && <span className="course-desc">{t.description}</span>}
     </li>
@@ -158,11 +158,14 @@ function CourseworkList() {
   return (
     <div className="course-cols">
       {coursework.map((c) => {
+        // Hidden records and planned courses stay in data but aren't shown; an area with nothing to show is skipped.
+        const topics = c.topics.filter((t) => typeof t === 'string' || (!t.hidden && t.status !== 'planned'));
+        if (!topics.length) return null;
         const linked = [...new Set(c.projects ?? [])].map(getProject).filter((p) => !!p && isPublicProject(p));
         return (
           <section key={c.id} className="course" aria-labelledby={`course-${c.id}`}>
             <h3 id={`course-${c.id}`} className="course-title">{c.label}</h3>
-            <ul className="course-topics">{c.topics.map((t) => <CourseItem key={typeof t === 'string' ? t : t.title} topic={t} />)}</ul>
+            <ul className="course-topics">{topics.map((t) => <CourseItem key={typeof t === 'string' ? t : t.title} topic={t} />)}</ul>
             {linked.length > 0 && (
               <p className="course-links">
                 <span className="course-links-label mono">Related work</span>
