@@ -1,6 +1,6 @@
 import { TODO_USER_CONTENT, type Project } from '../types';
 
-/** Experiments & Coursework — inventory P16–P22, P29–P30. */
+/** Experiments & Coursework — inventory P16–P19, P29–P30. */
 export const experimentProjects: Project[] = [
   {
     id: 'raspberry-pi-depth-benchmark',
@@ -82,56 +82,6 @@ export const experimentProjects: Project[] = [
       implementation: ['RC / op-amp designs with R = 10 kΩ and C = 100 nF, compared against theory for sine and square inputs.'],
     },
     todo: ['Verify signal conditions and measured vs theoretical values before publishing them'],
-  },
-  {
-    id: 'soil-compaction-permeability',
-    listing: 'archive',
-    inventory: 20,
-    title: 'Soil Compaction & Permeability Analysis',
-    summary: 'Lab analysis of compaction curves and hydraulic conductivity, from Proctor tests to flow nets.',
-    context: 'McMaster civil / materials lab',
-    dates: TODO_USER_CONTENT,
-    category: 'experiments',
-    status: 'coursework',
-    tech: ['Excel', 'Statistical analysis', 'Data visualization & dashboards'],
-    caseStudy: {
-      implementation: [
-        'Standard and Modified Proctor curves, optimum moisture content and maximum dry density, the 95% density criterion, and regression / parabolic extrapolation.',
-        'Hydraulic conductivity corrected to 20 °C, head loss, seepage and flow nets.',
-      ],
-    },
-  },
-  {
-    id: 'structural-analysis-exercises',
-    listing: 'archive',
-    inventory: 21,
-    title: 'Structural Analysis & Computational Mechanics',
-    summary: 'Beam and frame analysis from determinacy checks through moment distribution and FEM.',
-    context: 'McMaster coursework',
-    dates: TODO_USER_CONTENT,
-    category: 'experiments',
-    status: 'coursework',
-    tech: ['Structural analysis'],
-    caseStudy: {
-      implementation: [
-        'Determinacy and stability, reactions, shear-force and bending-moment diagrams and deflected shapes, using double integration, conjugate beam, slope-deflection, moment distribution and the finite element method.',
-      ],
-    },
-  },
-  {
-    id: 'matlab-numerical-methods',
-    listing: 'archive',
-    inventory: 22,
-    title: 'MATLAB Numerical & Matrix Computation',
-    summary: 'Iterative methods, matrix solving and numerical modelling in MATLAB.',
-    context: 'McMaster coursework',
-    dates: TODO_USER_CONTENT,
-    category: 'experiments',
-    status: 'coursework',
-    tech: ['MATLAB'],
-    caseStudy: {
-      implementation: ['Iterative methods, matrix solving with linsolve, data plotting and numerical modelling.'],
-    },
   },
   {
     id: 'vision-matrix-simulator',

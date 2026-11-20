@@ -98,7 +98,6 @@ export const coursework: CourseArea[] = [
       'Probability and statistics: distributions, sampling, confidence intervals, hypothesis tests, power, chi-square, regression, ANOVA',
       'Numerical methods in MATLAB',
     ],
-    projects: ['matlab-numerical-methods'],
   },
   {
     id: 'design',
@@ -116,11 +115,8 @@ export const coursework: CourseArea[] = [
     id: 'analysis',
     label: 'Other engineering analysis',
     topics: [
-      'Soil compaction and permeability',
-      'Structural determinacy, shear and moment diagrams, slopes and deflections',
       'Materials testing',
       'Cost accounting, budgeting and financial statements (course exposure)',
     ],
-    projects: ['soil-compaction-permeability', 'structural-analysis-exercises'],
   },
 ];

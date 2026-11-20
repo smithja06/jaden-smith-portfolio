@@ -22,9 +22,9 @@ function evidenceUrls(e?: Evidence): string[] {
 }
 
 describe('projects', () => {
-  it('has a record for every one of the 30 inventory entries', () => {
-    const nums = projects.map((p) => p.inventory).sort((a, b) => a - b);
-    expect(nums).toEqual(Array.from({ length: 30 }, (_, i) => i + 1));
+  it('gives every record a unique inventory number', () => {
+    const nums = projects.map((p) => p.inventory);
+    expect(new Set(nums).size).toBe(nums.length);
   });
 
   it('has unique ids', () => {

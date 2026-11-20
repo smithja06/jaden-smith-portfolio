@@ -143,8 +143,6 @@ export const skillGroups: SkillGroup[] = [
       { name: 'LTspice' },
       { name: 'Analog Discovery 3' },
       { name: 'CAD' },
-      { name: 'Structural analysis' },
-      { name: 'Excel' },
     ],
   },
   {
