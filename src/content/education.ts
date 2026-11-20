@@ -66,14 +66,34 @@ export const awards: Award[] = [
   { title: 'DELF B2 — French', detail: '83%', school: 'other', kind: 'certification' },
 ];
 
+/**
+ * One coursework entry. A plain string is a topic title; use the object form
+ * when official details are known. Only populated fields are displayed.
+ */
+export type CourseTopic =
+  | string
+  | {
+      title: string;
+      /** Official course code, e.g. 'ENGINEER 1P13'. */
+      code?: string;
+      /** One short line, if it adds something the title doesn't. */
+      description?: string;
+      /** Omit for completed coursework. */
+      status?: 'in-progress' | 'planned';
+    };
+
 export interface CourseArea {
   id: string;
   label: string;
-  topics: string[];
-  /** Project ids that came out of this area. */
+  topics: CourseTopic[];
+  /** Project ids that came out of this area (shown once, as "Related work"). */
   projects?: string[];
 }
 
+/**
+ * Relevant coursework by discipline. Rendered in content-height columns, so
+ * any number of areas and topics lays out without stretched or empty cells.
+ */
 export const coursework: CourseArea[] = [
   {
     id: 'software',
@@ -81,15 +101,18 @@ export const coursework: CourseArea[] = [
     topics: ['Data Structures and Algorithms', 'Python programming', 'Data integration'],
   },
   {
+    // Formerly two areas: "Electrical engineering" and "Electronics & circuits".
     id: 'electrical',
-    label: 'Electrical engineering',
-    topics: ['Circuits & Systems', 'Microelectronics', 'Microcontroller systems and serial communication'],
-    projects: ['cmos-transmission-gate'],
-  },
-  {
-    id: 'electronics',
-    label: 'Electronics & circuits',
-    topics: ['CMOS transmission gates and CD4007 switching', 'Op-amp integrators and differentiators', 'Rectifier and power-supply design', 'Analog measurement'],
+    label: 'Electrical engineering & circuits',
+    topics: [
+      'Circuits & Systems',
+      'Microelectronics',
+      'Microcontroller systems and serial communication',
+      'CMOS transmission gates and CD4007 switching',
+      'Op-amp integrators and differentiators',
+      'Rectifier and power-supply design',
+      'Analog measurement',
+    ],
     projects: ['cmos-transmission-gate', 'center-tap-power-supply', 'op-amp-integrator-differentiator'],
   },
   {
@@ -101,16 +124,18 @@ export const coursework: CourseArea[] = [
     ],
   },
   {
-    id: 'design',
-    label: 'Engineering design',
-    topics: ['iBioMed design projects (DP-3, DP-4)', 'Prototyping and CAD'],
-    projects: ['spinealign-posture-feedback', 'cycle-buddy'],
-  },
-  {
+    // Formerly two areas: "Engineering design" and "Biomedical engineering".
     id: 'biomedical',
-    label: 'Biomedical engineering',
-    topics: ['Assistive technology', 'Rehabilitation', 'Designing for patient needs', 'Implant design'],
-    projects: ['hip-implant-design-case', 'ostoflow'],
+    label: 'Biomedical engineering & design',
+    topics: [
+      'iBioMed design projects (DP-3, DP-4)',
+      'Prototyping and CAD',
+      'Assistive technology',
+      'Rehabilitation',
+      'Designing for patient needs',
+      'Implant design',
+    ],
+    projects: ['spinealign-posture-feedback', 'cycle-buddy', 'hip-implant-design-case', 'ostoflow'],
   },
   {
     id: 'analysis',

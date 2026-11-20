@@ -297,6 +297,19 @@ describe('skills', () => {
 });
 
 describe('education & contact', () => {
+  it('keeps every coursework topic and project link after consolidation', () => {
+    const titles = coursework.flatMap((c) => c.topics.map((t) => (typeof t === 'string' ? t : t.title)));
+    expect(titles).toHaveLength(20);
+    expect(new Set(titles).size).toBe(titles.length);
+    const linked = coursework.flatMap((c) => c.projects ?? []);
+    expect(new Set(linked).size).toBe(linked.length);
+    expect([...linked].sort()).toEqual([
+      'center-tap-power-supply', 'cmos-transmission-gate', 'cycle-buddy', 'hip-implant-design-case',
+      'op-amp-integrator-differentiator', 'ostoflow', 'spinealign-posture-feedback',
+    ]);
+    for (const id of linked) expect(getProject(id), id).toBeDefined();
+  });
+
   it('separates university awards from high-school ones', () => {
     const at = (school: string) => awards.filter((a) => a.kind === 'received' && a.school === school).map((a) => a.title);
     expect(at('mcmaster')).toEqual(['McMaster Award of Excellence', 'Dean’s Honour List']);

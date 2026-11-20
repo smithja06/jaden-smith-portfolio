@@ -2,7 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import type { StationId } from '../../lab3d/config/stations';
 import { getProject, isPublicProject, projectHref } from '../../content/projects';
 import { experience, experienceGroupLabels, experienceGroupOrder, experienceHref, experienceInGroup, getExperience } from '../../content/experience';
-import { awards, coursework, schools } from '../../content/education';
+import { awards, coursework, schools, type CourseTopic } from '../../content/education';
 import { site } from '../../content/site';
 import { isProvided, type ExperienceGroup } from '../../content/types';
 import { ExperienceItem, ExperienceRow } from '../content/ExperienceItem';
@@ -131,6 +131,51 @@ function AwardsList() {
   );
 }
 
+const statusLabel = { 'in-progress': 'In progress', planned: 'Planned' } as const;
+
+/** One coursework entry; only populated fields are shown. */
+function CourseItem({ topic }: { topic: CourseTopic }) {
+  const t = typeof topic === 'string' ? { title: topic } : topic;
+  return (
+    <li className="course-item">
+      <span className="course-name">
+        {t.code && <span className="course-code mono">{t.code}</span>}
+        {t.title}
+        {t.status && <span className="course-status mono">{statusLabel[t.status]}</span>}
+      </span>
+      {t.description && <span className="course-desc">{t.description}</span>}
+    </li>
+  );
+}
+
+/**
+ * Coursework by discipline, in two independent columns on wide screens:
+ * each area is as tall as its content, and any number of areas fits
+ * without stretched rows or empty cells. Related projects appear once per
+ * area as a secondary line.
+ */
+function CourseworkList() {
+  return (
+    <div className="course-cols">
+      {coursework.map((c) => {
+        const linked = [...new Set(c.projects ?? [])].map(getProject).filter((p) => !!p && isPublicProject(p));
+        return (
+          <section key={c.id} className="course" aria-labelledby={`course-${c.id}`}>
+            <h3 id={`course-${c.id}`} className="course-title">{c.label}</h3>
+            <ul className="course-topics">{c.topics.map((t) => <CourseItem key={typeof t === 'string' ? t : t.title} topic={t} />)}</ul>
+            {linked.length > 0 && (
+              <p className="course-links">
+                <span className="course-links-label mono">Related work</span>
+                {linked.map((p) => <Link key={p!.id} to={projectHref(p!)} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
+              </p>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 export function EducationSection() {
   return (
     <div className="sec-edu">
@@ -139,25 +184,8 @@ export function EducationSection() {
       <h2 className="sec-subhead mono">Awards &amp; recognition</h2>
       <AwardsList />
 
-      <details className="disclose edu-courses">
-        <summary className="disclose-summary">Relevant coursework, by discipline</summary>
-        <div className="course-grid">
-          {coursework.map((c) => {
-            const linked = (c.projects ?? []).map(getProject).filter((p) => !!p && isPublicProject(p));
-            return (
-              <section key={c.id} className="course" aria-labelledby={`course-${c.id}`}>
-                <h3 id={`course-${c.id}`} className="course-title">{c.label}</h3>
-                <ul className="course-topics">{c.topics.map((t) => <li key={t}>{t}</li>)}</ul>
-                {linked.length > 0 && (
-                  <p className="course-links">
-                    {linked.map((p) => <Link key={p!.id} to={projectHref(p!)} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
-                  </p>
-                )}
-              </section>
-            );
-          })}
-        </div>
-      </details>
+      <h2 className="sec-subhead mono">Relevant coursework</h2>
+      <CourseworkList />
 
       <h2 className="sec-subhead mono">Earlier</h2>
       <SchoolBlock id="cathedral" secondary />

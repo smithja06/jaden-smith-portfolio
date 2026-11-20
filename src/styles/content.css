@@ -538,11 +538,21 @@ button.skx-chip:hover { border-color: rgba(50, 126, 255, 0.55); background: var(
 .awards section { display: grid; gap: 12px; align-content: start; }
 .awards-title { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
 .awards section .awards-title:not(:first-child) { margin-top: 12px; }
-.course-grid { display: grid; gap: 1px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); background: var(--line-subtle); border: 1px solid var(--line-subtle); border-radius: var(--radius-card); overflow: hidden; }
-.course { background: var(--bg-base); padding: 20px 22px; display: grid; gap: 10px; align-content: start; }
-.course-title { font-size: 1rem; letter-spacing: -0.01em; }
-.course-topics { list-style: none; display: grid; gap: 6px; color: var(--text-secondary); font-size: 14.5px; line-height: 1.5; }
-.course-links { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13.5px; }
+/* Relevant coursework: content-height areas in two independent columns
+   (CSS columns, not a grid), so short areas never stretch to match long
+   ones and an odd number of areas leaves no empty cell. */
+.course-cols { columns: 1; column-gap: 56px; max-width: 1080px; margin-top: 4px; }
+@media (min-width: 820px) { .course-cols { columns: 2; } }
+.course { break-inside: avoid; display: grid; gap: 10px; align-content: start; padding: 18px 0 22px; border-top: 1px solid var(--line-subtle); }
+.course-title { font-size: 1rem; letter-spacing: -0.01em; color: var(--text-primary); }
+.course-topics { list-style: none; display: grid; gap: 6px; color: var(--text-secondary); font-size: 14.5px; line-height: 1.5; max-width: 60ch; }
+.course-item { display: grid; gap: 2px; }
+.course-name { overflow-wrap: anywhere; }
+.course-code { font-size: 12px; color: var(--blue-soft); margin-right: 8px; letter-spacing: 0.04em; }
+.course-status { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-left: 8px; }
+.course-desc { font-size: 13.5px; color: var(--text-muted); }
+.course-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13.5px; margin-top: 2px; }
+.course-links-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
 
 /* ---------- Contact ---------- */
 .sec-plain { min-height: 44px; display: inline-flex; align-items: center; color: var(--text-primary); }
@@ -658,8 +668,6 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 
 /* ================= LAB PAGES ================= */
 .sec-intro { color: var(--text-secondary); max-width: 62ch; margin-top: -8px; }
-.edu-courses { margin-top: 24px; }
-.edu-courses[open] .course-grid { margin-top: 12px; }
 
 @media (prefers-reduced-motion: reduce) { .home-lab-shot img { transition: none; } }
 
