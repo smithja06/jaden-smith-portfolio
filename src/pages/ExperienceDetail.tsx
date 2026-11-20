@@ -89,13 +89,13 @@ export default function ExperienceDetail() {
             {e.contributions && e.contributions.length > 0 && (
               <div>
                 <h2 className="case-h">What I did</h2>
-                <ul className="sec-dash">{e.contributions.map((c) => <li key={c}>{c}</li>)}</ul>
+                <ul className="sec-dash glass-dots">{e.contributions.map((c) => <li key={c}>{c}</li>)}</ul>
               </div>
             )}
             {e.leadership && e.leadership.length > 0 && (
               <div>
                 <h2 className="case-h">Leadership &amp; collaboration</h2>
-                <ul className="sec-dash">{e.leadership.map((c) => <li key={c}>{c}</li>)}</ul>
+                <ul className="sec-dash glass-dots">{e.leadership.map((c) => <li key={c}>{c}</li>)}</ul>
               </div>
             )}
           </Reveal>
@@ -111,7 +111,7 @@ export default function ExperienceDetail() {
         {linked.length > 0 && (
           <aside className="case-related exp-related" aria-labelledby="exp-projects">
             <div>
-              <h2 id="exp-projects" className="sec-subhead mono">Engineering detail · case studies</h2>
+              <h2 id="exp-projects" className="sec-subhead mono">Engineering detail · {linked.length === 1 ? 'case study' : 'case studies'}</h2>
               <ul className="rel-list">
                 {linked.map((p) => <li key={p.id}><Link to={`/work/${p.id}`} className="rel-link"><span>{p.title}</span><span className="muted">{statusLabels[p.status]}</span><Arrow /></Link></li>)}
               </ul>
@@ -146,7 +146,7 @@ function InitiativeRow({ i, n }: { i: Initiative; n: string }) {
           <details className="disclose init-more">
             <summary className="disclose-summary">Details<span className="sr-only">: {i.title}</span></summary>
             <div className="disclose-body">
-              {i.points && <ul className="sec-dash">{i.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>}
+              {i.points && <ul className="sec-dash glass-dots">{i.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>}
               {notes.map((m) => <p key={m.label} className="init-note"><b>{m.value} {m.label}.</b> {m.note}</p>)}
               {projects.length > 0 && (
                 <p className="disclose-links">
