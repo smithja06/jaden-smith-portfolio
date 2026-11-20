@@ -25,7 +25,7 @@ export default function About() {
           <p>I also care about how things feel to use. That’s why some of my work, like the brthday collection interface, is unapologetically about interaction and craft.</p>
         </div>
         <div className="about-actions">
-          {isProvided(site.resumeUrl) && <a href={site.resumeUrl} className="btn btn-primary" download>Download résumé</a>}
+          {isProvided(site.resumeUrl) && <a href={site.resumeUrl} className="btn btn-primary" download={site.resumeFilename}>Download résumé</a>}
           <Link to="/#contact" className="btn btn-ghost">Get in touch <Arrow /></Link>
         </div>
       </div>

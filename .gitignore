@@ -155,3 +155,6 @@ vite.config.ts.timestamp-*
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs
+
+# Personal Info
+jaden_smith_master_portfolio_inventory.md

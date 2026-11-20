@@ -2,13 +2,30 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
+import { stations } from '../lab3d/config/stations';
 
-const links = [
-  { label: 'Work', to: '/work', match: (p: string) => p.startsWith('/work') },
-  { label: 'Lab', to: '/lab', match: (p: string) => p.startsWith('/lab') },
-  { label: 'About', to: '/about', match: (p: string) => p.startsWith('/about') },
-  { label: 'Contact', to: '/#contact', match: (_p: string, h: string) => h === '#contact' },
-];
+/** One link per homepage section (matching the Lab stations): 01 Experience … 05 Contact. */
+const links = stations.map((s) => ({ id: s.id, index: s.letter, label: s.title, to: `/#${s.id}` }));
+
+/** Highlights the section currently in view on the homepage. */
+function useActiveSection(enabled: boolean) {
+  const [active, setActive] = useState<string | null>(null);
+  useEffect(() => {
+    if (!enabled) { setActive(null); return; }
+    const els = links.map((l) => document.getElementById(l.id)).filter((e): e is HTMLElement => !!e);
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const visible = new Map<string, number>();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => visible.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
+      // Pick the first section (in page order) that is meaningfully on screen.
+      const current = links.find((l) => (visible.get(l.id) ?? 0) > 0);
+      setActive(current ? current.id : null);
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: [0, 0.01] });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [enabled]);
+  return active;
+}
 
 export function Nav() {
   const { pathname, hash } = useLocation();
@@ -53,28 +70,28 @@ export function Nav() {
   }, [open]);
 
   const hasResume = isProvided(site.resumeUrl);
-  const isActive = (l: (typeof links)[number]) => l.match(pathname, pathname === '/' ? hash : '');
+  const activeSection = useActiveSection(pathname === '/');
+  const isActive = (l: (typeof links)[number]) => activeSection === l.id;
 
   return (
     <header className={`nav-wrap ${scrolled ? 'is-scrolled' : ''}`}>
       <nav className="nav glass" aria-label="Primary">
         <Link to="/" className="nav-brand" aria-label={`${site.name} — home`}>
-          <span className="nav-mono" aria-hidden="true">{site.initials}</span>
           <span className="nav-name">{site.name}</span>
+          <span className="nav-role mono">{site.role}</span>
         </Link>
 
         <ul className="nav-links">
           {links.map((l) => (
             <li key={l.label}>
               <Link to={l.to} className={`nav-link ${isActive(l) ? 'is-active' : ''}`} aria-current={isActive(l) ? 'page' : undefined}>
-                {l.label}
+                <span className="nav-index mono" aria-hidden="true">{l.index}</span>{l.label}
               </Link>
             </li>
           ))}
         </ul>
 
         <div className="nav-cta">
-          {hasResume && <a className="btn btn-ghost btn-sm" href={site.resumeUrl as string} download>Résumé</a>}
           <Link className="btn btn-primary btn-sm nav-lab-cta" to="/lab"><span className="nav-lab-dot" aria-hidden="true" />Enter the Lab</Link>
         </div>
 
@@ -95,12 +112,14 @@ export function Nav() {
         <ul>
           {links.map((l) => (
             <li key={l.label}>
-              <Link to={l.to} className={isActive(l) ? 'is-active' : ''} aria-current={isActive(l) ? 'page' : undefined}>{l.label}</Link>
+              <Link to={l.to} className={isActive(l) ? 'is-active' : ''} aria-current={isActive(l) ? 'page' : undefined}>
+                <span className="nav-index mono" aria-hidden="true">{l.index}</span>{l.label}
+              </Link>
             </li>
           ))}
         </ul>
-        <Link className="btn btn-primary" to="/lab">Enter the 3D Lab</Link>
-        {hasResume && <a className="btn btn-ghost" href={site.resumeUrl as string} download>Download résumé</a>}
+        <Link className="btn btn-primary" to="/lab">Enter the Lab</Link>
+        {hasResume && <a className="btn btn-ghost" href={site.resumeUrl as string} download={site.resumeFilename}>Download résumé</a>}
       </div>
     </header>
   );

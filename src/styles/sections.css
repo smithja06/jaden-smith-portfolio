@@ -151,3 +151,19 @@ a.sec-email:hover { color: var(--blue-soft); }
 .nettoy-svg { width: 100%; height: auto; }
 .nettoy-controls { display: grid; gap: 8px; }
 .nettoy .ctl-hint b { color: var(--text-secondary); font-weight: 600; }
+
+/* ================= HOMEPAGE SECTIONS ================= */
+.home-sec { position: relative; padding-top: clamp(72px, 9vw, 128px); scroll-margin-top: calc(var(--nav-height) + 8px); }
+.home-sec:focus { outline: none; }
+.home-sec .sec-head { margin-top: 0; }
+.home-sec .sec-body { margin-top: clamp(32px, 4vw, 48px); }
+.sec-more {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
+  color: var(--text-muted); font-size: 14.5px;
+}
+.sec-more .mono { color: var(--blue-soft); font-size: 12.5px; }
+.sec-more:hover { color: var(--text-primary); }
+.sec-more .arrow { transition: transform var(--dur-fast) var(--ease-out); }
+.sec-more:hover .arrow { transform: translateX(3px); }
+.home-sec-contact { overflow: hidden; padding-bottom: clamp(96px, 12vw, 160px); margin-top: 0; }
+.home-sec-contact .contact-band { z-index: -1; }
