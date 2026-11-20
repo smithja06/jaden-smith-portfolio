@@ -268,11 +268,11 @@ export const experience: ExperienceEntry[] = [
     id: 'gael-guides',
     group: 'leadership',
     org: 'Gael Guides Leadership Group — Cathedral High School',
-    title: 'President',
+    title: 'President / Chair',
     location: 'Hamilton, Ontario',
     dates: TODO_USER_CONTENT,
     start: '2024-01',
-    summary: 'Led the school’s student leadership group, focused on leadership development and community and service initiatives.',
+    summary: 'President and chair of the school’s student leadership group, focused on leadership development and community and service initiatives.',
     todo: ['Dates, responsibilities, impact'],
   },
 

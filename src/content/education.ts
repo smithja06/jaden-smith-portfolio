@@ -40,7 +40,7 @@ export const schools: School[] = [
     credential: 'Ontario Secondary School Diploma',
     dates: 'Class of 2024',
     stats: [{ value: '98%', label: 'Graduating average' }],
-    summary: 'Graduated with a 98% average while leading the FIRST Robotics software team and the Gael Guides leadership group.',
+    summary: 'Graduated with a 98% average while leading the FIRST Robotics software team and serving as president and chair of the Gael Guides leadership group.',
     teams: ['first-robotics', 'gael-guides'],
   },
 ];

@@ -206,7 +206,7 @@
 
 .exp-section { margin-top: clamp(48px, 6vw, 80px); }
 
-/* Experience contribution lists: small cobalt liquid-glass discs instead of dashes.
+/* Bullet lists site-wide (.sec-dash): small cobalt liquid-glass discs.
    Built like a glass bead: a clear, blue-tinted body that deepens toward the
    edge (thicker glass), a bright refractive rim, a light arc hugging the top,
    a small sharp glint, and a soft caustic where light exits the base.
@@ -218,9 +218,8 @@
 @property --glint-x { syntax: '<percentage>'; inherits: false; initial-value: 32%; }
 @property --glint-y { syntax: '<percentage>'; inherits: false; initial-value: 27%; }
 @property --glow { syntax: '<number>'; inherits: false; initial-value: 0.3; }
-.sec-dash.glass-dots li { padding-left: 23px; }
-.sec-dash.glass-dots li::before {
-  content: ''; left: 1px; top: calc(0.8em - 5.5px); width: 11px; height: 11px; border-radius: 50%;
+.sec-dash li::before {
+  content: ''; position: absolute; left: 1px; top: calc(0.8em - 5.5px); width: 11px; height: 11px; border-radius: 50%;
   background:
     radial-gradient(circle at var(--glint-x) var(--glint-y), rgba(255, 255, 255, 0.95) 0 7%, rgba(255, 255, 255, 0) 17%),
     radial-gradient(ellipse 70% 40% at 50% 104%, rgba(150, 210, 255, 0.85) 0 30%, transparent 75%),
@@ -234,16 +233,16 @@
     0 0 6px rgba(50, 126, 255, var(--glow));
   animation: glass-glint 7s ease-in-out infinite;
 }
-.sec-dash.glass-dots li:nth-child(2n)::before { animation-delay: -1.75s; }
-.sec-dash.glass-dots li:nth-child(3n)::before { animation-delay: -3.5s; }
-.sec-dash.glass-dots li:nth-child(4n)::before { animation-delay: -5.25s; }
+.sec-dash li:nth-child(2n)::before { animation-delay: -1.75s; }
+.sec-dash li:nth-child(3n)::before { animation-delay: -3.5s; }
+.sec-dash li:nth-child(4n)::before { animation-delay: -5.25s; }
 @keyframes glass-glint {
   0%, 100% { --glint-x: 32%; --glint-y: 27%; --glow: 0.3; }
   30% { --glint-x: 52%; --glint-y: 24%; --glow: 0.42; }
   55% { --glint-x: 66%; --glint-y: 36%; --glow: 0.34; }
   80% { --glint-x: 44%; --glint-y: 30%; --glow: 0.26; }
 }
-@media (prefers-reduced-motion: reduce) { .sec-dash.glass-dots li::before { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .sec-dash li::before { animation: none; } }
 .exp-cols { display: grid; gap: 40px 56px; max-width: 880px; }
 .exp-cols > div { display: grid; gap: 16px; align-content: start; }
 .exp-cols .sec-dash { max-width: 68ch; }
