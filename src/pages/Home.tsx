@@ -1,20 +1,44 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
-import { stations, stationPath } from '../lab3d/config/stations';
-import { sectionBodies, sectionCount } from '../components/sections/SiteSections';
+import { homepageCards, homepageExperienceIds } from '../content/featured';
+import { getExperience } from '../content/experience';
+import { stationPath, stations } from '../lab3d/config/stations';
+import { ContactSection } from '../components/sections/SiteSections';
+import { FeaturedCard } from '../components/content/FeaturedCard';
 import { SignalField } from '../components/SignalField';
 import { Reveal } from '../components/Reveal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Arrow } from '../components/Icons';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { homeSections } from '../content/homeSections';
+
+type HomeId = (typeof homeSections)[number]['id'];
+
+function HomeSection({ id, children, className = '' }: { id: HomeId; children: ReactNode; className?: string }) {
+  const s = homeSections.find((x) => x.id === id)!;
+  return (
+    <section id={id} className={`home-sec container ${className}`} aria-labelledby={`home-${id}-title`} tabIndex={-1}>
+      <Reveal as="header" className="sec-head">
+        <span className="sec-index mono" aria-hidden="true">{s.index}</span>
+        <div className="sec-head-main">
+          <h2 id={`home-${id}-title`} className="sec-title">{s.title}</h2>
+        </div>
+      </Reveal>
+      {children}
+    </section>
+  );
+}
 
 export default function Home() {
   usePageTitle();
+  const cards = homepageCards();
+  const roles = homepageExperienceIds.map(getExperience).filter((e) => !!e);
 
   return (
     <>
-      {/* Hero: name, role line, links — with the About card overlapping the visual */}
+      {/* Hero: name, one statement, one supporting line, two actions. */}
       <section className="hero2 container" aria-labelledby="hero-title">
         <div className="hero2-copy">
           <p className="eyebrow hero-in" style={{ animationDelay: '0ms' }}><span className="dot" aria-hidden="true" />{site.hero.eyebrow}</p>
@@ -24,12 +48,14 @@ export default function Home() {
               return <><span>{first}</span><span className="hero2-name-last">{rest.join(' ')}</span></>;
             })()}
           </h1>
-          <p className="hero2-desc hero-in" style={{ animationDelay: '180ms' }}>{site.hero.description}</p>
-          <div className="hero2-links hero-in" style={{ animationDelay: '260ms' }}>
-            <Link to="/#projects" className="hero2-link is-primary">Selected work <span aria-hidden="true">↓</span></Link>
-            {isProvided(site.resumeUrl) && <a href={site.resumeUrl} className="hero2-link" download={site.resumeFilename}>Résumé (PDF)</a>}
-            {isProvided(site.email) && <a href={`mailto:${site.email}`} className="hero2-link">Email</a>}
-            <Link to="/about" className="hero2-link">About</Link>
+          <p className="hero2-statement hero-in" style={{ animationDelay: '160ms' }}>{site.hero.statement}</p>
+          <p className="hero2-desc hero-in" style={{ animationDelay: '220ms' }}>{site.hero.description}</p>
+          <div className="hero2-actions hero-in" style={{ animationDelay: '280ms' }}>
+            <Link to="/#projects" className="btn btn-primary">View projects <span aria-hidden="true">↓</span></Link>
+            <Link to="/lab" className="btn btn-ghost">Enter the Lab <Arrow /></Link>
+            {isProvided(site.resumeUrl) && (
+              <a href={site.resumeUrl} className="hero2-link" download={site.resumeFilename}>Résumé (PDF)</a>
+            )}
           </div>
         </div>
 
@@ -38,51 +64,97 @@ export default function Home() {
             <SignalField />
           </ErrorBoundary>
         </div>
-
-        <aside className="hero2-about glass hero-in" style={{ animationDelay: '320ms' }} aria-labelledby="about-card-title">
-          <picture>
-            <source srcSet={site.headshot.webp} type="image/webp" />
-            <img className="hero2-photo" src={site.headshot.jpg} alt={site.headshot.alt} width={640} height={800} loading="eager" decoding="async" />
-          </picture>
-          <div className="hero2-about-text">
-            <h2 id="about-card-title" className="hero2-about-label mono">About</h2>
-            {site.about.map((para) => <p key={para}>{para}</p>)}
-            <Link to="/about" className="text-link hero2-about-more">More about me <Arrow /></Link>
-          </div>
-        </aside>
       </section>
 
-      {/* One scrolling page: the same five sections as the Lab, in order. */}
-      {stations.map((st) => {
-        const Body = sectionBodies[st.id];
-        const count = sectionCount[st.id];
-        return (
-          <section
-            key={st.id}
-            id={st.id}
-            className={`home-sec container ${st.id === 'contact' ? 'home-sec-contact' : ''}`}
-            aria-labelledby={`home-${st.id}-title`}
-            tabIndex={-1}
-          >
-            {st.id === 'contact' && <div className="contact-band" aria-hidden="true" />}
-            <Reveal as="header" className="sec-head">
-              <span className="sec-index mono" aria-hidden="true">{st.letter}</span>
-              <div className="sec-head-main">
-                <h2 id={`home-${st.id}-title`} className="sec-title">{st.title}</h2>
-              </div>
-              {count && <span className="sec-count mono">{count}</span>}
-            </Reveal>
-            <Reveal className="sec-body"><Body /></Reveal>
-            {st.id !== 'contact' && (
-              <div className="sec-body">
-                <Link to={stationPath(st.id)} className="sec-more">
-                  <span className="mono">[{st.letter}]</span> More in the Lab <Arrow />
-                </Link>
-              </div>
-            )}
-          </section>
-        );
-      })}
+      {/* About: portrait + a short, specific introduction. */}
+      <HomeSection id="about">
+        <Reveal className="sec-body home-about">
+          <picture className="home-about-photo">
+            <source srcSet={site.headshot.webp} type="image/webp" />
+            <img src={site.headshot.jpg} alt={site.headshot.alt} width={640} height={800} loading="lazy" decoding="async" />
+          </picture>
+          <div className="home-about-text">
+            {site.about.map((para) => <p key={para}>{para}</p>)}
+            <Link to="/about" className="text-link">More about me <Arrow /></Link>
+          </div>
+        </Reveal>
+      </HomeSection>
+
+      {/* Featured projects: three flagships, then one way into the archive. */}
+      <HomeSection id="projects">
+        <Reveal className="sec-body">
+          <div className="feat-grid is-home">
+            {cards.map((c) => <FeaturedCard key={c.key} card={c} headingLevel="h3" variant="home" />)}
+          </div>
+          <Link to={`${stationPath('projects')}`} className="home-more">
+            Explore all projects <Arrow />
+          </Link>
+        </Reveal>
+      </HomeSection>
+
+      {/* Experience: three technical roles only. */}
+      <HomeSection id="experience">
+        <Reveal className="sec-body">
+          <ol className="home-roles">
+            {roles.map((e) => (
+              <li key={e!.id} className="home-role">
+                <div className="home-role-side">
+                  {isProvided(e!.dates) && <p className="mono home-role-date">{e!.dates}</p>}
+                  {isProvided(e!.org) && <p className="home-role-org">{e!.org}</p>}
+                </div>
+                <div className="home-role-main">
+                  <h3 className="home-role-title">{e!.title}</h3>
+                  <p className="home-role-sum">{e!.summary}</p>
+                  <Link to={`/experience/${e!.id}`} className="text-link">
+                    Details <Arrow /><span className="sr-only">: {e!.title}{isProvided(e!.org) ? `, ${e!.org}` : ''}</span>
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <Link to={stationPath('experience')} className="home-more">
+            All experience, teams and leadership <Arrow />
+          </Link>
+        </Reveal>
+      </HomeSection>
+
+      {/* The Lab: one image of the real 3D scene, one action. */}
+      <HomeSection id="lab">
+        <Reveal className="sec-body home-lab">
+          <div className="home-lab-copy">
+            <p className="home-lab-lead">Explore the work as a place, not a page.</p>
+            <p className="secondary">
+              Cobalt Lab is a small 3D facility built for this site. A glowing hub connects five stations:{' '}
+              {stations.map((s) => s.title.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' and $1')}. Fly to one for a short introduction, then step into the full section.
+            </p>
+            <Link to="/lab" className="btn btn-primary">Enter the Lab <Arrow /></Link>
+          </div>
+          <Link to="/lab" className="home-lab-shot" aria-label="Enter the 3D Lab" tabIndex={-1}>
+            <picture>
+              <source srcSet="/lab-preview.webp" type="image/webp" />
+              <img
+                src="/lab-preview.jpg"
+                alt="The 3D Lab from above: a glowing central hub linked by light paths to five station platforms on a dark grid floor."
+                width={1120}
+                height={700}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+          </Link>
+        </Reveal>
+      </HomeSection>
+
+      <section id="contact" className="home-sec home-sec-contact container" aria-labelledby="home-contact-title" tabIndex={-1}>
+        <div className="contact-band" aria-hidden="true" />
+        <Reveal as="header" className="sec-head">
+          <span className="sec-index mono" aria-hidden="true">05</span>
+          <div className="sec-head-main">
+            <h2 id="home-contact-title" className="sec-title">Contact</h2>
+          </div>
+        </Reveal>
+        <Reveal className="sec-body"><ContactSection /></Reveal>
+      </section>
     </>
   );
 }

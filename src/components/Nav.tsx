@@ -2,10 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
-import { stations } from '../lab3d/config/stations';
+import { homeSections } from '../content/homeSections';
 
-/** One link per homepage section (matching the Lab stations): 01 Experience … 05 Contact. */
-const links = stations.map((s) => ({ id: s.id, index: s.letter, label: s.title, to: `/#${s.id}` }));
+/** One link per homepage section: 01 About … 05 Contact. */
+const links = homeSections.map((s) => ({
+  id: s.id,
+  index: s.index,
+  label: s.id === 'projects' ? 'Projects' : s.id === 'lab' ? 'Lab' : s.title,
+  to: `/#${s.id}`,
+}));
 
 /** Highlights the section currently in view on the homepage. */
 function useActiveSection(enabled: boolean) {

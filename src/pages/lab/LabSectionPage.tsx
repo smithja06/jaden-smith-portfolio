@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { stations, stationPath, type StationId } from '../../lab3d/config/stations';
-import { sectionBodies, sectionCount } from '../../components/sections/SiteSections';
+import { sectionBodies } from '../../components/sections/SiteSections';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
 /**
@@ -28,7 +28,6 @@ export default function LabSectionPage({ id }: { id: StationId }) {
   }, [navigate]);
 
   const Body = sectionBodies[id];
-  const count = sectionCount[id];
 
   return (
     <div className="page sec">
@@ -61,7 +60,6 @@ export default function LabSectionPage({ id }: { id: StationId }) {
             <h1 className="sec-title">{station.title}</h1>
             <p className="sec-summary">{station.summary}</p>
           </div>
-          {count && <span className="sec-count mono">{count}</span>}
         </header>
 
         <div className="sec-body"><Body detailed /></div>

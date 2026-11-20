@@ -151,12 +151,64 @@ function SpineAlign() {
   );
 }
 
+/** custodyOS: a chain of sealed ledger blocks, one hand-off highlighted. */
+function Custody() {
+  const blocks = [0, 1, 2, 3, 4];
+  return (
+    <Frame id="cust">
+      <line x1="70" y1="200" x2="530" y2="200" stroke={S.line} />
+      {blocks.map((i) => {
+        const x = 70 + i * 104;
+        const active = i === 3;
+        return (
+          <g key={i}>
+            <rect x={x} y={150} width="80" height="100" rx="12" fill={active ? S.strong : '#0B1F45'} fillOpacity={active ? 0.55 : 1} stroke="rgba(209,227,255,0.22)" />
+            <line x1={x + 16} y1={178} x2={x + 64} y2={178} stroke={S.soft} strokeOpacity="0.5" />
+            <line x1={x + 16} y1={196} x2={x + 52} y2={196} stroke={S.soft} strokeOpacity="0.35" />
+            <line x1={x + 16} y1={214} x2={x + 58} y2={214} stroke={S.soft} strokeOpacity="0.25" />
+            <circle cx={x + 40} cy={236} r="4" fill={active ? S.white : S.soft} opacity={active ? 1 : 0.6} />
+          </g>
+        );
+      })}
+      <path d="M418 140 C 418 90, 470 80, 500 96" fill="none" stroke={S.soft} strokeOpacity="0.5" strokeDasharray="4 6" />
+      <circle cx="510" cy="100" r="16" fill="none" stroke={S.soft} strokeOpacity="0.55" />
+      <circle cx="510" cy="100" r="5" fill={S.strong} />
+      <line x1="70" y1="300" x2="530" y2="300" stroke={S.line} strokeDasharray="2 8" />
+    </Frame>
+  );
+}
+
+/** Cobalt Lab: an isometric hub with five stations on light paths. */
+function Cobalt() {
+  const cx = 300, cy = 205;
+  const pts = [0, 1, 2, 3, 4].map((i) => {
+    const a = (-3 * Math.PI) / 4 + (i * 2 * Math.PI) / 5;
+    return [cx + Math.cos(a) * 200, cy + Math.sin(a) * 96] as const;
+  });
+  return (
+    <Frame id="cobalt">
+      <ellipse cx={cx} cy={cy} rx="236" ry="114" fill="none" stroke={S.line} strokeDasharray="3 8" />
+      {pts.map(([x, y], i) => (
+        <g key={i}>
+          <line x1={cx} y1={cy} x2={x} y2={y} stroke={S.soft} strokeOpacity="0.4" />
+          <ellipse cx={x} cy={y} rx="30" ry="14" fill="#0B1F45" stroke="rgba(209,227,255,0.24)" />
+          <circle cx={x} cy={y - 6} r="4" fill={i === 1 ? S.white : S.soft} opacity={i === 1 ? 1 : 0.7} />
+        </g>
+      ))}
+      <ellipse cx={cx} cy={cy} rx="54" ry="26" fill={S.strong} fillOpacity="0.45" stroke={S.soft} strokeOpacity="0.6" />
+      <ellipse cx={cx} cy={cy - 10} rx="22" ry="10" fill={S.white} fillOpacity="0.85" />
+    </Frame>
+  );
+}
+
 const map: Record<ArtKey, () => JSX.Element> = {
   medt: MedT,
   tooling: Tooling,
   bmett: Bmett,
   brthday: Brthday,
   spinealign: SpineAlign,
+  custody: Custody,
+  cobalt: Cobalt,
 };
 
 export function ProjectArt({ art }: { art: ArtKey }) {

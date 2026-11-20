@@ -10,7 +10,7 @@ export default function NotFound() {
       <p className="lead">The link may be old or mistyped. Here’s where you can go instead:</p>
       <div className="hero-ctas">
         <Link to="/" className="btn btn-primary">Home</Link>
-        <Link to="/work" className="btn btn-ghost">Work</Link>
+        <Link to="/lab/projects" className="btn btn-ghost">Projects</Link>
         <Link to="/lab" className="btn btn-ghost">Lab</Link>
         <Link to="/about" className="btn btn-ghost">About</Link>
       </div>

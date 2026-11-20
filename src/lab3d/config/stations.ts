@@ -17,8 +17,10 @@ export interface StationDef {
   category: string;
   /** One line shown on hover / in the station list. */
   tooltip: string;
-  /** Short paragraph at the top of the station panel. */
+  /** One sentence: the station panel intro and the full page's subtitle. */
   summary: string;
+  /** Two or three representative highlights for the station panel. */
+  highlights: string[];
 }
 
 export const stations: StationDef[] = [
@@ -27,40 +29,65 @@ export const stations: StationDef[] = [
     letter: '01',
     title: 'Experience',
     category: 'Career timeline',
-    tooltip: 'Professional roles and student teams',
-    summary: 'Where I’ve worked, the student design teams I’ve contributed to, and what I was responsible for.',
+    tooltip: 'RBC co-op, student design teams, leadership and work history',
+    summary: 'Where I’ve worked and led, and what I was responsible for in each role.',
+    highlights: [
+      'AI / Machine Learning Engineer Co-op at RBC',
+      'System Control Subteam Lead, McMaster MED-T',
+      'Built the full web app for BMETT’s ACL rehabilitation platform',
+    ],
   },
   {
     id: 'projects',
     letter: '02',
     title: 'Projects',
     category: 'Gallery',
-    tooltip: 'Prototypes, case studies and live demos',
-    summary: 'Every project with a full case study, plus interactive prototypes that run in your browser.',
+    tooltip: 'Featured case studies and the full project archive',
+    summary: 'Flagship case studies first, then the full archive of prototypes, products and lab work.',
+    highlights: [
+      'RBC payment-routing validation: ~99.9% rule-exit agreement in testing',
+      'MED-T: a working 4×4 vision-to-output bench prototype',
+      'custodyOS: an AI chain-of-custody platform built at the MongoDB Hackathon',
+    ],
   },
   {
     id: 'skills',
     letter: '03',
     title: 'Skills',
     category: 'Workstation',
-    tooltip: 'Technologies, grouped by what they’re for',
-    summary: 'Tools and techniques, grouped by capability.',
+    tooltip: 'Technologies, linked to the work that used them',
+    summary: 'The technologies I use, each linked to the projects and roles where I used it.',
+    highlights: [
+      'Python, TypeScript, React and Java / Spring Boot',
+      'ESP32 firmware, OpenCV and embedded protocols',
+      'AI agents, RAG and FastAPI backends',
+    ],
   },
   {
     id: 'education',
     letter: '04',
     title: 'Education',
     category: 'Research desk',
-    tooltip: 'McMaster studies, coursework and achievements',
-    summary: 'Academic background — the engineering foundation under the projects.',
+    tooltip: 'McMaster iBioMed, coursework, awards and earlier schooling',
+    summary: 'Electrical & Biomedical Engineering at McMaster, with the coursework and awards behind it.',
+    highlights: [
+      'McMaster iBioMed · B.Eng. Electrical & Biomedical (Co-op)',
+      'GPA 3.9 / 4.0 · expected 2030',
+      'McMaster Award of Excellence',
+    ],
   },
   {
     id: 'contact',
     letter: '05',
     title: 'Contact',
     category: 'Comms terminal',
-    tooltip: 'Contact links and résumé',
-    summary: 'The quickest ways to get in touch.',
+    tooltip: 'Email, phone and résumé',
+    summary: 'The quickest ways to reach me, and my résumé.',
+    highlights: [
+      'Email: smithja741@icloud.com',
+      'Résumé available as a PDF',
+      'Based in Hamilton, Ontario',
+    ],
   },
 ];
 

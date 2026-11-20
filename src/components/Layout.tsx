@@ -2,6 +2,7 @@ import { Suspense, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Nav } from './Nav';
 import { site } from '../content/site';
+import { isProvided } from '../content/types';
 
 /** Resets scroll and focus on route change; scrolls to #hash targets when present. */
 function useRouteFocus() {
@@ -65,11 +66,11 @@ function Footer() {
         </div>
         <nav aria-label="Footer">
           <ul className="footer-links">
-            <li><Link to="/work">Work</Link></li>
+            <li><Link to="/lab/projects">Projects</Link></li>
             <li><Link to="/lab">Lab</Link></li>
             <li><Link to="/about">About</Link></li>
-            {site.socials.map((s) => (
-              <li key={s.href}><a href={s.href} target="_blank" rel="noreferrer">{s.label}</a></li>
+            {site.socials.filter((s) => isProvided(s.href)).map((s) => (
+              <li key={s.label}><a href={s.href as string} target="_blank" rel="noreferrer">{s.label}</a></li>
             ))}
           </ul>
         </nav>

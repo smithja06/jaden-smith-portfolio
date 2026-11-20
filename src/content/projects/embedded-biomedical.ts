@@ -1,0 +1,274 @@
+import { TODO_USER_CONTENT, type Project } from '../types';
+
+/**
+ * Embedded & Biomedical Engineering — inventory P09–P15.
+ * None of these are medical devices; never imply clinical validation.
+ */
+export const embeddedBiomedicalProjects: Project[] = [
+  {
+    id: 'med-t-sensory-substitution',
+    inventory: 9,
+    title: 'MED-T — Vision-to-Tactile Sensory Substitution',
+    summary:
+      'An assistive system that turns what a camera sees into a small grid of output a person can feel — with a working 4×4 bench prototype.',
+    context: 'McMaster MED-T · System Control Subteam Lead',
+    dates: 'Oct 2025 – present',
+    category: 'embedded-biomedical',
+    status: 'prototype',
+    ownership: 'lead',
+    ownershipNote:
+      'I lead the system-control subteam and personally implemented the pipeline: ESP32 firmware, the Python / OpenCV / K-means vision stage, frame states and serial protocol, multiplexed matrix control over UART and I²C, PCA9685 PWM ramps and end-to-end integration.',
+    tech: ['ESP32', 'C / C++', 'Python', 'OpenCV', 'K-means clustering', 'UART', 'I²C', 'PCA9685', 'PWM & multiplexing', 'Camera integration', 'Team leadership & recruiting'],
+    highlights: ['Fully working 4×4 bench prototype', '6×4 actuator array planned for Jan–Feb 2027'],
+    metrics: [
+      { value: '4×4', label: 'working LED bench array' },
+      { value: '~1 kHz', label: 'PWM on a PCA9685 over I²C' },
+      { value: '4', label: 'discrete frame states (0–3)' },
+    ],
+    experience: ['med-t'],
+    related: ['esp32-led-matrix-driver', 'raspberry-pi-depth-benchmark', 'vision-matrix-simulator'],
+    art: 'medt',
+    evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
+    media: [],
+    simulation: { id: 'vision-matrix', label: 'Try the 4×4 experiment' },
+    plannedSimulation: 'Browser pipeline: visual processing → 4×4 matrix → PWM ramp, clearly labelled as a simplified model of the physical tests.',
+    caseStudy: {
+      problem: [
+        'Sensory substitution asks whether information normally carried by one sense can be delivered through another. For vision, that means compressing a rich camera image into something a body can perceive.',
+        'The output has very few “pixels”, so the real engineering is deciding what to keep — and making the result stable enough to read.',
+      ],
+      contributions: [
+        'Wrote the ESP32 firmware that addresses the array: rows on GPIO 23 / 19 / 18 / 5 (active-low), columns on PCA9685 channels 8–11 at I²C address 0x40, PWM around 1 kHz.',
+        'Built the vision stage in Python with OpenCV: brightness and IR measurements, then K-means clustering to classify each region into one of four states.',
+        'Designed the serial frame format and the UART link from the host to the microcontroller.',
+        'Implemented intensity ramping so the output changes smoothly rather than flickering.',
+        'Integrated the pipeline end to end and verified single-LED addressing, serial-driven states and PWM behaviour on the bench.',
+      ],
+      team: [
+        'As subteam lead I coordinate system-control requirements, interview and onboard members, manage electronics inventory and hardware restoration, and integrate with the other subteams.',
+      ],
+      architecture: {
+        caption: 'The working bench pipeline. Each stage hands a smaller, more decisive representation to the next.',
+        nodes: [
+          { id: 'cam', label: 'Camera frame', detail: 'Video input from the camera.' },
+          { id: 'feat', label: 'Features', detail: 'Brightness and IR measurements per region (OpenCV).' },
+          { id: 'state', label: 'State mapping', detail: 'K-means classifies each region into states 0–3.' },
+          { id: 'serial', label: 'UART frame', detail: 'Compact state frame sent to the ESP32.' },
+          { id: 'out', label: 'Array output', detail: 'Multiplexed rows + PCA9685 PWM columns.' },
+        ],
+      },
+      decisions: [
+        {
+          title: 'Few states beat many',
+          body: 'Four discrete levels are easier to perceive and to debug than a continuous value per cell.',
+        },
+        {
+          title: 'Heavy lifting off the microcontroller',
+          body: 'Image processing runs on the host; the ESP32 receives an already-reduced frame. That keeps firmware simple and messages small.',
+        },
+        {
+          title: 'Ramp, don’t jump',
+          body: 'If a cell keeps its state, its duty cycle rises by about 0.01 per update; on a mismatch it falls by 0.01, and the new state only takes over once the old intensity reaches zero. Repeated states feel steady and changes feel deliberate.',
+        },
+        {
+          title: 'Let the hardware decide the algorithm',
+          body: 'Depth estimation on a Raspberry Pi was too slow for real time, so the team moved to edge-density analysis with dense inverse search (see the benchmark).',
+        },
+      ],
+      validation: [
+        'The 4×4 bench array is fully functional: individual LEDs can be addressed, serial frame states drive the output, and transitions ramp as designed.',
+      ],
+      limitations: [
+        'An earlier 5×5 output concept was dropped. The ~60% wiring reduction once estimated for it is a historical estimate, not a measurement of the current design.',
+        'The final device — a 6×4 actuator array — is planned for January–February 2027 and has not been built or validated yet.',
+        'This is a student research prototype, not a medical device, and makes no clinical claims.',
+      ],
+      future: [
+        'Build and test the 6×4 actuator array.',
+        'Measure frame rate and pipeline latency, run integration tests, and plan user testing.',
+      ],
+    },
+    todo: ['Repo / report / demo links', 'Bench photographs', '6×4 results when measured'],
+  },
+  {
+    id: 'bmett-acl-rehabilitation',
+    inventory: 10,
+    title: 'BMETT — ACL Rehabilitation Monitoring Platform',
+    summary:
+      'A patient and clinician web app that streams wearable sensor data over BLE and compares recovery against baseline ACL performance.',
+    context: 'McMaster BMETT · Software Subteam',
+    dates: 'Oct 2025 – present',
+    category: 'embedded-biomedical',
+    status: 'prototype',
+    ownership: 'major',
+    ownershipNote:
+      'I built the complete web application and every screen, parsed the magnetometer and IMU data, and built the trend dashboards. Sensor hardware and the ML model were team efforts.',
+    tech: ['React', 'TypeScript', 'BLE', 'IMU & magnetometer', 'Data visualization & dashboards', 'UI / UX design'],
+    highlights: ['Real-time BLE streaming working', 'ML tested on live sensor input'],
+    experience: ['bmett'],
+    related: ['bmett-acl-movement-classification', 'spinealign-posture-feedback'],
+    art: 'bmett',
+    evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
+    media: [],
+    simulation: { id: 'signal-playground', label: 'Related experiment: filtering a noisy signal' },
+    plannedSimulation: 'Synthetic sensor stream compared against a baseline curve — clearly not a diagnosis.',
+    caseStudy: {
+      problem: [
+        'ACL recovery takes months, and most of it happens away from the clinic. Patients and clinicians have little visibility into how exercises are going between visits.',
+      ],
+      contributions: [
+        'Built the full web application: patient and clinician views, rehabilitation plans, exercises and weekly views, session history and progress analytics.',
+        'Parsed magnetometer and IMU data from the wearable.',
+        'Built trend dashboards that compare measured movement with baseline ACL performance to estimate rehabilitation progress.',
+      ],
+      team: ['The wearable sensing (IMU, magnetometer, EMG), BLE firmware and movement-classification model were developed with the wider team.'],
+      architecture: {
+        caption: 'From the wearable to the dashboard.',
+        nodes: [
+          { id: 'sense', label: 'Wearable sensors', detail: 'IMU, magnetometer and EMG.' },
+          { id: 'ble', label: 'BLE stream', detail: 'Real-time packets to the app.' },
+          { id: 'parse', label: 'Parsing', detail: 'Orientation and magnetometer data decoded.' },
+          { id: 'ml', label: 'ML classification', detail: 'Movement classified from live input.' },
+          { id: 'dash', label: 'Trend dashboards', detail: 'Progress compared with baseline performance.' },
+        ],
+      },
+      validation: [
+        'Real-time BLE streaming worked, and the ML system was tested with live sensor input.',
+        'No classifier accuracy or clinical-efficacy figures have been measured or published.',
+      ],
+      limitations: ['A student prototype for exploring rehabilitation monitoring, not a medical device.'],
+    },
+    todo: ['Confirm which packet fields / vibration feedback reached the final app', 'Screenshots, repo, baseline method'],
+  },
+  {
+    id: 'cycle-buddy',
+    inventory: 11,
+    title: 'Cycle Buddy — Blind-Spot Detection Helmet',
+    summary:
+      'A helmet-mounted camera and on-device object detection that warns a cyclist with reduced peripheral vision through haptic pads.',
+    context: 'McMaster iBioMed design project',
+    dates: 'Feb – Apr 2025',
+    category: 'embedded-biomedical',
+    status: 'coursework',
+    ownership: 'team',
+    tech: ['Raspberry Pi', 'Python', 'TensorFlow Lite', 'OpenCV', 'Camera integration', 'Haptic & actuator control', 'Human-centered design'],
+    highlights: ['Presented at the iBioMed Final Design Showcase'],
+    experience: ['ibiomed-showcase'],
+    related: ['med-t-sensory-substitution', 'spinealign-posture-feedback'],
+    evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT },
+    media: [],
+    caseStudy: {
+      problem: [
+        'A cyclist with reduced peripheral vision can’t see what is approaching from the side or behind. Turning to look is tiring and unsafe.',
+      ],
+      implementation: [
+        'A helmet-mounted camera feeds a Raspberry Pi running TensorFlow Lite and OpenCV object detection, and haptic pads alert the rider to what the camera detects.',
+      ],
+      decisions: [
+        {
+          title: 'Designed around one rider',
+          body: 'Requirements came from a specific user’s needs — visual impairment and navigation fatigue — rather than a generic cyclist.',
+        },
+      ],
+    },
+    todo: ['My individual contribution', 'Test results, photos, report link'],
+  },
+  {
+    id: 'spinealign-posture-feedback',
+    inventory: 12,
+    title: 'SpineAlign — Posture & Squat Safety Feedback',
+    summary:
+      'A wearable that tracks posture with an IMU and warns the user with vibration and a mechanical cue when their form drifts.',
+    context: 'McMaster iBioMed design project (DP-3)',
+    dates: '2024 – 2025',
+    category: 'embedded-biomedical',
+    status: 'prototype',
+    ownership: 'lead',
+    ownershipNote:
+      'Project manager. I wrote the sensor extraction and filtering, the rolling average, user-specific posture thresholds and the actuator control logic, and contributed to the CAD.',
+    tech: ['Raspberry Pi', 'Python', 'IMU (BNO055)', 'Haptic & actuator control', 'CAD', 'Project management'],
+    highlights: ['Full intended functionality demonstrated'],
+    related: ['bmett-acl-rehabilitation', 'cycle-buddy'],
+    art: 'spinealign',
+    evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
+    media: [],
+    simulation: { id: 'signal-playground', label: 'Related experiment: smoothing a noisy signal' },
+    plannedSimulation: 'Sensor threshold and feedback demonstration.',
+    caseStudy: {
+      problem: ['Poor posture during lifts like squats builds up quietly and can lead to injury. A timely physical cue helps the user correct it in the moment.'],
+      contributions: [
+        'Extracted and filtered pitch and roll from a BNO055 IMU.',
+        'Smoothed readings with a five-sample rolling average over roughly half a second.',
+        'Set dynamic, user-specific thresholds to decide posture state.',
+        'Wrote the control logic for the vibration motors and a DC-motor rack-and-pinion feedback mechanism.',
+        'Managed the project and contributed to the CAD.',
+      ],
+      architecture: {
+        caption: 'Sense → smooth → decide → respond.',
+        nodes: [
+          { id: 'imu', label: 'BNO055 IMU', detail: 'Pitch and roll.' },
+          { id: 'avg', label: 'Rolling average', detail: 'Five samples over ~0.5 s.' },
+          { id: 'thr', label: 'User threshold', detail: 'Calibrated per person.' },
+          { id: 'act', label: 'Feedback', detail: 'Vibration motors + rack-and-pinion cue.' },
+        ],
+      },
+      decisions: [
+        { title: 'Thresholds per person', body: 'A fixed angle doesn’t fit every body; calibrating thresholds to the user makes the warnings meaningful.' },
+        { title: 'Smooth before deciding', body: 'A short rolling average stops single noisy readings from triggering false alarms.' },
+      ],
+      validation: ['The prototype demonstrated its full intended functionality. Quantitative accuracy and latency were not measured.'],
+      limitations: ['A course design prototype, not a medical device.'],
+    },
+    todo: ['Testing methodology', 'Photos, repo, report'],
+  },
+  {
+    id: 'ostoflow',
+    inventory: 13,
+    title: 'Ostoflow — Ostomy Assistance Concept',
+    summary: 'A biomedical product concept for ostomy care built around a magnetic case, PTFE tubing and a possible flow clamp.',
+    context: 'Biomedical design concept',
+    dates: TODO_USER_CONTENT,
+    category: 'embedded-biomedical',
+    status: 'concept',
+    tech: ['Human-centered design', 'CAD'],
+    related: ['hip-implant-design-case'],
+    todo: ['Clinical problem statement, CAD, prototype maturity, role'],
+  },
+  {
+    id: 'hip-implant-design-case',
+    inventory: 14,
+    title: 'Patient-Specific Hip Implant Design Case',
+    summary: 'An academic design case sizing a hip-implant stem from measurements for a patient with rheumatoid arthritis.',
+    context: 'McMaster biomechanics coursework',
+    dates: TODO_USER_CONTENT,
+    category: 'embedded-biomedical',
+    status: 'coursework',
+    tech: [],
+    related: ['ostoflow'],
+    todo: ['Role, model, material constraints, final decision'],
+  },
+  {
+    id: 'esp32-led-matrix-driver',
+    inventory: 15,
+    title: 'ESP32 4×4 LED Array Driver',
+    summary: 'Firmware module that multiplexes a 4×4 LED array from an ESP32 and a PCA9685, driven by serial frame states.',
+    context: 'Part of MED-T',
+    dates: TODO_USER_CONTENT,
+    category: 'embedded-biomedical',
+    status: 'prototype',
+    ownership: 'sole',
+    tech: ['ESP32', 'C / C++', 'PCA9685', 'I²C', 'UART', 'PWM & multiplexing'],
+    highlights: ['Single-LED addressing verified on the bench'],
+    experience: ['med-t'],
+    parent: 'med-t-sensory-substitution',
+    related: ['vision-matrix-simulator'],
+    simulation: { id: 'vision-matrix', label: 'See the 4×4 model in your browser' },
+    caseStudy: {
+      implementation: [
+        'Rows on ESP32 GPIO 23 / 19 / 18 / 5 with active-low logic; columns on PCA9685 channels 8–11 at I²C address 0x40, with PWM around 1 kHz.',
+        'Accepts frame states over serial and ramps each cell between intensities instead of switching abruptly.',
+      ],
+      validation: ['Verified individual LED addressing, serial-driven states and ramped transitions on the bench.'],
+    },
+  },
+];

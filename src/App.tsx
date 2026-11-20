@@ -4,8 +4,8 @@ import { Layout } from './components/Layout';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 
-const Work = lazy(() => import('./pages/Work'));
 const CaseStudy = lazy(() => import('./pages/CaseStudy'));
+const ExperienceDetail = lazy(() => import('./pages/ExperienceDetail'));
 const LabWorld = lazy(() => import('./lab3d/LabWorld'));
 const VisionMatrixPage = lazy(() => import('./pages/VisionMatrixPage'));
 const SignalPlaygroundPage = lazy(() => import('./pages/SignalPlaygroundPage'));
@@ -17,7 +17,10 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/work', element: <Work /> },
+      { path: '/work', element: <Navigate to="/lab/projects#archive" replace /> },
+      { path: '/projects', element: <Navigate to="/lab/projects#archive" replace /> },
+      { path: '/experience', element: <Navigate to="/lab/experience" replace /> },
+      { path: '/experience/:id', element: <ExperienceDetail /> },
       { path: '/work/:slug', element: <CaseStudy /> },
       { path: '/lab', element: <LabWorld /> },
       { path: '/lab/experience', element: <LabSection id="experience" /> },
