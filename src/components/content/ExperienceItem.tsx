@@ -93,3 +93,37 @@ export function ExperienceItem({
     </article>
   );
 }
+
+/**
+ * Compact editorial row for supporting roles (student teams, leadership,
+ * additional employment): who/what/when on the left, the summary and any
+ * link on the right, so sentences get a full reading width.
+ */
+export function ExperienceRow({ entry: e }: { entry: ExperienceEntry }) {
+  const linked = projectsByIds(e.projects);
+  const parent = e.seeAlso ? getExperience(e.seeAlso) : undefined;
+  return (
+    <li className="exp-row">
+      <div className="exp-row-head">
+        <h3 className="exp-row-title">{e.title}</h3>
+        {isProvided(e.org) && <p className="exp-row-org">{e.org}</p>}
+        {isProvided(e.dates) && <p className="exp-row-date mono">{e.dates}</p>}
+      </div>
+      <div className="exp-row-body">
+        <p className="exp-row-sum">{e.summary}</p>
+        {(parent || linked.length > 0) && (
+          <p className="exp-row-links">
+            {parent && hasExperiencePage(parent) && (
+              <Link to={`/experience/${parent.id}`} className="text-link">
+                Technical work <Arrow /><span className="sr-only">: {isProvided(parent.org) ? parent.org : parent.title}</span>
+              </Link>
+            )}
+            {linked.map((p) => (
+              <Link key={p.id} to={`/work/${p.id}`} className="text-link">{p.title.split(' — ')[0]} <Arrow /></Link>
+            ))}
+          </p>
+        )}
+      </div>
+    </li>
+  );
+}

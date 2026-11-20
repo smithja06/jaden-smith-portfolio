@@ -1,0 +1,162 @@
+/* ================= ABOUT PAGE & EXPERIENCE ROWS =================
+   Layout refinement: balanced hero, even "What I work on" grid,
+   scroll-lit timeline, and readable rows for supporting roles. */
+
+.about { padding-bottom: clamp(64px, 7vw, 96px); }
+.about > .about-section:last-child { margin-bottom: 0; }
+
+/* Hero: biography leads (~58%), the signal field supports (~42%). */
+.about-hero { display: grid; gap: 40px; align-items: start; margin-bottom: clamp(72px, 9vw, 128px); }
+.about-hero-copy { display: grid; gap: 24px; }
+.about-bio { font-size: 1.06rem; max-width: 62ch; }
+.about-bio p:first-child { color: var(--text-primary); }
+.about-hero-visual { min-width: 0; }
+@media (min-width: 1000px) {
+  .about-hero { grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); }
+  .about-hero-visual { position: sticky; top: calc(var(--nav-height) + 40px); }
+}
+
+/* Signal field, four-cluster variant */
+.signal-field.is-clusters { aspect-ratio: 1 / 0.92; max-height: none; }
+.signal-field.is-clusters .signal-field-label,
+.signal-field.is-clusters .sf-note { display: none; }
+@media (max-width: 999px) { .signal-field.is-clusters { aspect-ratio: 4 / 3; max-height: 420px; } }
+.sf-clusters { list-style: none; position: absolute; inset: 0; pointer-events: none; }
+.sf-cluster { position: absolute; display: grid; justify-items: start; gap: 4px; width: max-content; max-width: 46%; pointer-events: none; }
+.sf-cluster.is-top { transform: translateY(calc(-100% - 22px)); }
+.sf-cluster.is-bottom { transform: translateY(22px); }
+.sf-cluster.is-left { translate: -24px 0; }
+.sf-cluster.is-right { translate: calc(-100% + 24px) 0; text-align: right; justify-items: end; }
+.sf-cluster-btn {
+  pointer-events: auto; display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid rgba(209, 227, 255, 0.14); background: rgba(6, 13, 32, 0.6);
+  color: var(--text-secondary); font: inherit; font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.08em; text-transform: uppercase; cursor: default;
+  transition: color var(--dur-fast), border-color var(--dur-fast), background-color var(--dur-fast);
+}
+.sf-cluster.is-on .sf-cluster-btn { color: var(--text-primary); border-color: rgba(128, 185, 255, 0.55); background: rgba(21, 94, 239, 0.22); }
+.sf-cluster-detail {
+  font-size: 13px; line-height: 1.4; color: var(--text-secondary); max-width: 24ch;
+  opacity: 0; transform: translateY(-2px);
+  transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
+}
+.sf-cluster.is-on .sf-cluster-detail { opacity: 1; transform: none; }
+@media (max-width: 520px) {
+  .sf-cluster { max-width: 34%; }
+  .sf-cluster-btn { font-size: 10px; letter-spacing: 0.06em; padding: 4px 10px; min-height: 30px; line-height: 1.3; }
+  .sf-cluster.is-right .sf-cluster-btn { text-align: right; }
+  .sf-cluster-detail { display: none; }
+}
+
+/* Section heads */
+.about-section { margin-bottom: clamp(72px, 9vw, 128px); }
+.about-section-title { margin-bottom: 28px; }
+.about-section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 32px; }
+.about-section-head .about-section-title { margin-bottom: 0; }
+
+/* What I work on: as many columns as there are areas, never an orphan. */
+.areas { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .areas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .areas { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.area {
+  display: grid; gap: 10px; align-content: start; padding: 24px 22px 26px;
+  border-radius: 18px; border: 1px solid var(--line-subtle);
+  background: linear-gradient(180deg, rgba(11, 31, 69, 0.5), rgba(8, 20, 43, 0.4));
+  transition: border-color var(--dur-card), transform var(--dur-card) var(--ease-out);
+}
+.area-mark { display: block; width: 28px; height: 2px; border-radius: 2px; background: var(--blue-electric); opacity: 0.8; }
+.area:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.area h3 { font-size: 1.08rem; letter-spacing: -0.01em; line-height: 1.3; }
+.area p { font-size: 15px; line-height: 1.6; }
+
+/* Timeline: narrow date column, thin rail that lights up on scroll. */
+.atl { --p: 0; --date-w: 170px; --rail-x: calc(var(--date-w) + 20px); position: relative; max-width: 1040px; }
+.atl-rail { position: absolute; top: 8px; bottom: 8px; left: var(--rail-x); width: 1px; background: var(--line-subtle); }
+.atl-fill {
+  position: absolute; top: 0; left: 0; right: 0; height: calc(var(--p) * 100%);
+  background: linear-gradient(180deg, rgba(50, 126, 255, 0.2), var(--blue-electric));
+  box-shadow: 0 0 10px rgba(50, 126, 255, 0.5);
+}
+.atl-list { list-style: none; display: grid; gap: 8px; }
+.atl-item { position: relative; display: grid; grid-template-columns: var(--date-w) 1fr; column-gap: 52px; padding: 22px 0; }
+.atl-node {
+  position: absolute; left: calc(var(--rail-x) - 4px); top: 29px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg-base); border: 1.5px solid rgba(128, 185, 255, 0.4);
+  transition: background-color 400ms var(--ease-out), border-color 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
+}
+.atl-item.is-active .atl-node { background: var(--blue-electric); border-color: var(--blue-soft); box-shadow: 0 0 0 4px rgba(50, 126, 255, 0.16); }
+/* The current role: a slightly larger node with a soft halo, and a "Current" tag. */
+.atl-item.is-current .atl-node { left: calc(var(--rail-x) - 6px); top: 27px; width: 13px; height: 13px; }
+.atl-item.is-current.is-active .atl-node { box-shadow: 0 0 0 5px rgba(50, 126, 255, 0.2), 0 0 16px rgba(50, 126, 255, 0.55); }
+.atl-item.is-current .atl-title { font-size: 1.22rem; }
+.atl-date {
+  display: grid; justify-items: end; align-content: start; gap: 8px;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); text-align: right; padding-top: 5px;
+}
+.atl-now {
+  display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10.5px; letter-spacing: 0.12em;
+  color: var(--blue-soft); border: 1px solid rgba(50, 126, 255, 0.4); background: rgba(21, 94, 239, 0.12);
+}
+.atl-body {
+  display: grid; gap: 4px; max-width: 64ch; opacity: 0.55; transform: translateY(6px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+.atl-item.is-active .atl-body { opacity: 1; transform: none; }
+.atl-title { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.atl-org { color: var(--blue-soft); font-size: 15px; }
+.atl-sum { color: var(--text-secondary); line-height: 1.6; margin-top: 6px; }
+.atl-link { justify-self: start; margin-top: 4px; font-size: 14.5px; min-height: 36px; }
+@media (max-width: 759px) {
+  .atl { --rail-x: 4px; }
+  .atl-item { grid-template-columns: 1fr; padding: 18px 0 18px 28px; }
+  .atl-node { top: 24px; }
+  .atl-item.is-current .atl-node { top: 22px; }
+  .atl-date { justify-items: start; text-align: left; padding: 0 0 6px; grid-auto-flow: column; justify-content: start; align-items: center; }
+}
+
+/* ---------- Experience history: three numbered parts ---------- */
+.ah-part { padding-top: 36px; border-top: 1px solid var(--line-subtle); }
+.ah-part + .ah-part { margin-top: clamp(56px, 7vw, 88px); }
+.ah-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; font-size: clamp(1.15rem, 1.6vw, 1.35rem); letter-spacing: -0.015em; }
+.ah-num { font-size: 12.5px; letter-spacing: 0.1em; color: var(--blue-soft); font-weight: 500; }
+
+/* Compact timeline for leadership and employment: same rail and animation,
+   tighter rhythm, smaller nodes and titles, so supporting roles stay secondary. */
+.atl-compact .atl-list { gap: 0; }
+.atl-compact .atl-item { padding: 14px 0; }
+.atl-compact .atl-node { top: 20px; width: 7px; height: 7px; left: calc(var(--rail-x) - 3px); }
+.atl-compact .atl-item.is-active .atl-node { box-shadow: 0 0 0 3px rgba(50, 126, 255, 0.14); }
+.atl-compact .atl-date { padding-top: 3px; }
+.atl-compact .atl-title { font-size: 1rem; line-height: 1.4; }
+.atl-org-inline { font-weight: 400; color: var(--blue-soft); }
+.atl-compact .atl-sum { font-size: 15px; margin-top: 2px; }
+.atl-compact .atl-fill { box-shadow: 0 0 8px rgba(50, 126, 255, 0.4); }
+@media (max-width: 759px) {
+  .atl-compact .atl-item { padding: 12px 0 12px 28px; }
+  .atl-compact .atl-node { top: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atl-body, .atl-node, .area, .sf-cluster-detail { transition: none; }
+  .atl-body { opacity: 1; transform: none; }
+}
+/* Without JS the timeline is fully readable. */
+html:not(.js) .atl-body { opacity: 1; transform: none; }
+
+/* ================= EXPERIENCE: supporting roles as rows ================= */
+.exp-rows { list-style: none; max-width: 1080px; border-top: 1px solid var(--line-subtle); }
+.exp-row {
+  display: grid; gap: 8px 48px; padding: 22px 16px; margin: 0 -16px;
+  border-bottom: 1px solid var(--line-subtle); border-radius: 12px;
+  transition: background-color var(--dur-fast);
+}
+.exp-row:hover { background: rgba(165, 202, 255, 0.035); }
+.exp-row-head { display: grid; gap: 2px; align-content: start; }
+.exp-row-title { font-size: 1.04rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
+.exp-row-org { color: var(--blue-soft); font-size: 14.5px; }
+.exp-row-date { font-size: 12px; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 4px; }
+.exp-row-body { display: grid; gap: 8px; align-content: start; }
+.exp-row-sum { color: var(--text-secondary); line-height: 1.6; max-width: 68ch; }
+.exp-row-links { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14.5px; }
+@media (min-width: 860px) { .exp-row { grid-template-columns: minmax(240px, 0.38fr) 1fr; } }
+@media (max-width: 640px) { .exp-row { margin: 0; padding: 20px 0; border-radius: 0; } }
+.sec-roles { max-width: 1080px; }

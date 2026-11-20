@@ -4,12 +4,19 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import { Info } from './Icons';
 
 /**
- * Signal Field — original decorative visualization for the hero.
- * Three sparse node groups (perceive → process → respond) joined by arcs
- * that carry small pulses, over a faint contour surface. Canvas 2D only.
+ * Signal Field — original decorative visualization. Canvas 2D only.
+ *
+ * Default (homepage hero): three sparse node groups (perceive → process →
+ * respond) joined by arcs that carry small pulses, over a faint contour surface.
+ *
+ * With `clusters` (About page): four discipline clusters around a central core.
+ * Each cluster gets a small focusable label; hovering or focusing it brightens
+ * that cluster and its connections and reveals a one-line description.
  */
 
-interface Node { x: number; y: number; r: number; group: 0 | 1 | 2; }
+export interface SignalCluster { label: string; detail: string; }
+
+interface Node { x: number; y: number; r: number; group: number; }
 interface Arc { a: Node; b: Node; c1: [number, number]; c2: [number, number]; speed: number; offset: number; }
 
 function buildScene() {
@@ -47,17 +54,43 @@ function buildScene() {
   return { nodes, arcs };
 }
 
+/** Cluster centres for the four-discipline layout (fractions of width / height). */
+const CLUSTER_POS: [number, number][] = [[0.2, 0.26], [0.8, 0.26], [0.2, 0.74], [0.8, 0.74]];
+
+function buildClusterScene() {
+  const core: Node = { x: 0.5, y: 0.5, r: 4.6, group: -1 };
+  const nodes: Node[] = [core];
+  const arcs: Arc[] = [];
+  const offsets: [number, number, number][] = [[0, 0, 3], [-0.06, 0.07, 1.8], [0.06, 0.06, 2.1], [0.03, -0.08, 1.6]];
+  CLUSTER_POS.forEach(([cx, cy], g) => {
+    offsets.forEach(([dx, dy, r], i) => {
+      const n: Node = { x: cx + dx * (cx < 0.5 ? 1 : -1), y: cy + dy * (cy < 0.5 ? 1 : -1), r, group: g };
+      nodes.push(n);
+      // Every cluster node feeds the core; the main node also receives a signal back.
+      const bend = (cy < 0.5 ? -1 : 1) * 0.1;
+      arcs.push({ a: n, b: core, c1: [n.x + (0.5 - n.x) * 0.35, n.y + bend], c2: [0.5 + (n.x - 0.5) * 0.3, 0.5 + bend * 0.6], speed: 0.055 + ((g + i) % 3) * 0.012, offset: g * 0.23 + i * 0.11 });
+      if (i === 0) arcs.push({ a: core, b: n, c1: [0.5 + (n.x - 0.5) * 0.3, 0.5 - bend * 0.6], c2: [n.x + (0.5 - n.x) * 0.35, n.y - bend], speed: 0.05, offset: 0.5 + g * 0.19 });
+    });
+  });
+  return { nodes, arcs };
+}
+
 function bez(t: number, p0: number, p1: number, p2: number, p3: number) {
   const u = 1 - t;
   return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
 }
 
-export function SignalField() {
+export function SignalField({ clusters }: { clusters?: SignalCluster[] } = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const [ready, setReady] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [active, setActive] = useState<number | null>(null);
+  const activeRef = useRef<number | null>(null);
+  const redrawRef = useRef<() => void>(() => {});
+  const hasClusters = !!clusters?.length;
+  useEffect(() => { activeRef.current = active; redrawRef.current(); }, [active]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,7 +99,7 @@ export function SignalField() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const { nodes, arcs } = buildScene();
+    const { nodes, arcs } = hasClusters ? buildClusterScene() : buildScene();
     const coarse = window.matchMedia('(pointer: coarse)').matches;
     const pointer = { x: -1, y: -1, tx: 0, ty: 0, px: 0, py: 0 };
     let w = 0, h = 0, raf = 0, visible = true, last = performance.now(), time = 0;
@@ -87,10 +120,10 @@ export function SignalField() {
       pointer.py += (pointer.ty - pointer.py) * 0.06;
       const par = (depth: number) => [pointer.px * depth, pointer.py * depth] as const;
 
-      // contour surface
+      // contour surface (homepage scene only)
       const [sx, sy] = par(3);
       ctx.lineWidth = 1;
-      const lines = 11;
+      const lines = hasClusters ? 0 : 11;
       for (let i = 0; i < lines; i++) {
         const f = i / (lines - 1);
         const baseY = h * (0.62 + f * f * 0.34);
@@ -107,9 +140,18 @@ export function SignalField() {
 
       // arcs
       const [ax, ay] = par(6);
+      const act = activeRef.current;
+      const inActive = (arc: Arc) => act !== null && (arc.a.group === act || arc.b.group === act);
+      const nearArc = (arc: Arc) => {
+        if (pointer.x < 0) return 0;
+        const mx = bez(0.5, arc.a.x, arc.c1[0], arc.c2[0], arc.b.x) * w;
+        const my = bez(0.5, arc.a.y, arc.c1[1], arc.c2[1], arc.b.y) * h;
+        return Math.max(0, 1 - Math.hypot(mx - pointer.x, my - pointer.y) / 180);
+      };
       for (const arc of arcs) {
-        ctx.strokeStyle = 'rgba(128,185,255,0.14)';
-        ctx.lineWidth = 1;
+        const lift = Math.max(inActive(arc) ? 1 : 0, nearArc(arc));
+        ctx.strokeStyle = `rgba(128,185,255,${0.14 + lift * 0.26})`;
+        ctx.lineWidth = 1 + lift * 0.4;
         ctx.beginPath();
         ctx.moveTo(arc.a.x * w + ax, arc.a.y * h + ay);
         ctx.bezierCurveTo(arc.c1[0] * w + ax, arc.c1[1] * h + ay, arc.c2[0] * w + ax, arc.c2[1] * h + ay, arc.b.x * w + ax, arc.b.y * h + ay);
@@ -124,7 +166,7 @@ export function SignalField() {
           if (q < 0) continue;
           const x = bez(q, arc.a.x, arc.c1[0], arc.c2[0], arc.b.x) * w + ax;
           const y = bez(q, arc.a.y, arc.c1[1], arc.c2[1], arc.b.y) * h + ay;
-          const fade = Math.sin(Math.PI * p);
+          const fade = Math.sin(Math.PI * p) * (act === null || inActive(arc) ? 1 : 0.45);
           ctx.fillStyle = `rgba(178,212,255,${(0.75 - j * 0.12) * fade})`;
           ctx.beginPath();
           ctx.arc(x, y, j === 0 ? 1.8 : 1.2, 0, Math.PI * 2);
@@ -138,8 +180,9 @@ export function SignalField() {
         const x = n.x * w + nx;
         const y = n.y * h + ny;
         const d = pointer.x < 0 ? Infinity : Math.hypot(x - pointer.x, y - pointer.y);
-        const near = Math.max(0, 1 - d / 160);
-        const pulse = n.group === 1 && n.r > 4 ? 0.5 + 0.5 * Math.sin(t * 1.4) : 0;
+        const near = Math.max(n.group === act ? 0.8 : 0, Math.max(0, 1 - d / 160));
+        const isCore = hasClusters ? n.group === -1 : n.group === 1 && n.r > 4;
+        const pulse = isCore ? 0.5 + 0.5 * Math.sin(t * 1.4) : 0;
         const glowR = n.r * (5 + near * 5 + pulse * 2);
         const g = ctx.createRadialGradient(x, y, 0, x, y, glowR);
         g.addColorStop(0, `rgba(50,126,255,${0.35 + near * 0.35 + pulse * 0.15})`);
@@ -172,6 +215,7 @@ export function SignalField() {
     resize();
     time = 4; // start mid-flow so the first frame isn't empty
     draw(time);
+    redrawRef.current = () => { if (!raf) draw(time); };
     setReady(true);
     start();
 
@@ -203,16 +247,44 @@ export function SignalField() {
       document.removeEventListener('visibilitychange', onVis);
       wrap.removeEventListener('pointermove', onMove);
       wrap.removeEventListener('pointerleave', onLeave);
+      redrawRef.current = () => {};
     };
-  }, [reduced]);
+  }, [reduced, hasClusters]);
 
   return (
-    <figure className="signal-field" aria-labelledby="sf-caption">
+    <figure className={`signal-field ${hasClusters ? 'is-clusters' : ''}`} aria-labelledby="sf-caption">
       <div ref={wrapRef} className="signal-field-canvas">
         <canvas ref={canvasRef} className={ready ? 'is-ready' : ''} aria-hidden="true" />
+        {hasClusters && (
+          <ul className="sf-clusters">
+            {clusters!.slice(0, 4).map((c, i) => (
+              <li
+                key={c.label}
+                className={`sf-cluster ${active === i ? 'is-on' : ''} ${CLUSTER_POS[i][0] < 0.5 ? 'is-left' : 'is-right'} ${CLUSTER_POS[i][1] < 0.5 ? 'is-top' : 'is-bottom'}`}
+                style={{ left: `${CLUSTER_POS[i][0] * 100}%`, top: `${CLUSTER_POS[i][1] * 100}%` }}
+              >
+                <button
+                  type="button"
+                  className="sf-cluster-btn"
+                  aria-expanded={active === i}
+                  onMouseEnter={() => setActive(i)}
+                  onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(i)}
+                  onBlur={() => setActive(null)}
+                  onClick={() => setActive(i)}
+                >
+                  {c.label}
+                </button>
+                <span className="sf-cluster-detail">{c.detail}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <figcaption id="sf-caption" className="sr-only">
-        Decorative animation: signals flow from a scattered group of input nodes on the left, through a central processing core, to a small grid of output nodes on the right.
+        {hasClusters
+          ? `Decorative animation: four clusters (${clusters!.map((c) => c.label).join(', ')}) each connected to a shared central core by flowing signals.`
+          : 'Decorative animation: signals flow from a scattered group of input nodes on the left, through a central processing core, to a small grid of output nodes on the right.'}
       </figcaption>
       <div className="signal-field-label">
         <span className="mono">SIGNAL FIELD / INTERACTIVE</span>

@@ -38,8 +38,8 @@ export interface SiteConfig {
   about: string[];
   /** Longer biography for /about. Extend in your own words. */
   bio: string[];
-  /** Areas of focus, each tied to real work. */
-  focusAreas: { title: string; body: string }[];
+  /** Areas of focus, each tied to real work. `label`/`hint` feed the About-page signal field. */
+  focusAreas: { title: string; body: string; label: string; hint: string }[];
   contactLead: string;
 }
 
@@ -71,27 +71,33 @@ export const site: SiteConfig = {
     'I’ve always loved solving problems with solutions you can’t just look up, and engineering lets me do that across software and hardware at once. Working with real patients in iBioMed made it personal: using what I’d learned to help with someone’s everyday challenges was the most rewarding thing I’ve done, and it’s what I want to keep building toward.',
   ],
   bio: [
-    'I study Electrical and Biomedical Engineering in McMaster University’s iBioMed program and build technology across software, AI and physical systems.',
-    'My work ranges from embedded computer-vision and rehabilitation prototypes to full-stack applications, agentic tooling and complex engineering interfaces. I’m most interested in the point where a technically demanding system becomes useful, intuitive and tangible for real people.',
-    'What drives me is connecting problem solving across software and hardware to an impact on real people. I’ve always found it rewarding to create a solution that didn’t exist before — the kind of answer you can’t find by searching online.',
-    'That became concrete in iBioMed, where I worked with patients facing hard challenges in their day-to-day lives. Applying what I’d learned to actually help someone was the most fulfilling thing I’ve done, and I want to keep creating technology that changes how people facing medical, social or any other kind of challenge live.',
+    'I study Electrical and Biomedical Engineering in McMaster University’s iBioMed program and build across software, AI and physical systems — from embedded computer vision and rehabilitation prototypes to full-stack applications and agentic tooling.',
+    'I’ve always loved solving problems with answers you can’t find by searching online, and engineering lets me do that across software and hardware at once. That became personal in iBioMed, where I worked with patients facing hard challenges in their day-to-day lives. Applying what I’d learned to actually help someone was the most fulfilling thing I’ve done, and I want to keep building technology that changes how people facing medical, social or any other kind of challenge live.',
     'The thread runs from early Swift and robotics work, through human-centered devices on student design teams, to professional software and AI engineering at RBC.',
   ],
   focusAreas: [
     {
       title: 'AI & software systems',
+      label: 'Software & AI',
+      hint: 'Validation tooling and AI agents at RBC',
       body: 'Validation and explainability tools, agent-readiness frameworks and AI agents at RBC; a RAG-backed custody platform at the MongoDB Hackathon.',
     },
     {
       title: 'Embedded & sensor systems',
+      label: 'Embedded & hardware',
+      hint: 'ESP32 firmware and on-device vision',
       body: 'ESP32 firmware, multiplexed output arrays, IMU filtering and on-device vision — chosen by benchmarking on the target hardware.',
     },
     {
       title: 'Biomedical & human-centered design',
+      label: 'Human-centered',
+      hint: 'Assistive and rehabilitation devices',
       body: 'Sensory substitution, ACL rehabilitation monitoring, posture feedback and a blind-spot helmet, each designed around a real user.',
     },
     {
       title: 'Interfaces & creative engineering',
+      label: 'Interfaces',
+      hint: 'Dashboards, a storefront and this lab',
       body: 'Clinician dashboards, an interactive clothing-rack storefront and this 3D lab — interfaces that explain the system behind them.',
     },
   ],

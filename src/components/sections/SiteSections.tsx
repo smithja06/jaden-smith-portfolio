@@ -10,7 +10,7 @@ import { isProvided, type ExperienceGroup } from '../../content/types';
 import { NetworkToy } from '../../lab/NetworkToy';
 import { Arrow } from '../Icons';
 import { FeaturedCard } from '../content/FeaturedCard';
-import { ExperienceItem } from '../content/ExperienceItem';
+import { ExperienceItem, ExperienceRow } from '../content/ExperienceItem';
 import { SearchableArchive } from '../content/ProjectArchive';
 import { SkillExplorer } from '../content/SkillExplorer';
 import { MetricList } from '../content/Meta';
@@ -49,9 +49,15 @@ export function ExperienceSection() {
       {groups.map((g) => (
         <section key={g} className="exp-group" aria-labelledby={`exp-${g}`}>
           <h2 id={`exp-${g}`} className="sec-subhead mono">{experienceGroupLabels[g]}</h2>
-          <div className="sec-roles">
-            {experienceInGroup(g).map((e) => <ExperienceItem key={e.id} entry={e} compact={g !== 'technical'} />)}
-          </div>
+          {g === 'technical' ? (
+            <div className="sec-roles">
+              {experienceInGroup(g).map((e) => <ExperienceItem key={e.id} entry={e} />)}
+            </div>
+          ) : (
+            <ol className="exp-rows">
+              {experienceInGroup(g).map((e) => <ExperienceRow key={e.id} entry={e} />)}
+            </ol>
+          )}
         </section>
       ))}
     </>

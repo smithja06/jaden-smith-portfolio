@@ -502,27 +502,8 @@
 .sysdiag-caption { font-size: 14.5px; }
 
 /* ================= ABOUT PAGE ================= */
-.about-intro { display: grid; gap: 32px; margin-bottom: clamp(64px, 8vw, 112px); }
-@media (min-width: 1000px) { .about-intro { grid-template-columns: 1fr auto; align-items: end; gap: 80px; } }
-.about-intro .prose { font-size: 1.08rem; }
+/* About-page layout lives in about.css. */
 .about-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.about-block { display: grid; gap: 28px; padding: 0 0 clamp(64px, 8vw, 112px); }
-@media (min-width: 1000px) { .about-block { grid-template-columns: 0.3fr 0.7fr; gap: 48px; } }
-.block-title { padding-top: 6px; }
-.timeline { list-style: none; display: grid; border-top: 1px solid var(--line-subtle); }
-.tl-item { display: grid; gap: 6px 32px; padding: 24px 0; border-bottom: 1px solid var(--line-subtle); }
-@media (min-width: 700px) { .tl-item { grid-template-columns: 150px 1fr; } }
-.tl-side { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; padding-top: 5px; }
-.tl-org { color: var(--blue-soft); font-size: 15px; margin: 2px 0 8px; }
-.areas { display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); background: var(--line-subtle); border: 1px solid var(--line-subtle); border-radius: var(--radius-card); overflow: hidden; }
-.area { background: var(--bg-base); padding: 24px; display: grid; gap: 8px; align-content: start; }
-.area h3 { font-size: 1.08rem; letter-spacing: -0.01em; }
-.toolgroups { display: grid; gap: 24px; }
-.tg-title { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; font-weight: 500; }
-.approach { list-style: none; display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
-.approach li { display: grid; gap: 6px; align-content: start; padding: 20px 20px 20px 0; border-top: 1px solid var(--line-subtle); }
-.approach li:first-child { border-top-color: var(--blue-electric); }
-.approach h3 { font-size: 1.08rem; }
 
 /* ================= 404 ================= */
 .notfound { display: grid; gap: 22px; min-height: 70svh; align-content: center; padding-bottom: var(--section-gap); }
