@@ -22,6 +22,10 @@ export interface Metric {
   value: string;
   label: string;
   note?: string;
+  /** A technical parameter rather than an outcome: shown in the technical breakdown, not under Results. */
+  detail?: boolean;
+  /** Module id this parameter belongs to; it is then shown inside that subsystem's card. */
+  subsystem?: string;
 }
 
 export interface DiagramNode {
@@ -33,6 +37,8 @@ export interface DiagramNode {
 export interface Decision {
   title: string;
   body: string;
+  /** Module id this decision belongs to; it is then shown inside that subsystem's card. */
+  subsystem?: string;
 }
 
 /**
@@ -96,10 +102,22 @@ export type ExperimentId = 'vision-matrix' | 'signal-playground';
 /**
  * Long-form case-study content. Every field is optional; empty fields are
  * hidden, so a project can start as a short record and grow over time.
+ *
+ * Case studies read at three depths:
+ *  1. Visible at once — `problem[0]`, `built`, primary metrics, `validation`, `outcomes`, `limitations`.
+ *  2. Engineering overview — the architecture, `implementation`, `challenges`, modules.
+ *  3. Technical breakdown (collapsed) — `contributions` when `built` is set, `decisions`,
+ *     `technical`, detail metrics and the full technology stack.
  */
 export interface CaseStudy {
+  /** First paragraph is the Overview; any further paragraphs introduce How it works. */
   problem?: string[];
-  /** What I personally built or did. */
+  /** Three to five distinct areas I owned, in plain language. Shown under What I built. */
+  built?: string[];
+  /**
+   * What I personally built or did, in full technical detail. Shown under What
+   * I built when `built` is empty; otherwise moved into the technical breakdown.
+   */
   contributions?: string[];
   /** What teammates built, so credit stays accurate. */
   team?: string[];
@@ -111,11 +129,37 @@ export interface CaseStudy {
   outcomes?: string[];
   limitations?: string[];
   future?: string[];
+  /** Low-level notes (pin maps, parameters, history) for the technical breakdown. */
+  technical?: string[];
+  /**
+   * Fields whose every point is already stated elsewhere on the page (the
+   * ownership list, diagram, a module, decisions or Results). They stay here
+   * as the record but are not rendered a second time.
+   */
+  covered?: ('contributions' | 'validation' | 'limitations')[];
 }
+
+/**
+ * Where a project appears publicly. Every record keeps its full content
+ * whatever this says; `listing` only decides presentation.
+ *
+ * - `case-study` — has its own page at /work/<id>; shown in Featured (see
+ *   featured.ts) or More projects on the Projects hub.
+ * - `archive`    — a compact, expandable row in the Technical archive. No page.
+ * - `module`     — a component of `parent`; rendered as a subsection of the
+ *   parent's case study. Its old URL redirects there.
+ * - `experiment` — describes an interactive experiment on this site; listed
+ *   under Interactive experiments. Its old URL redirects to the experiment.
+ * - `private`    — never shown in Projects, search, filters or related links
+ *   (employer work without shareable artifacts). Kept for Experience; its old
+ *   URL redirects to the experience entry.
+ */
+export type ProjectListing = 'case-study' | 'archive' | 'module' | 'experiment' | 'private';
 
 export interface Project {
   /** Stable URL id: /work/<id>. Never rename once published. */
   id: string;
+  listing: ProjectListing;
   /** Number in the master inventory (P01–P30). */
   inventory: number;
   title: string;
@@ -132,6 +176,11 @@ export interface Project {
   ownershipNote?: string;
   /** Canonical skill names (must exist in skills.ts) — drives the Skills explorer. */
   tech: string[];
+  /**
+   * Three to five primary technologies, in order, for headers and cards (cards
+   * show the first three). Must come from `tech`; defaults to its first five.
+   */
+  coreTech?: string[];
   /** One or two headline facts for the card. */
   highlights?: string[];
   metrics?: Metric[];
@@ -142,7 +191,7 @@ export interface Project {
   experience?: string[];
   /** Other project ids worth reading next. */
   related?: string[];
-  /** For sub-modules, e.g. the LED driver inside MED-T. */
+  /** The parent project of a `module`, e.g. the LED driver inside MED-T. */
   parent?: string;
   art?: ArtKey;
   evidence?: Evidence;

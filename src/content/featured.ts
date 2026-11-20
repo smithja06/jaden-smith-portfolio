@@ -1,100 +1,77 @@
-import type { ArtKey, Metric } from './types';
-import { categoryLabels, getProject, statusLabels } from './projects';
-import { getExperience } from './experience';
+import { isProvided, type ArtKey } from './types';
+import { categoryLabels, coreTechOf, getProject } from './projects';
 
 /**
- * Homepage curation — the six flagship pieces, in order.
- * Each entry points at an existing record (no copied content); `title`,
- * `summary` and `art` only override how the card reads.
+ * Curation only — every card reads from an existing project record.
+ * The first entries are the Projects hub's Featured collection, in order;
+ * `onHomepage` picks the homepage's Selected work. Every id must be a
+ * `case-study` project. Professional work (RBC) belongs in Experience, not here.
  */
-type FeaturedRef = { onHomepage?: boolean } & (
-  | { kind: 'project'; id: string; title?: string; summary?: string }
-  | { kind: 'experience'; id: string; title: string; summary: string; art: ArtKey; label: string; status: string }
-);
+interface FeaturedRef {
+  id: string;
+  onHomepage?: boolean;
+}
 
+/** Card technologies come from each project's `coreTech` (first three). */
 export const featuredRefs: FeaturedRef[] = [
-  {
-    kind: 'experience',
-    id: 'rbc',
-    title: 'RBC — Software & AI Engineering',
-    summary:
-      'Validation and explainability tooling for a payment-routing engine, a legacy rules application rebuilt from compiled code, and an AI agent-readiness framework.',
-    art: 'tooling',
-    label: 'AI & Software Systems',
-    status: 'Co-op · in progress',
-    onHomepage: true,
-  },
-  { kind: 'project', id: 'med-t-sensory-substitution', onHomepage: true },
-  { kind: 'project', id: 'custodyos', onHomepage: true },
-  { kind: 'project', id: 'bmett-acl-rehabilitation' },
-  { kind: 'project', id: 'brthday-interactive-commerce' },
-  { kind: 'project', id: 'cobalt-lab-portfolio' },
+  { id: 'med-t-sensory-substitution', onHomepage: true },
+  { id: 'custodyos', onHomepage: true },
+  { id: 'bmett-acl-rehabilitation', onHomepage: true },
+  { id: 'brthday-interactive-commerce' },
 ];
 
-/** Card-ready shape shared by projects and the RBC experience entry. */
+/** Card-ready shape for the homepage grid and the hub's Featured collection. */
 export interface FeaturedCard {
   key: string;
   href: string;
   title: string;
   summary: string;
-  context: string;
+  /** Two-line badge: where it was built, then a smaller detail. */
+  badge: { title: string; sub?: string };
   category: string;
-  status: string;
   art?: ArtKey;
-  highlights: string[];
-  metrics: Metric[];
+  /** One verified result, when the record has one. */
+  result?: string;
   tech: string[];
-  /** Project id when the card is a project (for "Featured" marks in the archive). */
-  projectId?: string;
+  /** Public repository, when one has been supplied. */
+  repo?: string;
+  projectId: string;
   onHomepage: boolean;
+}
+
+/** "MongoDB Hackathon 2026 · team project" → { title: 'MongoDB Hackathon 2026', sub: 'team project' } */
+function splitContext(context: string): { title: string; sub?: string } {
+  const i = context.indexOf(' · ');
+  return i < 0 ? { title: context } : { title: context.slice(0, i), sub: context.slice(i + 3) };
 }
 
 export function featuredCards(): FeaturedCard[] {
   return featuredRefs.flatMap((ref): FeaturedCard[] => {
-    if (ref.kind === 'experience') {
-      const e = getExperience(ref.id);
-      if (!e) return [];
-      return [{
-        key: `exp-${e.id}`,
-        href: `/experience/${e.id}`,
-        title: ref.title,
-        summary: ref.summary,
-        context: `${e.title} · ${e.dates}`,
-        category: ref.label,
-        status: ref.status,
-        art: ref.art,
-        highlights: [],
-        metrics: e.metrics ?? [],
-        tech: (e.tech ?? []).slice(0, 4),
-        onHomepage: !!ref.onHomepage,
-      }];
-    }
     const p = getProject(ref.id);
     if (!p) return [];
     return [{
       key: p.id,
       href: `/work/${p.id}`,
-      title: ref.title ?? p.title,
-      summary: ref.summary ?? p.summary,
-      context: p.context,
+      title: p.title,
+      summary: p.summary,
+      badge: splitContext(p.context),
       category: categoryLabels[p.category],
-      status: statusLabels[p.status],
       art: p.art,
-      highlights: p.highlights ?? [],
-      metrics: [],
-      tech: p.tech.slice(0, 4),
+      result: p.highlights?.[0],
+      tech: coreTechOf(p).slice(0, 3),
+      repo: isProvided(p.evidence?.repo) ? p.evidence!.repo : undefined,
       projectId: p.id,
       onHomepage: !!ref.onHomepage,
     }];
   });
 }
 
-/** The cards marked `onHomepage` (three, in order). Change the flags above to swap them. */
+/** The cards marked `onHomepage`, in order. */
 export function homepageCards(): FeaturedCard[] {
   return featuredCards().filter((c) => c.onHomepage);
 }
 
+export const featuredProjectIds = new Set(featuredRefs.map((r) => r.id));
+
 /** Roles summarized on the homepage, in order. Everything else lives on /lab/experience. */
 export const homepageExperienceIds = ['rbc', 'med-t', 'bmett'];
-
-export const featuredProjectIds = new Set(featuredRefs.filter((r) => r.kind === 'project').map((r) => r.id));

@@ -4,6 +4,8 @@ import { TODO_USER_CONTENT, type Project } from '../types';
 export const webCreativeProjects: Project[] = [
   {
     id: 'brthday-interactive-commerce',
+    listing: 'case-study',
+    coreTech: ['React', 'TypeScript', 'Shopify', 'UI / UX design'],
     inventory: 23,
     title: 'brthday — Interactive Commerce',
     summary:
@@ -21,6 +23,12 @@ export const webCreativeProjects: Project[] = [
     evidence: { repo: TODO_USER_CONTENT, demo: TODO_USER_CONTENT },
     media: [],
     caseStudy: {
+      built: [
+        'Designed the visual identity and the clothing-rack interaction model.',
+        'Built the animated rack and the complete storefront around it.',
+        'Prepared the product imagery, including transparent garment cut-outs.',
+        'Migrated commerce to Shopify while keeping the custom front end.',
+      ],
       problem: [
         'Most online stores are a grid of thumbnails. That works for search, but it loses the feeling of flicking through a rack of clothes — especially for one-of-one pieces where each item has its own story.',
       ],
@@ -41,6 +49,8 @@ export const webCreativeProjects: Project[] = [
   },
   {
     id: 'cobalt-lab-portfolio',
+    listing: 'case-study',
+    coreTech: ['React', 'TypeScript', 'Three.js', 'React Three Fiber'],
     inventory: 24,
     title: 'Cobalt Lab — Interactive Portfolio',
     summary:
@@ -72,6 +82,7 @@ export const webCreativeProjects: Project[] = [
   },
   {
     id: 'workout-tracker',
+    listing: 'case-study',
     inventory: 25,
     title: 'Multi-Activity Workout Tracker',
     summary:
@@ -93,6 +104,7 @@ export const webCreativeProjects: Project[] = [
   },
   {
     id: 'ar-gesture-sculpting',
+    listing: 'case-study',
     inventory: 26,
     title: 'AR Gesture-Controlled 3D Sculpting',
     summary: 'Create and move 3D shapes with your hands, using MediaPipe hand tracking — an early working prototype.',
@@ -113,6 +125,7 @@ export const webCreativeProjects: Project[] = [
   },
   {
     id: 'ar-shopping-ios',
+    listing: 'case-study',
     inventory: 27,
     title: 'AR Shopping iOS App',
     summary: 'An augmented-reality shopping app built in Swift and presented to Apple judges.',
@@ -133,6 +146,7 @@ export const webCreativeProjects: Project[] = [
   },
   {
     id: 'other-swift-apps',
+    listing: 'archive',
     inventory: 28,
     title: 'Swift iOS Apps',
     summary: 'Three further iOS apps built in Swift during the co-op program, alongside the AR shopping app.',

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { isProvided, type ExperienceEntry } from '../../content/types';
 import { getExperience } from '../../content/experience';
-import { projectsByIds, ownershipLabels } from '../../content/projects';
+import { caseStudiesByIds, ownershipLabels } from '../../content/projects';
 import { Arrow } from '../Icons';
 import { MetricList, TechList } from './Meta';
 
@@ -26,7 +26,7 @@ export function ExperienceItem({
   headingLevel?: 'h2' | 'h3' | 'h4';
   compact?: boolean;
 }) {
-  const linked = projectsByIds(e.projects);
+  const linked = caseStudiesByIds(e.projects);
   const parent = e.seeAlso ? getExperience(e.seeAlso) : undefined;
   const hasMore = !!(e.contributions?.length || e.initiatives?.length || e.metrics?.length || e.tech?.length || linked.length);
 
@@ -100,7 +100,7 @@ export function ExperienceItem({
  * link on the right, so sentences get a full reading width.
  */
 export function ExperienceRow({ entry: e }: { entry: ExperienceEntry }) {
-  const linked = projectsByIds(e.projects);
+  const linked = caseStudiesByIds(e.projects);
   const parent = e.seeAlso ? getExperience(e.seeAlso) : undefined;
   return (
     <li className="exp-row">

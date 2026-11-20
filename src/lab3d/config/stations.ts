@@ -44,12 +44,12 @@ export const stations: StationDef[] = [
     letter: '02',
     title: 'Projects',
     category: 'Gallery',
-    tooltip: 'Featured case studies and the full project archive',
-    summary: 'Flagship case studies first, then the full archive of prototypes, products and lab work.',
+    tooltip: 'Featured case studies, more projects and interactive experiments',
+    summary: 'Featured case studies first, then more projects, a technical archive and interactive experiments.',
     highlights: [
-      'RBC payment-routing validation: ~99.9% rule-exit agreement in testing',
       'MED-T: a working 4×4 vision-to-output bench prototype',
       'custodyOS: an AI chain-of-custody platform built at the MongoDB Hackathon',
+      'BMETT: real-time BLE streaming into an ACL rehabilitation dashboard',
     ],
   },
   {

@@ -4,6 +4,7 @@ import { TODO_USER_CONTENT, type Project } from '../types';
 export const experimentProjects: Project[] = [
   {
     id: 'raspberry-pi-depth-benchmark',
+    listing: 'archive',
     inventory: 16,
     title: 'Raspberry Pi Depth-Estimation Benchmark',
     summary:
@@ -32,6 +33,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'cmos-transmission-gate',
+    listing: 'archive',
     inventory: 17,
     title: 'CMOS Transmission Gate — Voltage-Controlled Switch',
     summary: 'Designed and characterized a bidirectional CMOS switch from complementary NMOS / PMOS transistors.',
@@ -50,6 +52,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'center-tap-power-supply',
+    listing: 'archive',
     inventory: 18,
     title: 'Centre-Tap Full-Wave DC Power Supply',
     summary: 'A full-wave rectifier and filter designed to deliver 3.0 V ± 0.1 V at 10 mA.',
@@ -66,6 +69,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'op-amp-integrator-differentiator',
+    listing: 'archive',
     inventory: 19,
     title: 'Op-Amp Integrator & Differentiator',
     summary: 'Built and tested op-amp integrator and differentiator circuits with sine and square inputs near 1 kHz.',
@@ -81,6 +85,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'soil-compaction-permeability',
+    listing: 'archive',
     inventory: 20,
     title: 'Soil Compaction & Permeability Analysis',
     summary: 'Lab analysis of compaction curves and hydraulic conductivity, from Proctor tests to flow nets.',
@@ -98,6 +103,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'structural-analysis-exercises',
+    listing: 'archive',
     inventory: 21,
     title: 'Structural Analysis & Computational Mechanics',
     summary: 'Beam and frame analysis from determinacy checks through moment distribution and FEM.',
@@ -114,6 +120,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'matlab-numerical-methods',
+    listing: 'archive',
     inventory: 22,
     title: 'MATLAB Numerical & Matrix Computation',
     summary: 'Iterative methods, matrix solving and numerical modelling in MATLAB.',
@@ -128,6 +135,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'vision-matrix-simulator',
+    listing: 'experiment',
     inventory: 29,
     title: 'Vision-to-LED Matrix Simulator',
     summary: 'A browser model of the MED-T idea: reduce an image to a 4×4 brightness grid, quantize it, and watch the output ramp.',
@@ -146,6 +154,7 @@ export const experimentProjects: Project[] = [
   },
   {
     id: 'signal-playground',
+    listing: 'experiment',
     inventory: 30,
     title: 'Signal Playground',
     summary: 'Add noise to a waveform, smooth it with a moving average, and compare raw and filtered signals with live readouts.',

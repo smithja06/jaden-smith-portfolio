@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { experience, experienceGroupLabels, getExperience } from '../content/experience';
-import { getProject, ownershipLabels, projectsByIds, statusLabels } from '../content/projects';
+import { caseStudiesByIds, ownershipLabels, statusLabels } from '../content/projects';
 import { isProvided } from '../content/types';
 import { stationPath } from '../lab3d/config/stations';
 import { orgLine } from '../components/content/ExperienceItem';
@@ -17,7 +17,8 @@ export default function ExperienceDetail() {
   usePageTitle(e ? `${e.title}${isProvided(e.org) ? ` — ${e.org}` : ''}` : 'Page not found', e?.summary);
   if (!e) return <NotFound />;
 
-  const linked = projectsByIds(e.projects);
+  // Only public case studies are linked; RBC initiatives are described here in full instead.
+  const linked = caseStudiesByIds(e.projects);
   const parent = e.seeAlso ? getExperience(e.seeAlso) : undefined;
   const related = experience.filter((x) => x.seeAlso === e.id);
 
@@ -69,11 +70,11 @@ export default function ExperienceDetail() {
                   <p className="sec-text">{i.summary}</p>
                   {i.points && <ul className="sec-dash">{i.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>}
                   <MetricList metrics={i.metrics} />
-                  {i.projects && i.projects.length > 0 && (
+                  {caseStudiesByIds(i.projects).length > 0 && (
                     <p className="disclose-links">
                       <span className="mono muted">Case study</span>
-                      {i.projects.map(getProject).filter((p) => !!p).map((p) => (
-                        <Link key={p!.id} to={`/work/${p!.id}`} className="inline-link">{p!.title}</Link>
+                      {caseStudiesByIds(i.projects).map((p) => (
+                        <Link key={p.id} to={`/work/${p.id}`} className="inline-link">{p.title}</Link>
                       ))}
                     </p>
                   )}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided, type ExperienceEntry } from '../content/types';
 import { experienceInGroup } from '../content/experience';
-import { projectsByIds } from '../content/projects';
+import { caseStudiesByIds } from '../content/projects';
 import { stationPath } from '../lab3d/config/stations';
 import { SignalField } from '../components/SignalField';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -64,7 +64,7 @@ function ProgressTimeline({ compact, children }: { compact?: boolean; children: 
 
 /** A compact milestone for supporting roles: date, role · organization, one line. */
 function CompactMilestone({ entry: e }: { entry: ExperienceEntry }) {
-  const project = projectsByIds(e.projects)[0];
+  const project = caseStudiesByIds(e.projects)[0];
   return (
     <li className="atl-item">
       <span className="atl-node" aria-hidden="true" />

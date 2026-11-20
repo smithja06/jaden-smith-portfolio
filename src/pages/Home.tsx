@@ -6,7 +6,7 @@ import { homepageCards, homepageExperienceIds } from '../content/featured';
 import { getExperience } from '../content/experience';
 import { stationPath, stations } from '../lab3d/config/stations';
 import { ContactSection } from '../components/sections/SiteSections';
-import { FeaturedCard } from '../components/content/FeaturedCard';
+import { ProjectGridCard } from '../components/content/ProjectGridCard';
 import { SignalField } from '../components/SignalField';
 import { Reveal } from '../components/Reveal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -16,7 +16,7 @@ import { homeSections } from '../content/homeSections';
 
 type HomeId = (typeof homeSections)[number]['id'];
 
-function HomeSection({ id, children, className = '' }: { id: HomeId; children: ReactNode; className?: string }) {
+function HomeSection({ id, children, className = '', count }: { id: HomeId; children: ReactNode; className?: string; count?: string }) {
   const s = homeSections.find((x) => x.id === id)!;
   return (
     <section id={id} className={`home-sec container ${className}`} aria-labelledby={`home-${id}-title`} tabIndex={-1}>
@@ -25,6 +25,7 @@ function HomeSection({ id, children, className = '' }: { id: HomeId; children: R
         <div className="sec-head-main">
           <h2 id={`home-${id}-title`} className="sec-title">{s.title}</h2>
         </div>
+        {count && <span className="sec-count mono">{count}</span>}
       </Reveal>
       {children}
     </section>
@@ -81,11 +82,11 @@ export default function Home() {
       </HomeSection>
 
       {/* Featured projects: three flagships, then one way into the archive. */}
-      <HomeSection id="projects">
+      <HomeSection id="projects" count={`${cards.length} selected`}>
         <Reveal className="sec-body">
-          <div className="feat-grid is-home">
-            {cards.map((c) => <FeaturedCard key={c.key} card={c} headingLevel="h3" variant="home" />)}
-          </div>
+          <ul className="pgc-grid">
+            {cards.map((c) => <ProjectGridCard key={c.key} card={c} />)}
+          </ul>
           <Link to={`${stationPath('projects')}`} className="home-more">
             Explore all projects <Arrow />
           </Link>

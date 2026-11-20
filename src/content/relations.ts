@@ -1,14 +1,15 @@
-import { projects } from './projects';
+import { projects, publicProjects } from './projects';
 import { experience } from './experience';
 import { allSkills, skillGroups } from './skills';
 import type { ExperienceEntry, Project } from './types';
 
 /**
  * Skill ↔ work relationships, derived from the `tech` arrays on projects and
- * experience entries. Nothing here is maintained by hand.
+ * experience entries. Nothing here is maintained by hand. Only public
+ * projects are listed; private (employer) work is reached through Experience.
  */
 export function projectsUsing(skill: string): Project[] {
-  return projects.filter((p) => p.tech.includes(skill));
+  return publicProjects.filter((p) => p.tech.includes(skill));
 }
 
 export function experienceUsing(skill: string): ExperienceEntry[] {

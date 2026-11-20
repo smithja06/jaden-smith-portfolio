@@ -3,14 +3,18 @@ import { TODO_USER_CONTENT, type Project } from '../types';
 /**
  * AI & Software Systems — inventory P01–P08.
  *
- * RBC records (P01–P06): the descriptions and figures here are approved for
- * public discussion. RBC code, repositories, screenshots, reports and
- * production data are NOT — keep `restricted: true` and leave `evidence`
- * empty. Any future visuals must be original, synthetic illustrations.
+ * RBC records (P01–P06) are `listing: 'private'`: they are professional
+ * Experience, not public projects, so they never appear in the Projects hub,
+ * search, filters, related links or the Skills explorer's project lists.
+ * They stay here as the detailed source behind the RBC experience entry.
+ * The descriptions and figures are approved for public discussion; RBC code,
+ * repositories, screenshots, reports and production data are NOT — keep
+ * `restricted: true` and leave `evidence` empty.
  */
 export const aiSoftwareProjects: Project[] = [
   {
     id: 'rbc-payment-routing-simulation',
+    listing: 'private',
     inventory: 1,
     title: 'Payment Routing Simulation & Explainability',
     summary:
@@ -71,6 +75,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'rbc-legacy-rules-reconstruction',
+    listing: 'private',
     inventory: 2,
     title: 'Legacy Banking Rules Application Reconstruction',
     summary:
@@ -106,6 +111,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'rbc-agent-readiness-framework',
+    listing: 'private',
     inventory: 3,
     title: 'AI Agent Readiness Framework',
     summary:
@@ -154,6 +160,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'rbc-ai-sdlc-observability',
+    listing: 'private',
     inventory: 4,
     title: 'AI SDLC Observability (Spec Kit Instrumentation)',
     summary:
@@ -179,6 +186,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'rbc-ai-adoption-analytics',
+    listing: 'private',
     inventory: 5,
     title: 'AI Adoption Analytics',
     summary:
@@ -211,6 +219,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'rbc-engineering-agents',
+    listing: 'private',
     inventory: 6,
     title: 'AI Agents for Engineering Workflows',
     summary:
@@ -236,6 +245,8 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'custodyos',
+    listing: 'case-study',
+    coreTech: ['React', 'FastAPI', 'MongoDB Atlas', 'TypeScript', 'Voice agents (ElevenLabs)'],
     inventory: 7,
     title: 'custodyOS — AI Chain-of-Custody Platform',
     summary:
@@ -251,13 +262,19 @@ export const aiSoftwareProjects: Project[] = [
     highlights: ['End-to-end custody workflow working in the live demo', '43 API endpoints operational'],
     metrics: [
       { value: '43', label: 'API endpoints working in the demo', note: 'Team total during the hackathon demonstration.' },
-      { value: '1,024', label: 'embedding dimensions' },
+      { value: '1,024', label: 'embedding dimensions', detail: true },
     ],
     experience: ['mongodb-hackathon'],
     art: 'custody',
     evidence: { repo: TODO_USER_CONTENT, demo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
     media: [],
     caseStudy: {
+      built: [
+        'Built the entire frontend, including the interactive custody simulator.',
+        'Built all of the voice-agent controls.',
+        'Contributed to the RAG engine behind natural-language custody queries.',
+        'Helped enforce append-only access to the audit ledger.',
+      ],
       problem: [
         'In forensic and biological labs, every hand-off of a sample has to be recorded and auditable. Paper trails and ad-hoc spreadsheets make it hard to see who had what, when — and easy for records to be altered.',
       ],
@@ -268,6 +285,7 @@ export const aiSoftwareProjects: Project[] = [
         'Contributed to the RAG engine that answers natural-language custody questions.',
         'Helped enforce append-only (write-only) access to the audit ledger in MongoDB.',
       ],
+      covered: ['contributions'],
       team: ['Most of the backend infrastructure and the MongoDB Atlas Vector Search implementation were built by teammates.'],
       architecture: {
         caption: 'How a custody event flows through the system.',
@@ -288,6 +306,7 @@ export const aiSoftwareProjects: Project[] = [
   },
   {
     id: 'bmett-acl-movement-classification',
+    listing: 'module',
     inventory: 8,
     title: 'ACL Rehabilitation Movement Classification',
     summary:
@@ -306,6 +325,7 @@ export const aiSoftwareProjects: Project[] = [
       problem: ['Rehabilitation progress depends on features such as range of motion, force and muscle activation — values that have to be extracted from noisy wearable data.'],
       validation: ['The ML system was tested on live sensor input streamed over BLE. No accuracy figures are published yet.'],
       limitations: ['A student prototype, not a clinically validated tool.'],
+      covered: ['validation', 'limitations'],
     },
     todo: ['Models used, training data, accuracy', 'My exact contribution to the model', 'Do not publish the confusion-matrix counts until verified'],
   },

@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { allSkills, coreSkills, skillGroups, skillId, type Skill } from '../../content/skills';
 import { experienceUsing, projectsUsing, skillUsage } from '../../content/relations';
-import { categoryLabels, statusLabels } from '../../content/projects';
+import { categoryLabels, projectHref, statusLabels } from '../../content/projects';
 import { isProvided } from '../../content/types';
 import { Arrow } from '../Icons';
 
@@ -76,7 +76,7 @@ export function SkillExplorer() {
                   <ul className="skx-links">
                     {projects.map((p) => (
                       <li key={p.id}>
-                        <Link to={`/work/${p.id}`} className="skx-link">
+                        <Link to={projectHref(p)} className="skx-link">
                           <span className="skx-link-text">
                             <span className="skx-link-title">{p.title}</span>
                             <span className="skx-link-meta">{categoryLabels[p.category]} · {statusLabels[p.status]}</span>

@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { experiments, type StationId } from '../../lab3d/config/stations';
-import { getProject } from '../../content/projects';
-import { featuredCards, featuredProjectIds } from '../../content/featured';
+import type { StationId } from '../../lab3d/config/stations';
+import { getProject, isPublicProject, projectHref } from '../../content/projects';
 import { experience, experienceGroupLabels, experienceGroupOrder, experienceInGroup, getExperience } from '../../content/experience';
 import { awards, coursework, schools } from '../../content/education';
 import { site } from '../../content/site';
 import { isProvided, type ExperienceGroup } from '../../content/types';
 import { NetworkToy } from '../../lab/NetworkToy';
-import { Arrow } from '../Icons';
-import { FeaturedCard } from '../content/FeaturedCard';
 import { ExperienceItem, ExperienceRow } from '../content/ExperienceItem';
-import { SearchableArchive } from '../content/ProjectArchive';
+import { ProjectsHub } from '../content/ProjectsHub';
 import { SkillExplorer } from '../content/SkillExplorer';
 import { MetricList } from '../content/Meta';
 
@@ -67,31 +64,7 @@ export function ExperienceSection() {
 /* ---------- Projects ---------- */
 
 export function ProjectsSection() {
-  const cards = featuredCards();
-  return (
-    <>
-      <h2 className="sec-subhead mono sec-subhead-first">Featured projects</h2>
-      <div className="feat-grid">
-        {cards.map((c) => <FeaturedCard key={c.key} card={c} headingLevel="h3" />)}
-      </div>
-
-      <h2 id="archive" className="sec-subhead mono" tabIndex={-1}>More projects</h2>
-      <p className="sec-intro">Prototypes, products, lab work and experiments. Search covers every project, featured ones included.</p>
-      <SearchableArchive hideWhenIdle={featuredProjectIds} />
-
-      <h2 className="sec-subhead mono">Interactive prototypes</h2>
-      <div className="sec-grid sec-grid-2">
-        {experiments.map((e) => (
-          <article key={e.id} className="sec-card sec-project">
-            <h3 className="sec-card-title">{e.title}</h3>
-            <p className="sec-badge mono"><span className="sec-badge-dot" aria-hidden="true" />Runs in your browser · {e.project}</p>
-            <p className="sec-text">{e.blurb}</p>
-            <Link to={e.route} className="sec-card-link text-link">Open experiment <Arrow /></Link>
-          </article>
-        ))}
-      </div>
-    </>
-  );
+  return <ProjectsHub />;
 }
 
 /* ---------- Skills ---------- */
@@ -112,7 +85,7 @@ function SchoolBlock({ id, secondary }: { id: string; secondary?: boolean }) {
   const s = schools.find((x) => x.id === id)!;
   const H = secondary ? 'h3' : 'h2';
   const teams = (s.teams ?? []).map(getExperience).filter((e) => !!e);
-  const projectsHere = (s.projects ?? []).map(getProject).filter((p) => !!p);
+  const projectsHere = (s.projects ?? []).map(getProject).filter((p) => !!p && isPublicProject(p));
   return (
     <article className={`edu-school ${secondary ? 'is-secondary' : ''}`}>
       <p className="sec-date mono">{s.dates}</p>
@@ -124,7 +97,7 @@ function SchoolBlock({ id, secondary }: { id: string; secondary?: boolean }) {
       {(projectsHere.length > 0 || teams.length > 0) && (
         <p className="disclose-links">
           {projectsHere.length > 0 && <span className="mono muted">Design work</span>}
-          {projectsHere.map((p) => <Link key={p!.id} to={`/work/${p!.id}`} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
+          {projectsHere.map((p) => <Link key={p!.id} to={projectHref(p!)} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
           {teams.length > 0 && <span className="mono muted">Teams</span>}
           {teams.map((t) => <Link key={t!.id} to={`/experience/${t!.id}`} className="inline-link">{isProvided(t!.org) ? t!.org : t!.title}</Link>)}
         </p>
@@ -165,14 +138,14 @@ export function EducationSection() {
         <summary className="disclose-summary">Relevant coursework, by discipline</summary>
         <div className="course-grid">
           {coursework.map((c) => {
-            const linked = (c.projects ?? []).map(getProject).filter((p) => !!p);
+            const linked = (c.projects ?? []).map(getProject).filter((p) => !!p && isPublicProject(p));
             return (
               <section key={c.id} className="course" aria-labelledby={`course-${c.id}`}>
                 <h3 id={`course-${c.id}`} className="course-title">{c.label}</h3>
                 <ul className="course-topics">{c.topics.map((t) => <li key={t}>{t}</li>)}</ul>
                 {linked.length > 0 && (
                   <p className="course-links">
-                    {linked.map((p) => <Link key={p!.id} to={`/work/${p!.id}`} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
+                    {linked.map((p) => <Link key={p!.id} to={projectHref(p!)} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
                   </p>
                 )}
               </section>

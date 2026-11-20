@@ -7,6 +7,8 @@ import { TODO_USER_CONTENT, type Project } from '../types';
 export const embeddedBiomedicalProjects: Project[] = [
   {
     id: 'med-t-sensory-substitution',
+    listing: 'case-study',
+    coreTech: ['ESP32', 'Python', 'OpenCV', 'C / C++'],
     inventory: 9,
     title: 'MED-T — Vision-to-Tactile Sensory Substitution',
     summary:
@@ -22,8 +24,8 @@ export const embeddedBiomedicalProjects: Project[] = [
     highlights: ['Fully working 4×4 bench prototype', '6×4 actuator array planned for Jan–Feb 2027'],
     metrics: [
       { value: '4×4', label: 'working LED bench array' },
-      { value: '~1 kHz', label: 'PWM on a PCA9685 over I²C' },
-      { value: '4', label: 'discrete frame states (0–3)' },
+      { value: '~1 kHz', label: 'PWM on a PCA9685 over I²C', detail: true, subsystem: 'esp32-led-matrix-driver' },
+      { value: '4', label: 'discrete frame states (0–3)', detail: true, subsystem: 'esp32-led-matrix-driver' },
     ],
     experience: ['med-t'],
     related: ['esp32-led-matrix-driver', 'raspberry-pi-depth-benchmark', 'vision-matrix-simulator'],
@@ -33,6 +35,12 @@ export const embeddedBiomedicalProjects: Project[] = [
     simulation: { id: 'vision-matrix', label: 'Try the 4×4 experiment' },
     plannedSimulation: 'Browser pipeline: visual processing → 4×4 matrix → PWM ramp, clearly labelled as a simplified model of the physical tests.',
     caseStudy: {
+      built: [
+        'Built the Python / OpenCV vision stage that reduces each camera frame to a small grid of discrete states.',
+        'Wrote the ESP32 firmware and the multiplexed control for the output array.',
+        'Designed the UART frame link and the smooth PWM intensity transitions.',
+        'Integrated and bench-tested the working 4×4 prototype end to end.',
+      ],
       problem: [
         'Sensory substitution asks whether information normally carried by one sense can be delivered through another. For vision, that means compressing a rich camera image into something a body can perceive.',
         'The output has very few “pixels”, so the real engineering is deciding what to keep — and making the result stable enough to read.',
@@ -64,24 +72,29 @@ export const embeddedBiomedicalProjects: Project[] = [
         },
         {
           title: 'Heavy lifting off the microcontroller',
+          subsystem: 'esp32-led-matrix-driver',
           body: 'Image processing runs on the host; the ESP32 receives an already-reduced frame. That keeps firmware simple and messages small.',
         },
         {
           title: 'Ramp, don’t jump',
+          subsystem: 'esp32-led-matrix-driver',
           body: 'If a cell keeps its state, its duty cycle rises by about 0.01 per update; on a mismatch it falls by 0.01, and the new state only takes over once the old intensity reaches zero. Repeated states feel steady and changes feel deliberate.',
         },
         {
           title: 'Let the hardware decide the algorithm',
-          body: 'Depth estimation on a Raspberry Pi was too slow for real time, so the team moved to edge-density analysis with dense inverse search (see the benchmark).',
+          body: 'Depth estimation on a Raspberry Pi was too slow for real time, so the team moved to edge-density analysis with dense inverse search (the benchmark is in the Technical archive).',
         },
       ],
       validation: [
         'The 4×4 bench array is fully functional: individual LEDs can be addressed, serial frame states drive the output, and transitions ramp as designed.',
       ],
       limitations: [
-        'An earlier 5×5 output concept was dropped. The ~60% wiring reduction once estimated for it is a historical estimate, not a measurement of the current design.',
         'The final device — a 6×4 actuator array — is planned for January–February 2027 and has not been built or validated yet.',
         'This is a student research prototype, not a medical device, and makes no clinical claims.',
+      ],
+      covered: ['contributions'],
+      technical: [
+        'An earlier 5×5 output concept was dropped. The ~60% wiring reduction once estimated for it is a historical estimate, not a measurement of the current design.',
       ],
       future: [
         'Build and test the 6×4 actuator array.',
@@ -92,6 +105,8 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'bmett-acl-rehabilitation',
+    listing: 'case-study',
+    coreTech: ['React', 'TypeScript', 'BLE', 'IMU & magnetometer'],
     inventory: 10,
     title: 'BMETT — ACL Rehabilitation Monitoring Platform',
     summary:
@@ -113,6 +128,11 @@ export const embeddedBiomedicalProjects: Project[] = [
     simulation: { id: 'signal-playground', label: 'Related experiment: filtering a noisy signal' },
     plannedSimulation: 'Synthetic sensor stream compared against a baseline curve — clearly not a diagnosis.',
     caseStudy: {
+      built: [
+        'Built the complete patient and clinician web application.',
+        'Parsed the wearable’s magnetometer and IMU data in the app.',
+        'Built the trend dashboards that compare recovery with baseline ACL performance.',
+      ],
       problem: [
         'ACL recovery takes months, and most of it happens away from the clinic. Patients and clinicians have little visibility into how exercises are going between visits.',
       ],
@@ -121,6 +141,7 @@ export const embeddedBiomedicalProjects: Project[] = [
         'Parsed magnetometer and IMU data from the wearable.',
         'Built trend dashboards that compare measured movement with baseline ACL performance to estimate rehabilitation progress.',
       ],
+      covered: ['contributions'],
       team: ['The wearable sensing (IMU, magnetometer, EMG), BLE firmware and movement-classification model were developed with the wider team.'],
       architecture: {
         caption: 'From the wearable to the dashboard.',
@@ -142,6 +163,8 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'cycle-buddy',
+    listing: 'case-study',
+    coreTech: ['Raspberry Pi', 'TensorFlow Lite', 'OpenCV', 'Haptic & actuator control'],
     inventory: 11,
     title: 'Cycle Buddy — Blind-Spot Detection Helmet',
     summary:
@@ -175,6 +198,8 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'spinealign-posture-feedback',
+    listing: 'case-study',
+    coreTech: ['Raspberry Pi', 'Python', 'IMU (BNO055)', 'Haptic & actuator control'],
     inventory: 12,
     title: 'SpineAlign — Posture & Squat Safety Feedback',
     summary:
@@ -195,6 +220,12 @@ export const embeddedBiomedicalProjects: Project[] = [
     simulation: { id: 'signal-playground', label: 'Related experiment: smoothing a noisy signal' },
     plannedSimulation: 'Sensor threshold and feedback demonstration.',
     caseStudy: {
+      built: [
+        'Wrote the sensing pipeline: IMU pitch and roll, filtered and smoothed.',
+        'Designed user-specific posture thresholds.',
+        'Wrote the control logic for the vibration and mechanical feedback cues.',
+        'Managed the project and contributed to the CAD.',
+      ],
       problem: ['Poor posture during lifts like squats builds up quietly and can lead to injury. A timely physical cue helps the user correct it in the moment.'],
       contributions: [
         'Extracted and filtered pitch and roll from a BNO055 IMU.',
@@ -223,6 +254,7 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'ostoflow',
+    listing: 'archive',
     inventory: 13,
     title: 'Ostoflow — Ostomy Assistance Concept',
     summary: 'A biomedical product concept for ostomy care built around a magnetic case, PTFE tubing and a possible flow clamp.',
@@ -236,6 +268,7 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'hip-implant-design-case',
+    listing: 'archive',
     inventory: 14,
     title: 'Patient-Specific Hip Implant Design Case',
     summary: 'An academic design case sizing a hip-implant stem from measurements for a patient with rheumatoid arthritis.',
@@ -249,6 +282,7 @@ export const embeddedBiomedicalProjects: Project[] = [
   },
   {
     id: 'esp32-led-matrix-driver',
+    listing: 'module',
     inventory: 15,
     title: 'ESP32 4×4 LED Array Driver',
     summary: 'Firmware module that multiplexes a 4×4 LED array from an ESP32 and a PCA9685, driven by serial frame states.',
@@ -269,6 +303,7 @@ export const embeddedBiomedicalProjects: Project[] = [
         'Accepts frame states over serial and ramps each cell between intensities instead of switching abruptly.',
       ],
       validation: ['Verified individual LED addressing, serial-driven states and ramped transitions on the bench.'],
+      covered: ['validation'],
     },
   },
 ];

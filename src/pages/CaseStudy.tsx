@@ -1,200 +1,428 @@
-import type { ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import {
+  caseStudiesByIds,
   categoryLabels,
-  childProjects,
+  coreTechOf,
   getProject,
-  legacyProjectRedirects,
+  hasCaseStudy,
+  moduleAnchor,
+  modulesOf,
   ownershipLabels,
-  projectsByIds,
-  siblingProjects,
   statusLabels,
+  workRedirect,
 } from '../content/projects';
 import { getExperience } from '../content/experience';
-import { isProvided, type Project } from '../content/types';
-import { experiments, stationPath } from '../lab3d/config/stations';
+import { isProvided, type Decision, type Metric, type Project } from '../content/types';
+import { experiments } from '../lab3d/config/stations';
 import { ProjectArt } from '../components/art/ProjectArt';
 import { SystemDiagram } from '../components/SystemDiagram';
-import { Arrow } from '../components/Icons';
+import { Arrow, ArrowLeft } from '../components/Icons';
 import { Reveal } from '../components/Reveal';
-import { EvidenceLinks, MediaGallery, MetricList, TechList, evidenceItems } from '../components/content/Meta';
+import { MediaGallery, MetricList, TechList, evidenceItems } from '../components/content/Meta';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useProjectsReturn } from '../hooks/useProjectsReturn';
 import NotFound from './NotFound';
 
+/** Outcomes shown under Results; anything beyond lives in the record. */
+const MAX_RESULTS = 3;
+/** Id of the one technical disclosure on each page. */
+const TECH_ID = 'technical-details';
+const techSubId = (key: string) => `tech-${key}`;
+
 /**
- * One template for every project. Sections render only when their field is
- * filled in, so a short archive record and a full case study share this page.
+ * One template for every case study: Overview, What I built, How it works,
+ * Results, Explore. Each layout adapts to how much content there is — a
+ * single result, subsystem or resource gets a single intentional treatment,
+ * never the first slot of an empty grid. All low-level detail lives in one
+ * "Explore technical details" disclosure. /work/<slug> for anything without
+ * its own page redirects to where it now lives.
  */
 export default function CaseStudy() {
   const { slug = '' } = useParams();
   const p = getProject(slug);
-  usePageTitle(p?.title ?? 'Page not found', p?.summary);
-  if (!p && legacyProjectRedirects[slug]) return <Navigate to={legacyProjectRedirects[slug]} replace />;
-  if (!p) return <NotFound />;
-  return <ProjectDetail key={p.id} p={p} />;
+  const live = p && hasCaseStudy(p) ? p : undefined;
+  usePageTitle(live?.title ?? 'Page not found', live?.summary);
+  if (!live) {
+    const to = workRedirect(slug);
+    return to ? <Navigate to={to} replace /> : <NotFound />;
+  }
+  return <ProjectDetail key={live.id} p={live} />;
+}
+
+const para = (items?: string[]) => (items?.length ? items.map((t, i) => <p key={i}>{t}</p>) : null);
+const bullets = (items?: string[]) => (items?.length ? <ul className="sec-dash">{items.map((t) => <li key={t}>{t}</li>)}</ul> : null);
+const textLength = (items?: string[]) => (items ?? []).join(' ').length;
+
+/** Below this many words, project-wide technical content is shown directly rather than behind a disclosure. */
+const INLINE_WORDS = 45;
+const words = (items: (string | undefined)[]) => items.join(' ').split(/\s+/).filter(Boolean).length;
+
+const isCovered = (cs: { covered?: string[] }, field: 'contributions' | 'validation' | 'limitations') => !!cs.covered?.includes(field);
+
+/** Numbered ownership list: one column up to three items, two balanced columns from four. */
+function Points({ items }: { items: string[] }) {
+  return (
+    <ol className={`case-points ${items.length >= 4 ? 'is-split' : ''}`}>
+      {items.map((t, i) => (
+        <li key={t}><span className="case-points-n mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></li>
+      ))}
+    </ol>
+  );
+}
+
+function Decisions({ items }: { items: Decision[] }) {
+  return (
+    <dl className="case-dl">
+      {items.map((d) => (
+        <div key={d.title}>
+          <dt>{d.title}</dt>
+          <dd>{d.body}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+type Part = { key: string; title: string; body: ReactNode };
+
+/**
+ * Project-wide technical content (anything not owned by a subsystem card).
+ * Substantial content sits behind one disclosure; a little is shown inline.
+ */
+function TechnicalDetails({ parts, inline }: { parts: Part[]; inline?: boolean }) {
+  const shown = parts.filter((x) => x.body);
+  if (!shown.length) return null;
+  if (inline) {
+    return (
+      <div className="case-tech-inline">
+        {shown.map((x) => (
+          <div key={x.key} className="case-tech-sub">
+            <h3 className="case-subh mono">{x.title}</h3>
+            {x.body}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <details id={TECH_ID} className="disclose case-disclose">
+      <summary className="disclose-summary">
+        Explore technical details
+        <span className="case-disclose-hint mono">{shown.map((x) => x.title).join(' · ')}</span>
+      </summary>
+      <div className="case-breakdown">
+        {shown.map((x) => (
+          <section key={x.key} id={techSubId(x.key)} className="case-tech-sub" aria-labelledby={`${techSubId(x.key)}-h`}>
+            <h3 id={`${techSubId(x.key)}-h`} className="case-subh mono">{x.title}</h3>
+            {x.body}
+          </section>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+interface Resource {
+  key: string;
+  kind: string;
+  title: string;
+  text?: string;
+  cta: string;
+  href: string;
+  external?: boolean;
+}
+
+/** Explore entries; the layout follows the count (one row, a pair, or a grid). */
+function Resources({ items }: { items: Resource[] }) {
+  const layout = items.length === 1 ? 'is-one' : items.length === 2 ? 'is-two' : 'is-many';
+  return (
+    <ul className={`case-res ${layout}`}>
+      {items.map((r) => {
+        const body = (
+          <>
+            <span className="case-res-kind mono">{r.kind}</span>
+            <span className="case-res-title">{r.title}</span>
+            {r.text && <span className="case-res-text">{r.text}</span>}
+            <span className="case-res-cta">{r.cta} {r.external ? <span aria-hidden="true">↗</span> : <Arrow />}</span>
+          </>
+        );
+        return (
+          <li key={r.key}>
+            {r.external
+              ? <a href={r.href} className="case-res-link" target="_blank" rel="noreferrer">{body}</a>
+              : <Link to={r.href} className="case-res-link">{body}</Link>}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 function ProjectDetail({ p }: { p: Project }) {
   const cs = p.caseStudy ?? {};
-  const { prev, next } = siblingProjects(p);
-  const parent = p.parent ? getProject(p.parent) : undefined;
-  const children = childProjects(p.id);
-  const related = projectsByIds(p.related).filter((r) => r.id !== parent?.id);
+  const back = useProjectsReturn();
+  const modules = modulesOf(p.id);
+  const related = caseStudiesByIds(p.related).filter((r) => r.id !== p.id);
   const roles = (p.experience ?? []).map(getExperience).filter((e) => !!e);
   const sim = p.simulation ? experiments.find((e) => e.id === p.simulation!.id) : undefined;
-  const hasEvidence = evidenceItems(p.evidence).length > 0;
+  const core = coreTechOf(p).slice(0, 4);
+  const outcomes: Metric[] = (p.metrics ?? []).filter((m) => !m.detail).slice(0, MAX_RESULTS);
+  const parameters: Metric[] = (p.metrics ?? []).filter((m) => m.detail);
+  // With a short `built` list, the full contribution detail moves into the technical details.
+  const summarized = !!cs.built?.length;
+  // Shown in the disclosure only when it adds detail not already on the page.
+  const showContributionDetail = summarized && !isCovered(cs, 'contributions') && !!(p.ownershipNote || cs.contributions?.length);
+  // Decisions and parameters tagged with a subsystem live in that subsystem's card.
+  const moduleIds = new Set(modules.map((m) => m.id));
+  const ownedBy = (s?: string) => !!s && moduleIds.has(s);
+  const projectDecisions = (cs.decisions ?? []).filter((d) => !ownedBy(d.subsystem));
+  const projectParameters = parameters.filter((m) => !ownedBy(m.subsystem));
+  const moduleTech = new Set(modules.flatMap((m) => m.tech));
+  const extraTech = p.tech.filter((t) => !core.includes(t) && !moduleTech.has(t));
+  const projectWords = words([
+    ...(showContributionDetail ? [p.ownershipNote, ...(cs.contributions ?? [])] : []),
+    ...projectDecisions.flatMap((d) => [d.title, d.body]),
+    ...(cs.technical ?? []),
+    ...projectParameters.flatMap((m) => [m.value, m.label]),
+  ]);
+  const evidence = [...(cs.validation ?? []), ...(cs.outcomes ?? [])];
+  // Planned work alone is not a result: it then closes How it works instead.
+  const hasResults = outcomes.length > 0 || evidence.length > 0 || !!cs.limitations?.length;
+  const [overview, ...context] = cs.problem ?? [];
+  const heroImage = p.media?.find((m) => m.kind === 'image');
 
   const meta: [string, string | undefined][] = [
     ['Context', p.context],
-    ['Dates', isProvided(p.dates) ? p.dates : undefined],
-    ['Category', categoryLabels[p.category]],
-    ['Status', statusLabels[p.status]],
     ['Role', p.ownership ? ownershipLabels[p.ownership] : undefined],
+    ['Status', statusLabels[p.status]],
+    ['Dates', isProvided(p.dates) ? p.dates : undefined],
   ];
 
-  // Build the numbered sections from whatever is filled in.
-  const sections: { title: string; wide?: boolean; body: ReactNode }[] = [];
-  const para = (items?: string[]) => items?.length ? items.map((t, i) => <p key={i}>{t}</p>) : null;
-  const bullets = (items?: string[]) => items?.length ? <ul className="sec-dash">{items.map((t) => <li key={t}>{t}</li>)}</ul> : null;
-  const add = (title: string, body: ReactNode, wide?: boolean) => { if (body) sections.push({ title, body, wide }); };
+  const sections: { id: string; title: string; body: ReactNode }[] = [];
+  const add = (id: string, title: string, parts: ReactNode[]) => {
+    const body = parts.filter(Boolean);
+    if (body.length) sections.push({ id, title, body: <>{body}</> });
+  };
 
-  add('The problem', para(cs.problem));
-  add('What I built', bullets(cs.contributions));
-  add('Team contributions', para(cs.team));
-  if (cs.architecture) add('Architecture', <SystemDiagram nodes={cs.architecture.nodes} caption={cs.architecture.caption} />, true);
-  add('Implementation', para(cs.implementation));
-  if (cs.decisions?.length) {
-    add('Design decisions', (
-      <div className="decisions">
-        {cs.decisions.map((d) => (
-          <div key={d.title} className="decision">
-            <h3 className="h-sub">{d.title}</h3>
-            <p className="secondary">{d.body}</p>
-          </div>
+  /* ---------- Overview ---------- */
+  add('overview', 'Overview', [overview && <p key="o" className="case-intro">{overview}</p>]);
+
+  /* ---------- What I built ---------- */
+  const mine = summarized ? cs.built! : cs.contributions ?? [];
+  add('built', 'What I built', [
+    !summarized && p.ownershipNote && <p key="own" className="case-text">{p.ownershipNote}</p>,
+    mine.length > 0 && <Points key="pts" items={mine} />,
+    cs.team?.length ? (
+      <aside key="team" className="case-team" aria-label="Team context">
+        <p className="case-subh mono">Team context</p>
+        {para(cs.team)}
+      </aside>
+    ) : null,
+  ]);
+
+  /* ---------- How it works ---------- */
+  const singleModule = modules.length === 1;
+  const projectParts: Part[] = [
+    { key: 'implementation', title: 'Implementation', body: showContributionDetail ? (
+      <div className="case-text">{p.ownershipNote && <p>{p.ownershipNote}</p>}{bullets(cs.contributions)}</div>
+    ) : null },
+    { key: 'decisions', title: modules.length ? 'System design decisions' : 'Design decisions', body: (projectDecisions.length || cs.technical?.length) ? (
+      <>
+        {projectDecisions.length ? <Decisions items={projectDecisions} /> : null}
+        {cs.technical?.length ? <div className="case-text">{bullets(cs.technical)}</div> : null}
+      </>
+    ) : null },
+    { key: 'parameters', title: 'Parameters', body: projectParameters.length ? <MetricList metrics={projectParameters} compact /> : null },
+    { key: 'stack', title: 'Additional technologies', body: extraTech.length ? <TechList tech={extraTech} label="Additional technologies" /> : null },
+  ];
+  add('how', 'How it works', [
+    context.length ? <div key="ctx" className="case-text">{para(context)}</div> : null,
+    cs.architecture && <SystemDiagram key="arch" nodes={cs.architecture.nodes} caption={cs.architecture.caption} />,
+    cs.implementation?.length ? <div key="impl" className="case-text">{para(cs.implementation)}</div> : null,
+    cs.challenges?.length ? (
+      <div key="ch" className="case-text">
+        <p className="case-subh mono">Challenges</p>
+        {para(cs.challenges)}
+      </div>
+    ) : null,
+    modules.length > 0 && (
+      <div key="mods" className={`case-modules ${modules.length === 1 ? 'is-one' : modules.length === 2 ? 'is-two' : 'is-many'}`}>
+        {modules.map((m) => (
+          <ModuleCard
+            key={m.id}
+            m={m}
+            parentSim={p.simulation?.id}
+            decisions={(cs.decisions ?? []).filter((d) => d.subsystem === m.id)}
+            parameters={parameters.filter((x) => x.subsystem === m.id)}
+            extra={singleModule ? projectParts : []}
+          />
         ))}
       </div>
-    ), true);
-  }
-  add('Engineering challenges', para(cs.challenges));
-  add('Testing & validation', para(cs.validation));
-  add('Outcomes', para(cs.outcomes));
-  add('Limitations', bullets(cs.limitations));
-  add('Next steps', bullets(cs.future));
-  if (p.media?.length) add('Media', <MediaGallery media={p.media} />, true);
+    ),
+    !hasResults && cs.future?.length ? (
+      <div key="next" className="case-text">
+        <p className="case-subh mono">Next steps</p>
+        {bullets(cs.future)}
+      </div>
+    ) : null,
+    // With exactly one subsystem card, project-wide details live inside that card's dropdown.
+    !singleModule && <TechnicalDetails key="tech" inline={projectWords <= INLINE_WORDS} parts={projectParts} />,
+  ]);
+
+  /* ---------- Results ---------- */
+  const balanced = !!cs.limitations?.length && !!cs.future?.length
+    && Math.max(textLength(cs.limitations), textLength(cs.future)) <= 2.2 * Math.min(textLength(cs.limitations), textLength(cs.future));
+  add('results', 'Results', [
+    outcomes.length === 1 ? (
+      <div key="one" className="case-outcome">
+        <p className="case-outcome-head"><span className="case-outcome-value">{outcomes[0].value}</span> <span className="case-outcome-label">{outcomes[0].label}</span></p>
+        {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
+      </div>
+    ) : (outcomes.length > 1 || evidence.length > 0) && (
+      <div key="many" className="case-results">
+        {outcomes.length > 1 && <MetricList metrics={outcomes} />}
+        {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
+      </div>
+    ),
+    hasResults && (cs.limitations?.length || cs.future?.length) ? (
+      <div key="lf" className={`case-pair ${balanced ? 'is-split' : ''}`}>
+        {cs.limitations?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Limitations</h3>{bullets(cs.limitations)}</div> : null}
+        {cs.future?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Next steps</h3>{bullets(cs.future)}</div> : null}
+      </div>
+    ) : null,
+  ]);
+
+  /* ---------- Explore ---------- */
+  const resources: Resource[] = [
+    ...(sim && p.simulation ? [{ key: 'sim', kind: 'Interactive experiment', title: sim.title, text: sim.blurb, cta: p.simulation.label, href: sim.route }] : []),
+    ...evidenceItems(p.evidence).map((e) => ({ key: e.href, kind: 'Project evidence', title: e.label, cta: 'Open', href: e.href, external: !e.href.startsWith('/') })),
+    ...roles.map((e) => ({
+      key: `exp-${e!.id}`,
+      kind: 'Related experience',
+      title: e!.title,
+      text: isProvided(e!.org) ? e!.org : undefined,
+      cta: 'Read about the role',
+      href: `/experience/${e!.id}`,
+    })),
+  ];
+  add('explore', 'Explore', [
+    resources.length > 0 && <Resources key="res" items={resources} />,
+    p.media?.length ? <MediaGallery key="media" media={p.media} /> : null,
+  ]);
 
   return (
-    <article className="page case">
+    <article className="page case case-study">
       <div className="container">
-        <nav aria-label="Breadcrumb" className="crumbs mono">
-          <ol>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to={stationPath('projects')}>Projects</Link></li>
-            <li><Link to={`${stationPath('projects')}?category=${p.category}#archive`}>{categoryLabels[p.category]}</Link></li>
-            <li aria-current="page">{p.title.split(' — ')[0]}</li>
-          </ol>
-        </nav>
+        <Link to={back.to} state={back.state} className="case-back">
+          <ArrowLeft /> All Projects
+        </Link>
 
-        <header className="case-hero">
+        <header className={`case-hero ${heroImage || p.art ? 'has-media' : ''}`}>
           <div className="case-hero-copy">
-            <p className="eyebrow">{parent ? <>Part of <Link to={`/work/${parent.id}`} className="inline-link">{parent.title.split(' — ')[0]}</Link></> : 'Case study'}</p>
+            <p className="eyebrow">{categoryLabels[p.category]}</p>
             <h1 className="h-section">{p.title}</h1>
             <p className="lead">{p.summary}</p>
-            {(sim || hasEvidence) && (
-              <div className="case-actions">
-                {sim && p.simulation && <Link to={sim.route} className="btn btn-primary">{p.simulation.label} <Arrow /></Link>}
-                <EvidenceLinks evidence={p.evidence} className="case-evidence" />
-              </div>
-            )}
+            {core.length > 0 && <TechList tech={core} label="Core technologies" />}
+            <dl className="case-meta">
+              {meta.filter(([, v]) => v).map(([k, v]) => (
+                <div key={k}><dt className="mono">{k}</dt><dd>{v}</dd></div>
+              ))}
+            </dl>
           </div>
-          <dl className="case-meta glass">
-            {meta.filter(([, v]) => v).map(([k, v]) => (
-              <div key={k}><dt className="mono muted">{k}</dt><dd>{v}</dd></div>
-            ))}
-          </dl>
+          {heroImage ? (
+            <figure className="case-hero-media">
+              <img src={heroImage.src} alt={heroImage.alt} decoding="async" />
+            </figure>
+          ) : p.art ? (
+            <div className="case-hero-media case-art">
+              <ProjectArt art={p.art} />
+              <span className="concept-badge project-art-badge">Illustration</span>
+            </div>
+          ) : null}
         </header>
-
-        {p.ownershipNote && <p className="case-own"><span className="mono">My part</span>{p.ownershipNote}</p>}
-        {p.restricted && (
-          <p className="note case-note">
-            <b>Employer work.</b> The description and figures here are approved for public discussion. Code, internal screenshots, reports and data are not shared.
-          </p>
-        )}
-
-        {p.art && (
-          <div className="case-art">
-            <ProjectArt art={p.art} />
-            <span className="concept-badge project-art-badge">Illustration — not a screenshot</span>
-          </div>
-        )}
-
-        {(p.metrics?.length || (!p.metrics?.length && p.highlights?.length)) ? (
-          <div className="case-facts">
-            {p.metrics?.length ? <MetricList metrics={p.metrics} /> : (
-              <ul className="feat-highlights">{p.highlights!.map((h) => <li key={h}>{h}</li>)}</ul>
-            )}
-          </div>
-        ) : null}
-
-        {p.tech.length > 0 && (
-          <div className="case-tech">
-            <p className="mono muted case-tech-label">Technologies</p>
-            <TechList tech={p.tech} />
-          </div>
-        )}
 
         {sections.length > 0 && (
           <div className="case-body">
-            {sections.map((s, i) => (
-              <Reveal key={s.title} as="section" className={`case-section ${s.wide ? 'case-wide' : ''}`}>
-                <h2 className="case-h"><span className="mono muted">{String(i + 1).padStart(2, '0')}</span> {s.title}</h2>
-                {s.wide ? s.body : <div className="prose">{s.body}</div>}
+            {sections.map((s) => (
+              <Reveal key={s.id} as="section" id={`cs-${s.id}-sec`} className={`case-section case-${s.id}`} aria-labelledby={`cs-${s.id}`}>
+                <h2 id={`cs-${s.id}`} className="case-h">{s.title}</h2>
+                <div className="case-stack">{s.body}</div>
               </Reveal>
             ))}
           </div>
         )}
 
-        {(roles.length > 0 || children.length > 0 || related.length > 0) && (
-          <aside className="case-related" aria-label="Related work">
-            {roles.length > 0 && (
-              <div>
-                <h2 className="sec-subhead mono">Experience</h2>
-                <ul className="rel-list">
-                  {roles.map((e) => (
-                    <li key={e!.id}><Link to={`/experience/${e!.id}`} className="rel-link"><span>{e!.title}</span><span className="muted">{isProvided(e!.org) ? e!.org : ''}</span><Arrow /></Link></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {children.length > 0 && (
-              <div>
-                <h2 className="sec-subhead mono">Modules</h2>
-                <ul className="rel-list">
-                  {children.map((c) => <li key={c.id}><Link to={`/work/${c.id}`} className="rel-link"><span>{c.title}</span><span className="muted">{statusLabels[c.status]}</span><Arrow /></Link></li>)}
-                </ul>
-              </div>
-            )}
-            {related.length > 0 && (
-              <div>
-                <h2 className="sec-subhead mono">Related projects</h2>
-                <ul className="rel-list">
-                  {related.map((r) => <li key={r.id}><Link to={`/work/${r.id}`} className="rel-link"><span>{r.title}</span><span className="muted">{categoryLabels[r.category]}</span><Arrow /></Link></li>)}
-                </ul>
-              </div>
-            )}
+        {related.length > 0 && (
+          <aside className="case-related" aria-labelledby="cs-related">
+            <h2 id="cs-related" className="sec-subhead mono">Related projects</h2>
+            <ul className="rel-list">
+              {related.map((r) => <li key={r.id}><Link to={`/work/${r.id}`} state={back.carry} className="rel-link"><span>{r.title}</span><span className="muted">{categoryLabels[r.category]}</span><Arrow /></Link></li>)}
+            </ul>
           </aside>
         )}
 
-        <nav className="case-next" aria-label="More projects">
-          <Link to={`/work/${prev.id}`} className="case-next-link is-left">
-            <span className="mono muted">← Previous in {categoryLabels[p.category]}</span>
-            <span className="h-sub">{prev.title.split(' — ')[0]}</span>
-          </Link>
-          <Link to={`/work/${next.id}`} className="case-next-link">
-            <span className="mono muted">Next →</span>
-            <span className="h-sub">{next.title.split(' — ')[0]} <Arrow /></span>
+        <nav className="case-next" aria-label="Back to projects">
+          <Link to={back.to} state={back.state} className="case-back case-back-end">
+            <ArrowLeft /> All Projects
           </Link>
         </nav>
       </div>
     </article>
+  );
+}
+
+/**
+ * A subsystem (consolidated module) that expands inside its own card. Holds
+ * everything technical that belongs to it: implementation, the parent's
+ * decisions and parameters tagged with its id, testing and its stack.
+ * Each card keeps its own open state; there is no link to anything elsewhere.
+ */
+function ModuleCard({ m, parentSim, decisions, parameters, extra }: { m: Project; parentSim?: string; decisions: Decision[]; parameters: Metric[]; extra: Part[] }) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
+  const cs = m.caseStudy ?? {};
+  const sim = m.simulation && m.simulation.id !== parentSim ? experiments.find((e) => e.id === m.simulation!.id) : undefined;
+  const parts: Part[] = [
+    { key: 'impl', title: cs.implementation?.length ? 'Implementation' : 'Context', body: (cs.problem?.length || cs.implementation?.length) ? <div className="case-text">{para(cs.problem)}{para(cs.implementation)}</div> : null },
+    { key: 'spec', title: 'Specifications', body: parameters.length ? <MetricList metrics={parameters} compact /> : null },
+    { key: 'dec', title: 'Design decisions', body: decisions.length ? <Decisions items={decisions} /> : null },
+    { key: 'test', title: 'Testing', body: cs.validation?.length && !isCovered(cs, 'validation') ? <div className="case-text">{para(cs.validation)}</div> : null },
+    { key: 'lim', title: 'Limitations', body: cs.limitations?.length && !isCovered(cs, 'limitations') ? <div className="case-text">{bullets(cs.limitations)}</div> : null },
+    { key: 'tech', title: 'Technologies', body: m.tech.length ? <TechList tech={m.tech} /> : null },
+    // Project-wide details, moved in unchanged when this is the page's only subsystem.
+    ...extra.map((x) => ({ ...x, key: `project-${x.key}` })),
+  ].filter((x) => x.body);
+  return (
+    <section id={moduleAnchor(m.id)} className={`case-module ${open ? 'is-open' : ''}`} aria-labelledby={`${moduleAnchor(m.id)}-t`} tabIndex={-1}>
+      <div className="case-module-head">
+        <p className="case-module-kicker mono">Key subsystem{m.ownership ? ` · ${ownershipLabels[m.ownership]}` : ''}</p>
+        <h3 id={`${moduleAnchor(m.id)}-t`} className="case-module-title">{m.title}</h3>
+      </div>
+      <div className="case-module-body">
+        <p>{m.summary}</p>
+        <p className="case-module-links">
+          {parts.length > 0 && (
+            <button type="button" className="text-link case-module-toggle" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen((v) => !v)}>
+              {open ? 'Hide implementation details' : 'Explore implementation details'}
+              <span className="case-chevron" aria-hidden="true" />
+            </button>
+          )}
+          {sim && m.simulation && <Link to={sim.route} className="text-link">{m.simulation.label} <Arrow /></Link>}
+        </p>
+      </div>
+      {parts.length > 0 && (
+        <div id={panelId} className="case-module-panel" role="region" aria-label={`${m.title}: implementation details`}>
+          <div className="case-module-panel-inner">
+            {parts.map((x) => (
+              <div key={x.key} className="case-module-part">
+                <h4 className="case-subh mono">{x.title}</h4>
+                {x.body}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }

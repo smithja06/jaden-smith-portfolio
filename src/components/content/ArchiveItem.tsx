@@ -1,27 +1,50 @@
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import type { Project } from '../../content/types';
-import { statusLabels } from '../../content/projects';
-import { featuredProjectIds } from '../../content/featured';
-import { Arrow } from '../Icons';
+import { archiveAnchor, statusLabels } from '../../content/projects';
+import { EvidenceLinks, TechList } from './Meta';
 
-/** Compact archive row: title, context, one line, status. The whole row is the link. */
-export function ArchiveItem({ project: p, headingLevel: H = 'h4' }: { project: Project; headingLevel?: 'h3' | 'h4' | 'h5' }) {
+/**
+ * Compact, expandable Technical-archive row. Closed: title, one line and
+ * context. Open: the record's details and any evidence. Archive projects have
+ * no page of their own; links to them land here (#archive-<id>) and open it.
+ */
+export function ArchiveRow({ project: p }: { project: Project }) {
+  const { hash } = useLocation();
+  const anchor = archiveAnchor(p.id);
+  const cs = p.caseStudy ?? {};
+  const paras = [...(cs.problem ?? []), ...(cs.implementation ?? []), ...(cs.validation ?? []), ...(cs.outcomes ?? [])];
+  const notes = [...(cs.decisions ?? []).map((d) => `${d.title}: ${d.body}`), ...(cs.limitations ?? [])];
+  const hasDetail = paras.length > 0 || notes.length > 0 || p.tech.length > 0;
+
+  const head = (
+    <>
+      <span className="arch-main">
+        <span className="arch-title">{p.title}</span>
+        <span className="arch-sum">{p.summary}</span>
+      </span>
+      <span className="arch-side">
+        <span className="arch-status mono">{statusLabels[p.status]}</span>
+        <span className="arch-context">{p.context}</span>
+      </span>
+    </>
+  );
+
   return (
-    <li className="arch-item">
-      <Link to={`/work/${p.id}`} className="arch-link">
-        <div className="arch-main">
-          <H className="arch-title">
-            {p.title}
-            {featuredProjectIds.has(p.id) && <span className="arch-star mono" title="Featured project">Featured</span>}
-          </H>
-          <span className="arch-sum">{p.summary}</span>
-        </div>
-        <span className="arch-side">
-          <span className="arch-status mono">{statusLabels[p.status]}</span>
-          <span className="arch-context">{p.context}</span>
-        </span>
-        <Arrow />
-      </Link>
+    <li id={anchor} className="arch-item" tabIndex={-1}>
+      {hasDetail ? (
+        // Sharing a `name` makes the rows an exclusive accordion: opening one closes the others.
+        <details className="arch-row" name="archive" open={hash === `#${anchor}` || undefined}>
+          <summary className="arch-link arch-summary">{head}<span className="arch-toggle" aria-hidden="true" /></summary>
+          <div className="arch-detail">
+            {paras.map((t) => <p key={t}>{t}</p>)}
+            {notes.length > 0 && <ul className="sec-dash">{notes.map((t) => <li key={t}>{t}</li>)}</ul>}
+            <TechList tech={p.tech} />
+            <EvidenceLinks evidence={p.evidence} className="case-evidence" />
+          </div>
+        </details>
+      ) : (
+        <div className="arch-link">{head}</div>
+      )}
     </li>
   );
 }

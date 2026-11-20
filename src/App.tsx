@@ -17,8 +17,8 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/work', element: <Navigate to="/lab/projects#archive" replace /> },
-      { path: '/projects', element: <Navigate to="/lab/projects#archive" replace /> },
+      { path: '/work', element: <Navigate to="/lab/projects" replace /> },
+      { path: '/projects', element: <Navigate to="/lab/projects" replace /> },
       { path: '/experience', element: <Navigate to="/lab/experience" replace /> },
       { path: '/experience/:id', element: <ExperienceDetail /> },
       { path: '/work/:slug', element: <CaseStudy /> },

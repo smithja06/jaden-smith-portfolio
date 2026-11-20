@@ -1,16 +1,56 @@
-import { Suspense, useEffect, useRef } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Suspense, useEffect, useLayoutEffect, useRef } from 'react';
+import { Link, Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { Nav } from './Nav';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
+import { recallScroll, rememberScroll, type ScrollRestoreState } from '../hooks/scrollMemory';
 
-/** Resets scroll and focus on route change; scrolls to #hash targets when present. */
+/** Scrolls to `y` once the page is tall enough (lazy content may still be arriving). */
+function scrollWhenReady(y: number): () => void {
+  let tries = 0;
+  let raf = 0;
+  const tick = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (max >= y - 1 || tries++ > 60) window.scrollTo(0, Math.min(y, Math.max(0, max)));
+    else raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(raf);
+}
+
+/**
+ * Scroll and focus on route change: #hash targets are scrolled into view;
+ * back / forward and links carrying `restoreScroll` return to the remembered
+ * position; everything else starts at the top.
+ */
 function useRouteFocus() {
-  const { pathname, hash } = useLocation();
+  const location = useLocation();
+  const { pathname, hash, key } = location;
+  const navType = useNavigationType();
   const mainRef = useRef<HTMLElement>(null);
   const first = useRef(true);
+  const keyRef = useRef(key);
+  const pathRef = useRef(pathname);
+
+  // Remember where each history entry was scrolled to.
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    const onScroll = () => rememberScroll(keyRef.current, window.scrollY);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useLayoutEffect(() => {
+    // Same page, new entry (e.g. a search updating the query string): keep the position.
+    const samePage = pathRef.current === pathname;
+    keyRef.current = key;
+    pathRef.current = pathname;
+    if (samePage) rememberScroll(key, window.scrollY);
+  }, [key, pathname]);
 
   useEffect(() => {
+    const requested = (location.state as ScrollRestoreState | null)?.restoreScroll;
+    const restore = typeof requested === 'number' ? requested : navType === 'POP' ? recallScroll(key) : undefined;
     if (hash) {
       // Wait a frame so the target exists after a route change.
       const id = decodeURIComponent(hash.slice(1));
@@ -25,9 +65,15 @@ function useRouteFocus() {
       requestAnimationFrame(tick);
       return;
     }
-    window.scrollTo(0, 0);
-    if (first.current) { first.current = false; return; }
-    mainRef.current?.focus({ preventScroll: true });
+    const wasFirst = first.current;
+    first.current = false;
+    let cancel: (() => void) | undefined;
+    if (restore !== undefined && restore > 0) cancel = scrollWhenReady(restore);
+    else window.scrollTo(0, 0);
+    if (!wasFirst) mainRef.current?.focus({ preventScroll: true });
+    return cancel;
+    // Runs per page (path or hash), not per query-string change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, hash]);
 
   return mainRef;
