@@ -107,13 +107,19 @@ function SchoolBlock({ id, secondary }: { id: string; secondary?: boolean }) {
 
 function AwardsList() {
   const received = awards.filter((a) => a.kind === 'received');
+  // Split by school so high-school awards aren't read as university ones.
+  const university = received.filter((a) => a.school === 'mcmaster');
+  const highSchool = received.filter((a) => a.school === 'cathedral');
+  const item = (a: (typeof awards)[number]) => <li key={a.title}>{a.title}{a.detail && <span className="muted"> · {a.detail}</span>}</li>;
   const candidate = awards.filter((a) => a.kind === 'candidate');
   const certs = awards.filter((a) => a.kind === 'certification');
   return (
     <div className="awards">
-      <section aria-labelledby="awards-received">
-        <h3 id="awards-received" className="awards-title mono">Awards received</h3>
-        <ul className="sec-dash">{received.map((a) => <li key={a.title}>{a.title}{a.detail && <span className="muted"> · {a.detail}</span>}</li>)}</ul>
+      <section aria-labelledby="awards-university">
+        <h3 id="awards-university" className="awards-title mono">University · McMaster</h3>
+        <ul className="sec-dash">{university.map(item)}</ul>
+        <h3 id="awards-high-school" className="awards-title mono">High school · Cathedral High School</h3>
+        <ul className="sec-dash">{highSchool.map(item)}</ul>
       </section>
       <section aria-labelledby="awards-candidate">
         <h3 id="awards-candidate" className="awards-title mono">Scholarship candidacies</h3>

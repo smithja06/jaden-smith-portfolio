@@ -55,6 +55,7 @@ export interface Award {
 
 export const awards: Award[] = [
   { title: 'McMaster Award of Excellence', school: 'mcmaster', kind: 'received' },
+  { title: 'Dean’s Honour List', detail: '2 times', school: 'mcmaster', kind: 'received' },
   { title: 'Director’s Award of Excellence', detail: '4 times', school: 'cathedral', kind: 'received' },
   { title: 'Certificate of Distinction', school: 'cathedral', kind: 'received' },
   { title: 'St. Albertus Magnus Science Award', school: 'cathedral', kind: 'received' },

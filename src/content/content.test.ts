@@ -297,6 +297,14 @@ describe('skills', () => {
 });
 
 describe('education & contact', () => {
+  it('separates university awards from high-school ones', () => {
+    const at = (school: string) => awards.filter((a) => a.kind === 'received' && a.school === school).map((a) => a.title);
+    expect(at('mcmaster')).toEqual(['McMaster Award of Excellence', 'Dean’s Honour List']);
+    for (const t of ['Director’s Award of Excellence', 'Certificate of Distinction', 'St. Albertus Magnus Science Award', 'Carl & Rose Rocky Memorial Award', 'FIRST Robotics Award']) {
+      expect(at('cathedral')).toContain(t);
+    }
+  });
+
   it('distinguishes scholarship candidacies from awards', () => {
     const loran = awards.find((a) => a.title.startsWith('Loran'));
     expect(loran?.kind).toBe('candidate');
