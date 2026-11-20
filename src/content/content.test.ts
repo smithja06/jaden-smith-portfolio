@@ -3,7 +3,7 @@ import {
   projects, getProject, categoryOrder, publicProjects, caseStudyProjects, searchProjects,
   workRedirect, modulesOf, caseStudiesByIds, projectHref, coreTechOf,
 } from './projects';
-import { experience, getExperience } from './experience';
+import { EXPERIENCE_HUB, experience, experienceHref, getExperience, hasExperiencePage, roleAnchor } from './experience';
 import { awards, coursework, schools } from './education';
 import { allSkills } from './skills';
 import { featuredCards, featuredRefs, homepageCards, homepageExperienceIds } from './featured';
@@ -224,6 +224,31 @@ describe('experience', () => {
 
   it('lists all seven RBC initiatives', () => {
     expect(getExperience('rbc')?.initiatives).toHaveLength(7);
+  });
+
+  it('gives each primary role its own page, and sends everything else somewhere real', () => {
+    for (const id of ['rbc', 'med-t', 'bmett', 'swift-coop']) {
+      expect(hasExperiencePage(getExperience(id)!), id).toBe(true);
+      expect(experienceHref(getExperience(id)!)).toBe(`/experience/${id}`);
+    }
+    // Leadership entries that extend a role go to that role's page.
+    expect(experienceHref(getExperience('med-t-leadership')!)).toBe('/experience/med-t');
+    expect(experienceHref(getExperience('bmett-team')!)).toBe('/experience/bmett');
+    // Short entries go to their row on the hub.
+    for (const id of ['first-robotics', 'gael-guides', 'medsprint', 'mongodb-hackathon', 'hgcc']) {
+      expect(experienceHref(getExperience(id)!)).toBe(`${EXPERIENCE_HUB}#${roleAnchor(id)}`);
+    }
+  });
+
+  it('keeps MED-T leadership duties on the MED-T role page', () => {
+    expect(getExperience('med-t')?.leadership).toEqual(getExperience('med-t-leadership')?.contributions);
+  });
+
+  it('keeps hub badges to a short subset of each role’s technologies', () => {
+    for (const e of experience.filter((x) => x.coreTech)) {
+      expect(e.coreTech!.length, e.id).toBeLessThanOrEqual(4);
+      for (const t of e.coreTech!) expect(e.tech, `${e.id}: ${t}`).toContain(t);
+    }
   });
 });
 

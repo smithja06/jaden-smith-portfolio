@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { StationId } from '../../lab3d/config/stations';
 import { getProject, isPublicProject, projectHref } from '../../content/projects';
-import { experience, experienceGroupLabels, experienceGroupOrder, experienceInGroup, getExperience } from '../../content/experience';
+import { experience, experienceGroupLabels, experienceGroupOrder, experienceHref, experienceInGroup, getExperience } from '../../content/experience';
 import { awards, coursework, schools } from '../../content/education';
 import { site } from '../../content/site';
 import { isProvided, type ExperienceGroup } from '../../content/types';
@@ -11,6 +10,7 @@ import { ExperienceItem, ExperienceRow } from '../content/ExperienceItem';
 import { ProjectsHub } from '../content/ProjectsHub';
 import { SkillExplorer } from '../content/SkillExplorer';
 import { MetricList } from '../content/Meta';
+import { useHubLinkState } from '../../hooks/useProjectsReturn';
 
 /**
  * Full-section bodies for the Lab pages (/lab/<station>). The homepage has
@@ -25,7 +25,12 @@ export interface SectionProps {
 type ExpFilter = 'all' | ExperienceGroup;
 
 export function ExperienceSection() {
-  const [filter, setFilter] = useState<ExpFilter>('all');
+  // The filter lives in the URL (?group=…) so "All Experience" on a role page can restore it.
+  const [params, setParams] = useSearchParams();
+  const raw = params.get('group');
+  const filter: ExpFilter = experienceGroupOrder.includes(raw as ExperienceGroup) ? (raw as ExperienceGroup) : 'all';
+  const setFilter = (f: ExpFilter) => setParams(f === 'all' ? {} : { group: f }, { replace: true });
+  const linkState = useHubLinkState();
   const groups = experienceGroupOrder.filter((g) => filter === 'all' || filter === g);
   const opts: { id: ExpFilter; label: string }[] = [
     { id: 'all', label: 'All' },
@@ -48,11 +53,11 @@ export function ExperienceSection() {
           <h2 id={`exp-${g}`} className="sec-subhead mono">{experienceGroupLabels[g]}</h2>
           {g === 'technical' ? (
             <div className="sec-roles">
-              {experienceInGroup(g).map((e) => <ExperienceItem key={e.id} entry={e} />)}
+              {experienceInGroup(g).map((e) => <ExperienceItem key={e.id} entry={e} linkState={linkState} />)}
             </div>
           ) : (
             <ol className="exp-rows">
-              {experienceInGroup(g).map((e) => <ExperienceRow key={e.id} entry={e} />)}
+              {experienceInGroup(g).map((e) => <ExperienceRow key={e.id} entry={e} linkState={linkState} />)}
             </ol>
           )}
         </section>
@@ -99,7 +104,7 @@ function SchoolBlock({ id, secondary }: { id: string; secondary?: boolean }) {
           {projectsHere.length > 0 && <span className="mono muted">Design work</span>}
           {projectsHere.map((p) => <Link key={p!.id} to={projectHref(p!)} className="inline-link">{p!.title.split(' — ')[0]}</Link>)}
           {teams.length > 0 && <span className="mono muted">Teams</span>}
-          {teams.map((t) => <Link key={t!.id} to={`/experience/${t!.id}`} className="inline-link">{isProvided(t!.org) ? t!.org : t!.title}</Link>)}
+          {teams.map((t) => <Link key={t!.id} to={experienceHref(t!)} className="inline-link">{isProvided(t!.org) ? t!.org : t!.title}</Link>)}
         </p>
       )}
     </article>

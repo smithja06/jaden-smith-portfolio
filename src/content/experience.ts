@@ -19,6 +19,7 @@ export const experience: ExperienceEntry[] = [
     note: '12-month co-op · Technology & Operations',
     summary:
       'I own the simulation and validation tooling around a team-built payment-routing engine, work solo on agent-readiness and AI automation, and teach spec-driven development courses to engineers in the organization.',
+    coreTech: ['Java', 'Spring Boot', 'Python', 'AI agents'],
     tech: ['Java', 'Spring Boot', 'Three.js', 'IBM MQ', 'Microsoft Entra ID', 'React', 'TypeScript', 'FastAPI', 'MongoDB Atlas', 'Python', 'Devin Cloud', 'Spec Kit', 'Google Analytics 4', 'REST APIs', 'AI agents'],
     metrics: [
       { value: '~99.9%', label: 'rule-exit agreement · 9,500+ payments', note: 'Comparative testing against production results.' },
@@ -114,9 +115,18 @@ export const experience: ExperienceEntry[] = [
     contributions: [
       'Implemented the ESP32 firmware, output multiplexing, PWM intensity ramps and UART frame communication.',
       'Built the OpenCV / K-means visual pipeline and the mapping from frames to discrete output states.',
-      'Brought up a fully working 4×4 LED bench prototype (PCA9685 over I²C, ~1 kHz PWM).',
+      // Hardware specifics (PCA9685 over I²C, ~1 kHz PWM) live in the MED-T case study.
+      'Brought up a fully working 4×4 LED bench prototype.',
       'Leading the move to a 6×4 actuator array, targeted for January–February 2027.',
     ],
+    leadership: [
+      'Coordinate system-control requirements and technical milestones.',
+      'Interview and onboard new members.',
+      'Manage electronics inventory and restore hardware.',
+      'Integrate and test across subteams.',
+    ],
+    outcome: 'Fully working 4×4 bench prototype.',
+    coreTech: ['ESP32', 'C / C++', 'OpenCV'],
     tech: ['ESP32', 'C / C++', 'Python', 'OpenCV', 'K-means clustering', 'UART', 'I²C', 'PCA9685', 'PWM & multiplexing'],
     projects: ['med-t-sensory-substitution', 'esp32-led-matrix-driver'],
     evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT },
@@ -136,6 +146,8 @@ export const experience: ExperienceEntry[] = [
       'Parsed magnetometer and IMU data and built trend dashboards against baseline ACL performance.',
       'Real-time BLE streaming worked, and the ML system was tested with live sensor input.',
     ],
+    outcome: 'Real-time BLE streaming working, with the ML system tested on live sensor input.',
+    coreTech: ['React', 'TypeScript', 'BLE'],
     tech: ['React', 'TypeScript', 'BLE', 'IMU & magnetometer', 'Data visualization & dashboards'],
     projects: ['bmett-acl-rehabilitation', 'bmett-acl-movement-classification'],
     evidence: { repo: TODO_USER_CONTENT, report: TODO_USER_CONTENT },
@@ -150,12 +162,12 @@ export const experience: ExperienceEntry[] = [
     start: '2023-02',
     note: 'Apple-partnered program',
     summary: 'Built four iOS apps in Swift, including an augmented-reality shopping app presented to Apple judges.',
+    // The four apps and the Apple-judges presentation are in the summary; not repeated here.
     contributions: [
-      'Developed 4+ iOS applications in Swift.',
-      'Built an AR shopping app and presented it to Apple judges.',
       'Used Firebase Authentication for sign-in and sessions.',
       'Worked in sprints with technical and business mentors, tying product decisions to user needs.',
     ],
+    coreTech: ['Swift', 'Augmented reality', 'Firebase Authentication'],
     tech: ['Swift', 'iOS development', 'Augmented reality', 'Firebase Authentication'],
     projects: ['ar-shopping-ios', 'other-swift-apps'],
   },
@@ -317,4 +329,25 @@ export function experienceInGroup(g: ExperienceGroup): ExperienceEntry[] {
 
 export function getExperience(id: string): ExperienceEntry | undefined {
   return experience.find((e) => e.id === id);
+}
+
+/** The Experience hub. */
+export const EXPERIENCE_HUB = '/lab/experience';
+
+/** Anchor id of an entry's row or card on the hub. */
+export const roleAnchor = (id: string) => `role-${id}`;
+
+/** Has enough depth for its own /experience/:id page. */
+export const hasExperiencePage = (e: ExperienceEntry) =>
+  !!(e.initiatives?.length || (e.contributions?.length && e.projects?.length));
+
+/**
+ * Where a link to this entry should go: its own page; for a leadership entry
+ * that extends a technical role, that role's page; otherwise its row on the hub.
+ */
+export function experienceHref(e: ExperienceEntry): string {
+  if (hasExperiencePage(e)) return `/experience/${e.id}`;
+  const parent = e.seeAlso ? getExperience(e.seeAlso) : undefined;
+  if (parent && hasExperiencePage(parent)) return `/experience/${parent.id}`;
+  return `${EXPERIENCE_HUB}#${roleAnchor(e.id)}`;
 }

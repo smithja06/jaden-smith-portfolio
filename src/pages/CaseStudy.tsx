@@ -12,7 +12,7 @@ import {
   statusLabels,
   workRedirect,
 } from '../content/projects';
-import { getExperience } from '../content/experience';
+import { experienceHref, getExperience } from '../content/experience';
 import { isProvided, type Decision, type Metric, type Project } from '../content/types';
 import { experiments } from '../lab3d/config/stations';
 import { ProjectArt } from '../components/art/ProjectArt';
@@ -303,7 +303,7 @@ function ProjectDetail({ p }: { p: Project }) {
       title: e!.title,
       text: isProvided(e!.org) ? e!.org : undefined,
       cta: 'Read about the role',
-      href: `/experience/${e!.id}`,
+      href: experienceHref(e!),
     })),
   ];
   add('explore', 'Explore', [

@@ -233,10 +233,16 @@ export interface ExperienceEntry {
   start: string;
   /** One or two sentences, always visible. */
   summary: string;
-  /** Revealed on demand. */
+  /** Shown on the role's own page. */
   contributions?: string[];
+  /** Leadership and collaboration responsibilities, on the role's own page. */
+  leadership?: string[];
   initiatives?: Initiative[];
   tech?: string[];
+  /** Representative subset of `tech` for the Experience hub (defaults to none). */
+  coreTech?: string[];
+  /** One verified outcome shown on the hub when the role has no headline metrics. */
+  outcome?: string;
   metrics?: Metric[];
   projects?: string[];
   /** For leadership/competition entries that extend a technical entry. */

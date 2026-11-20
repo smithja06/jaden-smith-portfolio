@@ -3,6 +3,7 @@ import { allSkills, coreSkills, skillGroups, skillId, type Skill } from '../../c
 import { experienceUsing, projectsUsing, skillUsage } from '../../content/relations';
 import { categoryLabels, projectHref, statusLabels } from '../../content/projects';
 import { isProvided } from '../../content/types';
+import { experienceHref } from '../../content/experience';
 import { Arrow } from '../Icons';
 
 /**
@@ -35,7 +36,8 @@ export function SkillExplorer() {
   };
 
   const projects = selected ? projectsUsing(selected.name) : [];
-  const roles = selected ? experienceUsing(selected.name) : [];
+  // A leadership entry that extends a role links to that role's page; list each destination once.
+  const roles = (selected ? experienceUsing(selected.name) : []).filter((e, i, all) => all.findIndex((x) => experienceHref(x) === experienceHref(e)) === i);
 
   return (
     <div className="skx">
@@ -94,7 +96,7 @@ export function SkillExplorer() {
                   <ul className="skx-links">
                     {roles.map((e) => (
                       <li key={e.id}>
-                        <Link to={`/experience/${e.id}`} className="skx-link">
+                        <Link to={experienceHref(e)} className="skx-link">
                           <span className="skx-link-text">
                             <span className="skx-link-title">{e.title}</span>
                             {isProvided(e.org) && <span className="skx-link-meta">{e.org}</span>}

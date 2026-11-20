@@ -52,18 +52,25 @@ function useRouteFocus() {
     const requested = (location.state as ScrollRestoreState | null)?.restoreScroll;
     const restore = typeof requested === 'number' ? requested : navType === 'POP' ? recallScroll(key) : undefined;
     if (hash) {
-      // Wait a frame so the target exists after a route change.
+      // Wait for the target: after a route change (or a redirect into a
+      // lazily loaded page) it can take a few hundred ms to exist. ~3 s budget.
       const id = decodeURIComponent(hash.slice(1));
+      // Jump rather than smooth-scroll (a smooth scroll is cut short while a
+      // freshly loaded page is still laying out), then re-align once it settles.
       let tries = 0;
+      let frame = 0;
+      let settle = 0;
+      const jump = (el: HTMLElement) => el.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior });
       const tick = () => {
         const el = document.getElementById(id);
         if (el) {
-          el.scrollIntoView({ block: 'start' });
+          jump(el);
           el.focus({ preventScroll: true });
-        } else if (tries++ < 20) requestAnimationFrame(tick);
+          settle = window.setTimeout(() => jump(el), 350);
+        } else if (tries++ < 180) frame = requestAnimationFrame(tick);
       };
-      requestAnimationFrame(tick);
-      return;
+      frame = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(frame); window.clearTimeout(settle); };
     }
     const wasFirst = first.current;
     first.current = false;
