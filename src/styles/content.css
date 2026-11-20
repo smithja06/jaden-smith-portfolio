@@ -362,3 +362,15 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 .edu-courses[open] .course-grid { margin-top: 12px; }
 
 @media (prefers-reduced-motion: reduce) { .home-lab-shot img { transition: none; } }
+
+/* Contact: round portrait beside the invitation */
+.sec-contact-intro { display: flex; align-items: center; gap: 16px; }
+.sec-contact-avatar {
+  display: block; flex: none; width: 56px; height: 56px; border-radius: 50%;
+  object-fit: cover; object-position: 50% 30%;
+  border: 1px solid var(--line-strong); background: var(--bg-elevated);
+}
+.sec-contact-intro .sec-contact-lead { max-width: 60ch; }
+
+/* Contact page has no subtitle: match the homepage's title-to-content gap. */
+.sec[data-station='contact'] .sec-body { margin-top: clamp(32px, 4vw, 48px); }

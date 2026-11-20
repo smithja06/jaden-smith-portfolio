@@ -131,8 +131,11 @@ describe('education & contact', () => {
 
   it('matches the verified contact details', () => {
     expect(site.email).toBe('smithja741@icloud.com');
-    expect(site.phoneHref).toBe('+12894402161');
-    expect(site.location).toBe('Hamilton, Ontario, Canada');
+    expect(JSON.stringify(site)).not.toMatch(/289|tel:/);
+    expect(site.socials.map((s) => s.href)).toEqual([
+      'https://github.com/smithja06',
+      'https://www.linkedin.com/in/jaden-smith-577325267/',
+    ]);
   });
 });
 

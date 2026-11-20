@@ -30,7 +30,7 @@ export default function LabSectionPage({ id }: { id: StationId }) {
   const Body = sectionBodies[id];
 
   return (
-    <div className="page sec">
+    <div className="page sec" data-station={id}>
       <div className="container">
         <nav className="sec-bar" aria-label="Lab sections">
           <p className="sec-crumb mono"><span className="sec-crumb-index">[{station.letter}]</span> {station.title}</p>
@@ -58,7 +58,7 @@ export default function LabSectionPage({ id }: { id: StationId }) {
           <span className="sec-index mono" aria-hidden="true">{station.letter}</span>
           <div className="sec-head-main">
             <h1 className="sec-title">{station.title}</h1>
-            <p className="sec-summary">{station.summary}</p>
+            {station.showSummaryOnPage !== false && <p className="sec-summary">{station.summary}</p>}
           </div>
         </header>
 

@@ -13,11 +13,6 @@ export interface SiteConfig {
   /** Public base URL used for canonical/OG tags once deployed. */
   baseUrl: Maybe<string>;
   email: Maybe<string>;
-  /** Display form of the phone number. */
-  phone: Maybe<string>;
-  /** E.164 form used for tel: links. */
-  phoneHref: Maybe<string>;
-  location: string;
   /** Path to a real PDF in /public, e.g. "/resume.pdf". Hidden until provided. */
   resumeUrl: Maybe<string>;
   /** Filename the browser saves the résumé as. */
@@ -49,14 +44,11 @@ export const site: SiteConfig = {
   descriptor: 'Software, AI & embedded systems',
   baseUrl: TODO_USER_CONTENT,
   email: 'smithja741@icloud.com',
-  phone: '+1 (289) 440-2161',
-  phoneHref: '+12894402161',
-  location: 'Hamilton, Ontario, Canada',
   resumeUrl: '/Jaden-Smith-Resume.pdf',
   resumeFilename: 'Jaden Smith - Resume.pdf',
   socials: [
-    { label: 'GitHub', href: TODO_USER_CONTENT },
-    { label: 'LinkedIn', href: TODO_USER_CONTENT },
+    { label: 'GitHub', href: 'https://github.com/smithja06' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaden-smith-577325267/' },
   ],
   role: 'Software · AI · Embedded',
   headshot: { webp: '/jaden-headshot.webp', jpg: '/jaden-headshot.jpg', alt: 'Portrait of Jaden Smith' },
@@ -101,5 +93,5 @@ export const site: SiteConfig = {
       body: 'Clinician dashboards, an interactive clothing-rack storefront and this 3D lab — interfaces that explain the system behind them.',
     },
   ],
-  contactLead: 'Have an idea worth building, or a role in software, AI or embedded engineering? The quickest way to reach me is email.',
+  contactLead: 'Have an idea worth building? I’m open to conversations about software, AI and embedded engineering.',
 };

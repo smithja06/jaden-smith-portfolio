@@ -21,6 +21,8 @@ export interface StationDef {
   summary: string;
   /** Two or three representative highlights for the station panel. */
   highlights: string[];
+  /** Set false to keep the summary in the 3D panel but leave it off the full page. */
+  showSummaryOnPage?: boolean;
 }
 
 export const stations: StationDef[] = [
@@ -81,13 +83,14 @@ export const stations: StationDef[] = [
     letter: '05',
     title: 'Contact',
     category: 'Comms terminal',
-    tooltip: 'Email, phone and résumé',
-    summary: 'The quickest ways to reach me, and my résumé.',
+    tooltip: 'Email, GitHub and LinkedIn',
+    summary: 'Email, GitHub and LinkedIn.',
     highlights: [
-      'Email: smithja741@icloud.com',
-      'Résumé available as a PDF',
-      'Based in Hamilton, Ontario',
+      'smithja741@icloud.com',
+      'github.com/smithja06',
+      'LinkedIn: jaden-smith-577325267',
     ],
+    showSummaryOnPage: false,
   },
 ];
 

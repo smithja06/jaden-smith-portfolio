@@ -189,24 +189,22 @@ export function EducationSection() {
 
 /* ---------- Contact ---------- */
 
-export function ResumeButton({ className = 'btn btn-primary' }: { className?: string }) {
-  if (!isProvided(site.resumeUrl)) return null;
-  return <a className={className} href={site.resumeUrl} download={site.resumeFilename}>Download résumé <span aria-hidden="true">↓</span></a>;
-}
-
-/** Homepage: invitation, email, résumé, profiles. `detailed` adds phone and location. */
-export function ContactSection({ detailed }: SectionProps) {
+/** Portrait + invitation, email and profiles — the same on the homepage and the Contact page. */
+export function ContactSection(_props: SectionProps) {
   const socials = site.socials.filter((s) => isProvided(s.href));
-  const hasPhone = detailed && isProvided(site.phone) && isProvided(site.phoneHref);
   return (
     <div className="sec-contact">
-      <p className="sec-contact-lead">{site.contactLead}</p>
+      <div className="sec-contact-intro">
+        <picture>
+          <source srcSet={site.headshot.webp} type="image/webp" />
+          <img className="sec-contact-avatar" src={site.headshot.jpg} alt="" width={56} height={56} loading="lazy" decoding="async" />
+        </picture>
+        <p className="sec-contact-lead">{site.contactLead}</p>
+      </div>
       {isProvided(site.email) && <a className="sec-email" href={`mailto:${site.email}`}>{site.email}</a>}
       <div className="sec-contact-row">
-        {(hasPhone || detailed || socials.length > 0) && (
+        {socials.length > 0 && (
           <ul className="sec-socials">
-            {hasPhone && <li><span className="mono muted">Phone</span><a href={`tel:${site.phoneHref}`}>{site.phone as string}</a></li>}
-            {detailed && <li><span className="mono muted">Based in</span><span className="sec-plain">{site.location}</span></li>}
             {socials.map((s) => (
               <li key={s.label}>
                 <span className="mono muted">{s.label}</span>
@@ -215,7 +213,6 @@ export function ContactSection({ detailed }: SectionProps) {
             ))}
           </ul>
         )}
-        <ResumeButton />
       </div>
     </div>
   );
