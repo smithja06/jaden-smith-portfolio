@@ -131,11 +131,26 @@ interface Resource {
   cta: string;
   href: string;
   external?: boolean;
+  /** Router state for internal links (e.g. the Projects return path). */
+  state?: unknown;
 }
 
-/** Explore entries; the layout follows the count (one row, a pair, or a grid). */
+/** Action wording for evidence links, by label; anything else just opens. */
+const evidenceCta: Record<string, string> = {
+  'Source code': 'View repository',
+  'Live demo': 'Open demo',
+  Video: 'Watch video',
+  Report: 'Read report',
+};
+
+/**
+ * Explore: one card per resource (experiment, evidence, role, related
+ * project), all with the same structure — type label, title, optional
+ * context, action pinned to the bottom. Cards in a row share a height; the
+ * column count follows the number of cards so no row has an empty cell.
+ */
 function Resources({ items }: { items: Resource[] }) {
-  const layout = items.length === 1 ? 'is-one' : items.length === 2 ? 'is-two' : 'is-many';
+  const layout = items.length === 1 ? 'is-one' : items.length === 2 ? 'is-two' : items.length === 3 ? 'is-three' : 'is-many';
   return (
     <ul className={`case-res ${layout}`}>
       {items.map((r) => {
@@ -151,7 +166,7 @@ function Resources({ items }: { items: Resource[] }) {
           <li key={r.key}>
             {r.external
               ? <a href={r.href} className="case-res-link" target="_blank" rel="noreferrer">{body}</a>
-              : <Link to={r.href} className="case-res-link">{body}</Link>}
+              : <Link to={r.href} state={r.state} className="case-res-link">{body}</Link>}
           </li>
         );
       })}
@@ -295,15 +310,25 @@ function ProjectDetail({ p }: { p: Project }) {
 
   /* ---------- Explore ---------- */
   const resources: Resource[] = [
-    ...(sim && p.simulation ? [{ key: 'sim', kind: 'Interactive experiment', title: sim.title, text: sim.blurb, cta: p.simulation.label, href: sim.route }] : []),
-    ...evidenceItems(p.evidence).map((e) => ({ key: e.href, kind: 'Project evidence', title: e.label, cta: 'Open', href: e.href, external: !e.href.startsWith('/') })),
+    ...(sim && p.simulation ? [{ key: 'sim', kind: 'Interactive experiment', title: sim.title, text: sim.blurb, cta: 'Open experiment', href: sim.route }] : []),
+    ...evidenceItems(p.evidence).map((e) => ({ key: e.href, kind: 'Project evidence', title: e.label, cta: evidenceCta[e.label] ?? 'Open', href: e.href, external: !e.href.startsWith('/') })),
     ...roles.map((e) => ({
       key: `exp-${e!.id}`,
       kind: 'Related experience',
       title: e!.title,
       text: isProvided(e!.org) ? e!.org : undefined,
-      cta: 'Read about the role',
+      cta: 'View experience',
       href: experienceHref(e!),
+    })),
+    // Related case studies, as cards here rather than a separate list below.
+    ...related.map((r) => ({
+      key: `rel-${r.id}`,
+      kind: 'Related project',
+      title: r.title,
+      text: `${categoryLabels[r.category]} · ${r.context}`,
+      cta: 'View project',
+      href: `/work/${r.id}`,
+      state: back.carry,
     })),
   ];
   add('explore', 'Explore', [
@@ -351,15 +376,6 @@ function ProjectDetail({ p }: { p: Project }) {
               </Reveal>
             ))}
           </div>
-        )}
-
-        {related.length > 0 && (
-          <aside className="case-related" aria-labelledby="cs-related">
-            <h2 id="cs-related" className="sec-subhead mono">Related projects</h2>
-            <ul className="rel-list">
-              {related.map((r) => <li key={r.id}><Link to={`/work/${r.id}`} state={back.carry} className="rel-link"><span>{r.title}</span><span className="muted">{categoryLabels[r.category]}</span><Arrow /></Link></li>)}
-            </ul>
-          </aside>
         )}
 
         <nav className="case-next" aria-label="Back to projects">
