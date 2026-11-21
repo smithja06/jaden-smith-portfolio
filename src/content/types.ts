@@ -69,8 +69,20 @@ export interface MediaItem {
   /** Required for images and diagrams: describe what the picture shows. */
   alt: string;
   caption?: string;
+  /** Short visible title, e.g. for a demonstration video. */
+  title?: string;
   /** Optional poster frame for videos. */
   poster?: string;
+  /** Intrinsic size of the delivered file: reserves space and keeps the aspect ratio. */
+  width?: number;
+  height?: number;
+  /**
+   * Where a case study shows it: `hero` beside the title, or inline in the
+   * How it works / Results section. Unplaced media goes to Explore.
+   */
+  placement?: 'hero' | 'how' | 'results';
+  /** `contain` shows the whole frame (technical drawings); default fills it. */
+  fit?: 'contain';
 }
 
 /* ------------------------------------------------------------------ */

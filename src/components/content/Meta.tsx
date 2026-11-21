@@ -64,25 +64,58 @@ export function EvidenceLinks({ evidence, className = 'evidence' }: { evidence?:
   );
 }
 
+/**
+ * One photo, drawing or video with its caption. The file's own width and
+ * height reserve its box, so nothing shifts as it loads and nothing is
+ * stretched. Videos never autoplay and load nothing until played.
+ */
+export function MediaFigure({ m, className = '', zoom }: { m: MediaItem; className?: string; zoom?: boolean }) {
+  const portrait = !!m.width && !!m.height && m.height > m.width;
+  const box = m.width && m.height ? { aspectRatio: `${m.width} / ${m.height}` } : undefined;
+  const cls = ['media-item', `media-${m.kind}`, portrait && 'is-portrait', m.fit === 'contain' && 'is-contain', className].filter(Boolean).join(' ');
+  return (
+    <figure className={cls}>
+      {m.kind === 'video' ? (
+        <video
+          src={m.src}
+          poster={m.poster}
+          width={m.width}
+          height={m.height}
+          style={box}
+          controls
+          playsInline
+          preload="none"
+          aria-label={m.alt}
+        />
+      ) : m.kind === 'pdf' ? (
+        <a href={m.src} target="_blank" rel="noreferrer" className="media-pdf">
+          <span className="mono">PDF</span> {m.caption ?? m.alt}
+        </a>
+      ) : (
+        zoom ? (
+          <a href={m.src} target="_blank" rel="noreferrer" className="media-zoom" aria-label={`${m.alt} (opens full size in a new tab)`}>
+            <img src={m.src} alt="" width={m.width} height={m.height} style={box} loading="lazy" decoding="async" />
+          </a>
+        ) : (
+          <img src={m.src} alt={m.alt} width={m.width} height={m.height} style={box} loading="lazy" decoding="async" />
+        )
+      )}
+      {(m.title || m.caption) && m.kind !== 'pdf' && (
+        <figcaption>
+          {m.title && <span className="media-title">{m.title}</span>}
+          {m.caption && <span className="muted">{m.caption}</span>}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 /** Photos, screenshots, videos, diagrams and PDFs. Renders nothing when empty. */
-export function MediaGallery({ media }: { media?: MediaItem[] }) {
+export function MediaGallery({ media, className = '', zoom }: { media?: MediaItem[]; className?: string; zoom?: boolean }) {
   if (!media?.length) return null;
   return (
-    <div className="media-grid">
-      {media.map((m) => (
-        <figure key={m.src} className={`media-item media-${m.kind}`}>
-          {m.kind === 'video' ? (
-            <video src={m.src} poster={m.poster} controls preload="metadata" aria-label={m.alt} />
-          ) : m.kind === 'pdf' ? (
-            <a href={m.src} target="_blank" rel="noreferrer" className="media-pdf">
-              <span className="mono">PDF</span> {m.caption ?? m.alt}
-            </a>
-          ) : (
-            <img src={m.src} alt={m.alt} loading="lazy" decoding="async" />
-          )}
-          {m.caption && m.kind !== 'pdf' && <figcaption className="muted">{m.caption}</figcaption>}
-        </figure>
-      ))}
+    <div className={`media-grid ${className}`}>
+      {media.map((m) => <MediaFigure key={m.src} m={m} zoom={zoom} />)}
     </div>
   );
 }

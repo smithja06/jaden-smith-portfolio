@@ -376,3 +376,36 @@ describe('integrity', () => {
     expect(json).not.toMatch(/clinically proven|FDA|Health Canada approved/i);
   });
 });
+
+describe('project media', () => {
+  // Keys only: nothing is imported, this just lists what is in public/.
+  const shipped = new Set(Object.keys(import.meta.glob('/public/media/projects/**/*')));
+  const withMedia = projects.filter((p) => p.media?.length);
+
+  it('only points at files that ship in public/', () => {
+    for (const p of withMedia) {
+      for (const m of p.media!) {
+        for (const src of [m.src, m.poster].filter(Boolean) as string[]) {
+          expect(src.startsWith(`/media/projects/${p.id}/`), src).toBe(true);
+          expect(shipped.has(`/public${src}`), src).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('gives every image and video alt text and its size, and every video a poster', () => {
+    for (const m of withMedia.flatMap((p) => p.media!)) {
+      expect(m.alt.length, m.src).toBeGreaterThan(20);
+      expect(m.width && m.height, m.src).toBeTruthy();
+      if (m.kind === 'video') expect(m.poster, m.src).toBeTruthy();
+    }
+  });
+
+  it('keeps the iBioMed archive projects as archive rows with two images each', () => {
+    for (const id of ['ostoflow', 'hip-implant-design-case']) {
+      const p = projects.find((x) => x.id === id)!;
+      expect(p.listing).toBe('archive');
+      expect(p.media?.filter((m) => m.kind === 'image')).toHaveLength(2);
+    }
+  });
+});

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import type { Project } from '../../content/types';
 import { archiveAnchor, statusLabels } from '../../content/projects';
-import { EvidenceLinks, TechList } from './Meta';
+import { EvidenceLinks, MediaGallery, TechList } from './Meta';
 
 /**
  * Compact, expandable Technical-archive row. Closed: title, one line and
@@ -14,7 +14,7 @@ export function ArchiveRow({ project: p }: { project: Project }) {
   const cs = p.caseStudy ?? {};
   const paras = [...(cs.problem ?? []), ...(cs.implementation ?? []), ...(cs.validation ?? []), ...(cs.outcomes ?? [])];
   const notes = [...(cs.decisions ?? []).map((d) => `${d.title}: ${d.body}`), ...(cs.limitations ?? [])];
-  const hasDetail = paras.length > 0 || notes.length > 0 || p.tech.length > 0;
+  const hasDetail = paras.length > 0 || notes.length > 0 || p.tech.length > 0 || !!p.media?.length;
 
   const head = (
     <>
@@ -35,11 +35,16 @@ export function ArchiveRow({ project: p }: { project: Project }) {
         // Sharing a `name` makes the rows an exclusive accordion: opening one closes the others.
         <details className="arch-row" name="archive" open={hash === `#${anchor}` || undefined}>
           <summary className="arch-link arch-summary">{head}<span className="arch-toggle" aria-hidden="true" /></summary>
-          <div className="arch-detail">
-            {paras.map((t) => <p key={t}>{t}</p>)}
-            {notes.length > 0 && <ul className="sec-dash">{notes.map((t) => <li key={t}>{t}</li>)}</ul>}
-            <TechList tech={p.tech} />
-            <EvidenceLinks evidence={p.evidence} className="case-evidence" />
+          {/* With media: text left, images right (stacked below on narrow screens). */}
+          <div className={`arch-detail ${p.media?.length ? 'has-media' : ''}`}>
+            <div className="arch-text">
+              {paras.map((t) => <p key={t}>{t}</p>)}
+              {notes.length > 0 && <ul className="sec-dash">{notes.map((t) => <li key={t}>{t}</li>)}</ul>}
+              <TechList tech={p.tech} />
+              <EvidenceLinks evidence={p.evidence} className="case-evidence" />
+            </div>
+            {/* Only loaded once the row is opened; each image opens full size. */}
+            <MediaGallery media={p.media} className="arch-media" zoom />
           </div>
         </details>
       ) : (

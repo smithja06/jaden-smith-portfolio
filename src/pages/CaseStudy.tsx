@@ -19,7 +19,7 @@ import { ProjectArt } from '../components/art/ProjectArt';
 import { SystemDiagram } from '../components/SystemDiagram';
 import { Arrow, ArrowLeft } from '../components/Icons';
 import { Reveal } from '../components/Reveal';
-import { MediaGallery, MetricList, TechList, evidenceItems } from '../components/content/Meta';
+import { MediaFigure, MediaGallery, MetricList, TechList, evidenceItems } from '../components/content/Meta';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useProjectsReturn } from '../hooks/useProjectsReturn';
 import NotFound from './NotFound';
@@ -205,7 +205,10 @@ function ProjectDetail({ p }: { p: Project }) {
   // Planned work alone is not a result: it then closes How it works instead.
   const hasResults = outcomes.length > 0 || evidence.length > 0 || !!cs.limitations?.length;
   const [overview, ...context] = cs.problem ?? [];
-  const heroImage = p.media?.find((m) => m.kind === 'image');
+  // Media sits beside the work it documents; only unplaced items fall through to Explore.
+  const media = p.media ?? [];
+  const heroImage = media.find((m) => m.placement === 'hero' && m.kind === 'image');
+  const placed = (where: 'how' | 'results') => media.filter((m) => m.placement === where).map((m) => <MediaFigure key={m.src} m={m} className="case-figure" />);
 
   const meta: [string, string | undefined][] = [
     ['Context', p.context],
@@ -254,6 +257,7 @@ function ProjectDetail({ p }: { p: Project }) {
   add('how', 'How it works', [
     context.length ? <div key="ctx" className="case-text">{para(context)}</div> : null,
     cs.architecture && <SystemDiagram key="arch" nodes={cs.architecture.nodes} caption={cs.architecture.caption} />,
+    ...placed('how'),
     cs.implementation?.length ? <div key="impl" className="case-text">{para(cs.implementation)}</div> : null,
     cs.challenges?.length ? (
       <div key="ch" className="case-text">
@@ -288,25 +292,32 @@ function ProjectDetail({ p }: { p: Project }) {
   /* ---------- Results ---------- */
   const balanced = !!cs.limitations?.length && !!cs.future?.length
     && Math.max(textLength(cs.limitations), textLength(cs.future)) <= 2.2 * Math.min(textLength(cs.limitations), textLength(cs.future));
-  add('results', 'Results', [
-    outcomes.length === 1 ? (
-      <div key="one" className="case-outcome">
-        <p className="case-outcome-head"><span className="case-outcome-value">{outcomes[0].value}</span> <span className="case-outcome-label">{outcomes[0].label}</span></p>
-        {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
-      </div>
-    ) : (outcomes.length > 1 || evidence.length > 0) && (
-      <div key="many" className="case-results">
-        {outcomes.length > 1 && <MetricList metrics={outcomes} />}
-        {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
-      </div>
-    ),
-    hasResults && (cs.limitations?.length || cs.future?.length) ? (
-      <div key="lf" className={`case-pair ${balanced ? 'is-split' : ''}`}>
-        {cs.limitations?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Limitations</h3>{bullets(cs.limitations)}</div> : null}
-        {cs.future?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Next steps</h3>{bullets(cs.future)}</div> : null}
-      </div>
-    ) : null,
-  ]);
+  const outcomeBlock = outcomes.length === 1 ? (
+    <div key="one" className="case-outcome">
+      <p className="case-outcome-head"><span className="case-outcome-value">{outcomes[0].value}</span> <span className="case-outcome-label">{outcomes[0].label}</span></p>
+      {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
+    </div>
+  ) : (outcomes.length > 1 || evidence.length > 0) && (
+    <div key="many" className="case-results">
+      {outcomes.length > 1 && <MetricList metrics={outcomes} />}
+      {evidence.length > 0 && <div className="case-text">{para(evidence)}</div>}
+    </div>
+  );
+  const limitsBlock = hasResults && (cs.limitations?.length || cs.future?.length) ? (
+    <div key="lf" className={`case-pair ${balanced ? 'is-split' : ''}`}>
+      {cs.limitations?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Limitations</h3>{bullets(cs.limitations)}</div> : null}
+      {cs.future?.length ? <div className="case-pair-item"><h3 className="case-subh mono">Next steps</h3>{bullets(cs.future)}</div> : null}
+    </div>
+  ) : null;
+  // A vertical clip is narrow: it sits beside the results text instead of below it.
+  const resultsMedia = media.filter((m) => m.placement === 'results');
+  const sideMedia = resultsMedia.length > 0 && resultsMedia.every((m) => !!m.width && !!m.height && m.height > m.width);
+  add('results', 'Results', sideMedia ? [
+    <div key="split" className="case-split">
+      <div className="case-split-main">{outcomeBlock}{limitsBlock}</div>
+      <div className="case-split-media">{placed('results')}</div>
+    </div>,
+  ] : [outcomeBlock, ...placed('results'), limitsBlock]);
 
   /* ---------- Explore ---------- */
   const resources: Resource[] = [
@@ -333,7 +344,7 @@ function ProjectDetail({ p }: { p: Project }) {
   ];
   add('explore', 'Explore', [
     resources.length > 0 && <Resources key="res" items={resources} />,
-    p.media?.length ? <MediaGallery key="media" media={p.media} /> : null,
+    <MediaGallery key="media" media={media.filter((m) => !m.placement)} />,
   ]);
 
   return (
@@ -356,8 +367,8 @@ function ProjectDetail({ p }: { p: Project }) {
             </dl>
           </div>
           {heroImage ? (
-            <figure className="case-hero-media">
-              <img src={heroImage.src} alt={heroImage.alt} decoding="async" />
+            <figure className="case-hero-media is-photo" style={heroImage.width && heroImage.height ? { aspectRatio: `${heroImage.width} / ${heroImage.height}` } : undefined}>
+              <img src={heroImage.src} alt={heroImage.alt} width={heroImage.width} height={heroImage.height} decoding="async" fetchPriority="high" />
             </figure>
           ) : p.art ? (
             <div className="case-hero-media case-art">

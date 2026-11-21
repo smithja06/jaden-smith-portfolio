@@ -279,7 +279,11 @@
   border: 1px solid var(--line-subtle); background: var(--bg-ink);
 }
 .case-hero-media img { width: 100%; height: 100%; object-fit: cover; }
-@media (max-width: 999px) { .case-hero-media { aspect-ratio: 16 / 9; } }
+@media (max-width: 999px) {
+  .case-hero-media { aspect-ratio: 16 / 9; }
+  /* Real photos keep their own ratio (set inline); stacked, they stay modest. */
+  .case-hero-media.is-photo { max-width: 560px; }
+}
 
 /* Secondary metadata: a quiet 2×2 of facts under a hairline, not a stack of boxes. */
 .case-study .case-meta {
@@ -440,7 +444,52 @@
 .media-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
 .media-item { margin: 0; display: grid; gap: 8px; }
 .media-item img, .media-item video { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line-subtle); background: var(--bg-ink); }
-.media-item figcaption { font-size: 13.5px; }
+.media-item figcaption { display: grid; gap: 2px; font-size: 13.5px; line-height: 1.5; }
+.media-title { color: var(--text-primary); font-weight: 500; }
+.media-item.is-contain img { object-fit: contain; }
+.media-zoom { display: block; border-radius: 14px; }
+.media-zoom:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.media-zoom img { transition: border-color var(--dur-fast) var(--ease-out); }
+.media-zoom:hover img { border-color: var(--line-strong); }
+
+/* Inline evidence inside a case-study section: sized to the frame, never page-wide. */
+.case-figure { max-width: 720px; }
+.case-figure.is-portrait { max-width: 300px; }
+/* Wide screens: a vertical clip keeps its narrow column, with its caption beside it. */
+@media (min-width: 760px) {
+  .case-figure.is-portrait { max-width: 640px; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; align-items: end; }
+}
+
+/* Results with a vertical clip: text groups left, the clip right; stacked below 1000px. */
+.case-split { display: grid; gap: 28px; max-width: 1040px; }
+.case-split-main { display: grid; gap: 24px; align-content: start; min-width: 0; }
+.case-split-main .case-pair.is-split { grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 1000px) {
+  .case-split { grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: start; }
+  .case-split .case-figure.is-portrait { grid-template-columns: 1fr; gap: 8px; max-width: 300px; }
+}
+/* Wide desktops have room for the clip's title and caption beside it, not under it. */
+@media (min-width: 1200px) {
+  .case-split { grid-template-columns: minmax(0, 1fr) auto; max-width: 1200px; }
+  .case-split .case-figure.is-portrait { grid-template-columns: 300px 220px; gap: 20px; max-width: none; }
+}
+/* When the caption sits beside the clip, it starts at the clip's top edge. */
+.case-split .case-figure.is-portrait { align-items: start; }
+@media (max-width: 519px) { .case-split .case-figure.is-portrait { max-width: 260px; } }
+
+/* Archive rows: text left, images right (stacked, whole frame visible); each opens full size. */
+.arch-text { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.arch-detail.has-media { max-width: 1120px; gap: 24px; }
+/* Images sit side by side when they fit and wrap when they don't; each figure is as wide as its image. */
+.arch-media { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.arch-media .media-item { flex: 0 1 auto; max-width: min(100%, 480px); }
+.arch-media img { width: auto; max-width: 100%; max-height: 240px; object-fit: contain; }
+.arch-media figcaption { font-size: 13px; contain: inline-size; }
+@media (min-width: 900px) {
+  .arch-detail.has-media { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+  .arch-detail.has-media .arch-text { max-width: 72ch; }
+}
+@media (prefers-reduced-motion: reduce) { .media-zoom img { transition: none; } }
 .media-pdf { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--line-strong); }
 .media-pdf .mono { font-size: 11.5px; color: var(--blue-soft); }
 
