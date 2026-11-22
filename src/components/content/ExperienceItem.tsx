@@ -4,7 +4,7 @@ import { experienceHref, getExperience, hasExperiencePage, roleAnchor } from '..
 import { caseStudiesByIds } from '../../content/projects';
 import type { FromHubState } from '../../hooks/useProjectsReturn';
 import { Arrow } from '../Icons';
-import { MetricList, TechList } from './Meta';
+import { MediaGallery, MetricList, TechList } from './Meta';
 
 export { hasExperiencePage };
 
@@ -68,6 +68,8 @@ export function ExperienceRow({ entry: e, linkState }: { entry: ExperienceEntry;
         {parentPage && parentPage.title === e.title
           ? <p className="exp-row-sum">Leadership responsibilities are covered on the role page.</p>
           : <p className="exp-row-sum">{e.summary}</p>}
+        {/* Original images only; each thumbnail opens full size. */}
+        <MediaGallery media={e.media} className="exp-row-media" zoom />
         {(parentPage || linked.length > 0) && (
           <p className="exp-row-links">
             {parentPage && (

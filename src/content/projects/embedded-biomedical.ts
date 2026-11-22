@@ -111,7 +111,7 @@ export const embeddedBiomedicalProjects: Project[] = [
     title: 'BMETT — ACL Rehabilitation Monitoring Platform',
     summary:
       'A patient and clinician web app that streams wearable sensor data over BLE and compares recovery against baseline ACL performance.',
-    context: 'McMaster BMETT · Software Subteam',
+    context: 'McMaster BMETT · Software Team',
     dates: 'Oct 2025 – present',
     category: 'embedded-biomedical',
     status: 'prototype',

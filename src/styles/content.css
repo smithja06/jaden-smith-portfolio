@@ -477,6 +477,11 @@
 .case-split .case-figure.is-portrait { align-items: start; }
 @media (max-width: 519px) { .case-split .case-figure.is-portrait { max-width: 260px; } }
 
+/* Experience hub rows: one small, uncropped thumbnail under the summary. */
+.exp-row-media { grid-template-columns: minmax(0, 360px); margin-top: 12px; }
+.exp-row-media img { max-height: 200px; object-fit: contain; }
+.exp-row-media figcaption { font-size: 13px; }
+
 /* Archive rows: text left, images right (stacked, whole frame visible); each opens full size. */
 .arch-text { display: grid; gap: 12px; align-content: start; min-width: 0; }
 .arch-detail.has-media { max-width: 1120px; gap: 24px; }

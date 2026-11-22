@@ -267,7 +267,6 @@ export const aiSoftwareProjects: Project[] = [
       { value: '43', label: 'API endpoints working in the demo', note: 'Team total during the hackathon demonstration.' },
       { value: '1,024', label: 'embedding dimensions', detail: true },
     ],
-    experience: ['mongodb-hackathon'],
     art: 'custody',
     evidence: { repo: TODO_USER_CONTENT, demo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
     media: [],

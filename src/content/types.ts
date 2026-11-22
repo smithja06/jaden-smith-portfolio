@@ -262,5 +262,7 @@ export interface ExperienceEntry {
   evidence?: Evidence;
   /** Rendered as a short line under the title, e.g. 'Apple-partnered program'. */
   note?: string;
+  /** Original images for short entries, shown as small thumbnails in their hub row. */
+  media?: MediaItem[];
   todo?: string[];
 }

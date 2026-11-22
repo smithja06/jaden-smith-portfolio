@@ -220,9 +220,20 @@ describe('experience', () => {
     const ids = experience.map((e) => e.id);
     for (const id of [
       'rbc', 'med-t', 'bmett', 'swift-coop',
-      'med-t-leadership', 'bmett-team', 'gael-guides', 'first-robotics', 'ibiomed-showcase', 'medsprint', 'mongodb-hackathon', 'true-north',
+      'med-t-leadership', 'gael-guides', 'first-robotics', 'ibiomed-showcase', 'medsprint',
       'shakespeares', 'hgcc', 'french-camp',
     ]) expect(ids).toContain(id);
+  });
+
+  it('keeps BMETT as one entry and the hackathon in Projects only', () => {
+    const ids = experience.map((e) => e.id);
+    // True North is BMETT's 2026–27 season, not a separate role.
+    for (const gone of ['bmett-team', 'true-north', 'mongodb-hackathon']) expect(ids).not.toContain(gone);
+    const bmett = getExperience('bmett')!;
+    expect(bmett.org).toBe('McMaster BMETT');
+    expect(bmett.title).toBe('Software Team Member');
+    expect(bmett.contributions?.some((c) => c.includes('True North'))).toBe(true);
+    expect(getProject('custodyos')?.experience ?? []).not.toContain('mongodb-hackathon');
   });
 
   it('lists all eight RBC initiatives, including the Spec Kit bug-fix extension', () => {
@@ -238,9 +249,8 @@ describe('experience', () => {
     }
     // Leadership entries that extend a role go to that role's page.
     expect(experienceHref(getExperience('med-t-leadership')!)).toBe('/experience/med-t');
-    expect(experienceHref(getExperience('bmett-team')!)).toBe('/experience/bmett');
     // Short entries go to their row on the hub.
-    for (const id of ['first-robotics', 'gael-guides', 'medsprint', 'mongodb-hackathon', 'hgcc']) {
+    for (const id of ['first-robotics', 'gael-guides', 'medsprint', 'hgcc']) {
       expect(experienceHref(getExperience(id)!)).toBe(`${EXPERIENCE_HUB}#${roleAnchor(id)}`);
     }
   });
