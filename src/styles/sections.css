@@ -137,9 +137,10 @@ a.sec-email:hover { color: var(--blue-soft); }
 .sec-next-link:hover > span:last-child { color: var(--blue-soft); }
 
 @media (max-width: 640px) {
-  .sec-bar-right { width: 100%; justify-content: space-between; }
-  .sec-pager { gap: 4px; }
-  .sec-pager-link { width: 36px; }
+  /* Six pager squares plus the back link must fit a 350px column. */
+  .sec-bar-right { width: 100%; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .sec-pager { gap: 3px; }
+  .sec-pager-link { width: 32px; height: 36px; }
   .sec-back { padding: 0 10px; }
   .sec-back kbd { display: none; }
   .sec-card { padding: 20px; }

@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import type { StationId } from '../../lab3d/config/stations';
+import type { SectionStationId } from '../../lab3d/config/stations';
 import { getProject, isPublicProject, projectHref } from '../../content/projects';
 import { experience, experienceGroupLabels, experienceGroupOrder, experienceHref, experienceInGroup, getExperience } from '../../content/experience';
 import { awards, coursework, schools, type CourseTopic } from '../../content/education';
@@ -227,7 +227,7 @@ export function ContactSection(_props: SectionProps) {
   );
 }
 
-export const sectionBodies: Record<StationId, (p: SectionProps) => JSX.Element> = {
+export const sectionBodies: Record<SectionStationId, (p: SectionProps) => JSX.Element> = {
   experience: ExperienceSection,
   projects: ProjectsSection,
   skills: SkillsSection,

@@ -2,35 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
-import { homeSections } from '../content/homeSections';
+import { stations, stationPath } from '../lab3d/config/stations';
 
-/** One link per homepage section: 01 About … 05 Contact. */
-const links = homeSections.map((s) => ({
-  id: s.id,
-  index: s.index,
-  label: s.id === 'projects' ? 'Projects' : s.id === 'lab' ? 'Lab' : s.title,
-  to: `/#${s.id}`,
-}));
+/**
+ * 01 About … 06 Contact, in station order. Each opens that section's full
+ * page; About opens /about, the same page the homepage's About links to.
+ * The 3D Lab itself is the button on the right, not a link here.
+ */
+const links = stations.map((s) => ({ id: s.id, index: s.letter, label: s.title, to: stationPath(s.id) }));
 
-/** Highlights the section currently in view on the homepage. */
-function useActiveSection(enabled: boolean) {
-  const [active, setActive] = useState<string | null>(null);
-  useEffect(() => {
-    if (!enabled) { setActive(null); return; }
-    const els = links.map((l) => document.getElementById(l.id)).filter((e): e is HTMLElement => !!e);
-    if (!els.length || typeof IntersectionObserver === 'undefined') return;
-    const visible = new Map<string, number>();
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => visible.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
-      // Pick the first section (in page order) that is meaningfully on screen.
-      const current = links.find((l) => (visible.get(l.id) ?? 0) > 0);
-      setActive(current ? current.id : null);
-    }, { rootMargin: '-35% 0px -55% 0px', threshold: [0, 0.01] });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [enabled]);
-  return active;
-}
+/** Pages that belong to a section: its own page, plus detail pages under it. */
+const owns: Record<string, (path: string) => boolean> = {
+  about: (p) => p === '/about',
+  experience: (p) => p === '/lab/experience' || p.startsWith('/experience/'),
+  projects: (p) => p === '/lab/projects' || p.startsWith('/work/'),
+  skills: (p) => p === '/lab/skills',
+  education: (p) => p === '/lab/education',
+  contact: (p) => p === '/lab/contact',
+};
 
 export function Nav() {
   const { pathname, hash } = useLocation();
@@ -75,8 +64,7 @@ export function Nav() {
   }, [open]);
 
   const hasResume = isProvided(site.resumeUrl);
-  const activeSection = useActiveSection(pathname === '/');
-  const isActive = (l: (typeof links)[number]) => activeSection === l.id;
+  const isActive = (l: (typeof links)[number]) => owns[l.id]?.(pathname) ?? false;
 
   return (
     <header className={`nav-wrap ${scrolled ? 'is-scrolled' : ''}`}>

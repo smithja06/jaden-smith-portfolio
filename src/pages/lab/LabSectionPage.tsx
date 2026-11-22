@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { stations, stationPath, type StationId } from '../../lab3d/config/stations';
+import { stations, stationPath, type SectionStationId } from '../../lab3d/config/stations';
 import { sectionBodies } from '../../components/sections/SiteSections';
 import { usePageTitle } from '../../hooks/usePageTitle';
 
 /**
- * Full-page view for one Lab station: section bar with a 01–05 pager,
+ * Full-page view for one Lab station: section bar with a 01–06 pager (About opens /about),
  * an indexed heading, and the same section content as the homepage plus
  * Lab-only extras (filters, search, evidence explorer). Esc returns to the 3D lab.
  */
-export default function LabSectionPage({ id }: { id: StationId }) {
+export default function LabSectionPage({ id }: { id: SectionStationId }) {
   const index = stations.findIndex((s) => s.id === id);
   const station = stations[index];
   const navigate = useNavigate();

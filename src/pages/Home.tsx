@@ -4,7 +4,9 @@ import { site } from '../content/site';
 import { isProvided } from '../content/types';
 import { homepageCards, homepageExperienceIds } from '../content/featured';
 import { getExperience } from '../content/experience';
-import { stationPath, stations } from '../lab3d/config/stations';
+import { stationPath } from '../lab3d/config/stations';
+import { homepageSkills, skillGroups } from '../content/skills';
+import { awards, schools } from '../content/education';
 import { ContactSection } from '../components/sections/SiteSections';
 import { ProjectGridCard } from '../components/content/ProjectGridCard';
 import { SignalField } from '../components/SignalField';
@@ -36,6 +38,8 @@ export default function Home() {
   usePageTitle();
   const cards = homepageCards();
   const roles = homepageExperienceIds.map(getExperience).filter((e) => !!e);
+  const uni = schools[0];
+  const uniAwards = awards.filter((a) => a.school === uni.id && a.kind === 'received');
 
   return (
     <>
@@ -81,18 +85,6 @@ export default function Home() {
         </Reveal>
       </HomeSection>
 
-      {/* Featured projects: three flagships, then one way into the archive. */}
-      <HomeSection id="projects" count={`${cards.length} selected`}>
-        <Reveal className="sec-body">
-          <ul className="pgc-grid">
-            {cards.map((c) => <ProjectGridCard key={c.key} card={c} />)}
-          </ul>
-          <Link to={`${stationPath('projects')}`} className="home-more">
-            Explore all projects <Arrow />
-          </Link>
-        </Reveal>
-      </HomeSection>
-
       {/* Experience: three technical roles only. */}
       <HomeSection id="experience">
         <Reveal className="sec-body">
@@ -119,29 +111,60 @@ export default function Home() {
         </Reveal>
       </HomeSection>
 
-      {/* The Lab: one image of the real 3D scene, one action. */}
-      <HomeSection id="lab">
-        <Reveal className="sec-body home-lab">
-          <div className="home-lab-copy">
-            <p className="home-lab-lead">Explore the work as a place, not a page.</p>
-            <p className="secondary">
-              Cobalt Lab is a small 3D facility built for this site. A glowing hub connects five stations:{' '}
-              {stations.map((s) => s.title.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' and $1')}. Fly to one for a short introduction, then step into the full section.
-            </p>
-            <Link to="/lab" className="btn btn-primary">Enter the Lab <Arrow /></Link>
-          </div>
-          <Link to="/lab" className="home-lab-shot" aria-label="Enter the 3D Lab" tabIndex={-1}>
-            <picture>
-              <source srcSet="/lab-preview.webp" type="image/webp" />
-              <img
-                src="/lab-preview.jpg"
-                alt="The 3D Lab from above: a glowing central hub linked by light paths to five station platforms on a dark grid floor."
-                width={1120}
-                height={700}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
+      {/* Featured projects: three flagships, then one way into the archive. */}
+      <HomeSection id="projects" count={`${cards.length} selected`}>
+        <Reveal className="sec-body">
+          <ul className="pgc-grid">
+            {cards.map((c) => <ProjectGridCard key={c.key} card={c} />)}
+          </ul>
+          <Link to={`${stationPath('projects')}`} className="home-more">
+            Explore all projects <Arrow />
+          </Link>
+        </Reveal>
+      </HomeSection>
+
+      {/* Skills: one row per capability — number, name, then the technologies. */}
+      <HomeSection id="skills" count={`${skillGroups.length} groups`}>
+        <Reveal className="sec-body">
+          <ol className="home-skills">
+            {skillGroups.map((g, i) => (
+              <li key={g.id} className="home-skill">
+                <span className="home-skill-index mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="home-skill-label">{g.label}</h3>
+                <p className="home-skill-list">{(homepageSkills[g.id] ?? g.skills.map((k) => k.name)).join(', ')}</p>
+              </li>
+            ))}
+          </ol>
+          <Link to={stationPath('skills')} className="home-more">
+            Every skill, with where I’ve used it <Arrow />
+          </Link>
+        </Reveal>
+      </HomeSection>
+
+      {/* Education: the degree first, then its key facts and recognition. */}
+      <HomeSection id="education">
+        <Reveal className="sec-body home-edu">
+          <p className="home-edu-dates mono">{uni.dates}</p>
+          <h3 className="home-edu-degree">{uni.credential}</h3>
+          <p className="home-edu-school">{uni.program ? `${uni.program} / ` : ''}{uni.institution}, {uni.location}</p>
+          <dl className="home-edu-facts">
+            {uni.stats.map((m) => (
+              <div key={m.label} className="home-edu-fact">
+                <dt className="mono">{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {uniAwards.length > 0 && (
+            <div className="home-edu-awards">
+              <p className="home-edu-label mono">Recognition</p>
+              <ul className="sec-dash">
+                {uniAwards.map((a) => <li key={a.title}>{a.title}{a.detail ? ` · ${a.detail}` : ''}</li>)}
+              </ul>
+            </div>
+          )}
+          <Link to={stationPath('education')} className="home-more">
+            Coursework, awards and earlier schooling <Arrow />
           </Link>
         </Reveal>
       </HomeSection>
@@ -149,7 +172,7 @@ export default function Home() {
       <section id="contact" className="home-sec home-sec-contact container" aria-labelledby="home-contact-title" tabIndex={-1}>
         <div className="contact-band" aria-hidden="true" />
         <Reveal as="header" className="sec-head">
-          <span className="sec-index mono" aria-hidden="true">05</span>
+          <span className="sec-index mono" aria-hidden="true">06</span>
           <div className="sec-head-main">
             <h2 id="home-contact-title" className="sec-title">Contact</h2>
           </div>

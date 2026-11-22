@@ -89,7 +89,7 @@ export default function LabWorld() {
       <h1 className="sr-only">Cobalt Lab — interactive 3D engineering lab</h1>
       <p className="sr-only" id="lab3d-desc">
         A miniature engineering facility seen from above. A glowing central hub sits in the middle of a dark grid floor,
-        connected by thin light paths to five stations: server racks with a holographic career timeline for experience,
+        connected by thin light paths to six stations: a portrait frame for about, server racks with a holographic career timeline for experience,
         a gallery of floating displays for projects, a robotic workstation for skills, a research desk for education,
         and a communication dish for contact. Choosing a station flies there and shows a short introduction with a link to its full page.
       </p>

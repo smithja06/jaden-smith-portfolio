@@ -17,8 +17,7 @@
 
 /* Floating DOM labels (drei <Html>) */
 .lab3d-label {
-  display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
-  max-width: 220px;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
   padding: 5px 10px 5px 6px;
   border-radius: 14px;
   background: rgba(6, 13, 32, 0.66);
@@ -30,7 +29,14 @@
 }
 .lab3d-label.is-hovered { color: var(--text-primary); border-color: rgba(128, 185, 255, 0.55); background: rgba(8, 20, 43, 0.86); }
 .lab3d-label.is-dim { opacity: 0.4; }
-.lab3d-label-tip { flex-basis: 100%; text-align: center; white-space: normal; color: var(--blue-soft); font-size: 12px; letter-spacing: 0.02em; padding: 2px 4px 2px 10px; }
+.lab3d-label-head { display: inline-flex; align-items: center; gap: 8px; }
+/* Hover description: its own reading width (two short lines), not the label's. */
+.lab3d-label-tip {
+  display: block; width: max-content; max-width: 250px; padding: 6px 4px 2px;
+  border-top: 1px solid rgba(128, 185, 255, 0.2);
+  font-family: var(--font-sans, inherit); font-size: 12.5px; line-height: 1.45; letter-spacing: 0;
+  text-align: center; white-space: normal; color: var(--blue-soft);
+}
 .lab3d-hub-label { padding: 5px 12px; letter-spacing: 0.14em; font-size: 12px; }
 .lab3d-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-electric); box-shadow: 0 0 8px var(--blue-electric); }
 .lab3d-letter {

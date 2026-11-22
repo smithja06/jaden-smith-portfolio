@@ -5,7 +5,7 @@ import {
 } from './projects';
 import { EXPERIENCE_HUB, experience, experienceHref, getExperience, hasExperiencePage, roleAnchor } from './experience';
 import { MOCK_CODE, awards, coursework, schools } from './education';
-import { allSkills, focusAreas, skillGroups, spokenLanguages } from './skills';
+import { allSkills, focusAreas, homepageSkills, skillGroups, spokenLanguages } from './skills';
 import { experienceUsing } from './relations';
 import { experiments } from '../lab3d/config/stations';
 import { featuredCards, featuredRefs, homepageCards, homepageExperienceIds } from './featured';
@@ -409,5 +409,19 @@ describe('project media', () => {
       expect(p.listing).toBe('archive');
       expect(p.media?.filter((m) => m.kind === 'image')).toHaveLength(2);
     }
+  });
+});
+
+describe('homepage skills overview', () => {
+  it('shows five or six catalogue skills for every group', () => {
+    for (const g of skillGroups) {
+      const picks = homepageSkills[g.id];
+      expect(picks, g.id).toBeDefined();
+      expect(picks.length, g.id).toBeGreaterThanOrEqual(5);
+      expect(picks.length, g.id).toBeLessThanOrEqual(6);
+      const names = g.skills.map((k) => k.name);
+      for (const n of picks) expect(names, `${g.id}: ${n}`).toContain(n);
+    }
+    expect(Object.keys(homepageSkills).sort()).toEqual(skillGroups.map((g) => g.id).sort());
   });
 });

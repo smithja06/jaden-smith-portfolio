@@ -60,7 +60,7 @@ export const webCreativeProjects: Project[] = [
     category: 'web-creative',
     status: 'in-progress',
     tech: ['React', 'TypeScript', 'Vite', 'Three.js', 'React Three Fiber', 'Responsive design & animation', 'Accessible web design', 'UI / UX design'],
-    highlights: ['3D lab with five stations around a central hub', 'Two working browser experiments'],
+    highlights: ['3D lab with six stations around a central hub', 'Two working browser experiments'],
     related: ['vision-matrix-simulator', 'signal-playground', 'brthday-interactive-commerce'],
     art: 'cobalt',
     evidence: { repo: TODO_USER_CONTENT },
@@ -69,7 +69,7 @@ export const webCreativeProjects: Project[] = [
     caseStudy: {
       problem: ['A portfolio has to work for a recruiter with two minutes and an engineer who wants depth. Most sites choose one.'],
       implementation: [
-        'The homepage is a single readable scroll. Underneath, /lab is a 3D facility built from procedural geometry in three.js / React Three Fiber: a central hub connected by light paths to Experience, Projects, Skills, Education and Contact stations.',
+        'The homepage is a single readable scroll. Underneath, /lab is a 3D facility built from procedural geometry in three.js / React Three Fiber: a central hub connected by light paths to About, Experience, Projects, Skills, Education and Contact stations.',
         'Choosing a station flies the camera there and opens a full page. Everything is also reachable through ordinary navigation, a list view and a no-WebGL fallback.',
         'Content lives in typed records, so projects, experience and skills stay consistent everywhere they appear.',
       ],

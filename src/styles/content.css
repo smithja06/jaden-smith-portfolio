@@ -714,24 +714,31 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 .home-role-main .text-link { justify-self: start; font-size: 15px; }
 @media (min-width: 860px) { .home-role { grid-template-columns: 260px 1fr; } }
 
-/* Lab preview */
-.home-lab { display: grid; gap: 32px; align-items: center; }
-.home-lab-copy { display: grid; gap: 18px; justify-items: start; max-width: 46ch; }
-.home-lab-lead { font-size: clamp(1.35rem, 2.2vw, 1.85rem); line-height: 1.25; letter-spacing: -0.025em; font-weight: 600; }
-.home-lab-copy .secondary { line-height: 1.65; }
-.home-lab-shot {
-  display: block; position: relative; overflow: hidden; border-radius: var(--radius-card);
-  border: 1px solid var(--line-strong); background: var(--bg-ink);
-  box-shadow: 0 40px 90px -50px rgba(21, 94, 239, 0.6);
+/* Skills: numbered rows under hairlines — index, capability, then the technologies. */
+.home-skills { list-style: none; border-top: 1px solid var(--line-subtle); }
+.home-skill { display: grid; grid-template-columns: 32px 1fr; gap: 6px 16px; padding: 20px 0; border-bottom: 1px solid var(--line-subtle); }
+.home-skill-index { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; padding-top: 3px; }
+.home-skill-label { font-size: 15.5px; font-weight: 500; letter-spacing: -0.01em; }
+.home-skill-list { grid-column: 2; color: var(--text-secondary); font-size: 15px; line-height: 1.65; max-width: 70ch; }
+@media (min-width: 860px) {
+  .home-skill { grid-template-columns: 32px 300px 1fr; gap: 0 24px; align-items: baseline; }
+  .home-skill-list { grid-column: 3; max-width: none; }
 }
-.home-lab-shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; transition: transform 600ms var(--ease-out); }
-.home-lab-shot:hover img { transform: scale(1.02); }
-@media (min-width: 960px) { .home-lab { grid-template-columns: 0.8fr 1.2fr; gap: 56px; } }
+
+/* Education: dates, the degree as a heading, then key facts in hairline cells. */
+.home-edu { display: grid; gap: 10px; }
+.home-edu-dates { font-size: 12.5px; letter-spacing: 0.06em; color: var(--text-muted); }
+.home-edu-degree { font-size: clamp(1.3rem, 2vw, 1.75rem); letter-spacing: -0.02em; line-height: 1.3; max-width: 48ch; text-wrap: balance; }
+.home-edu-school { color: var(--text-secondary); font-size: 15.5px; }
+.home-edu-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 560px; margin-top: 18px; border-top: 1px solid var(--line-subtle); border-bottom: 1px solid var(--line-subtle); }
+.home-edu-fact { display: grid; gap: 6px; padding: 16px 0; }
+.home-edu-fact + .home-edu-fact { padding-left: 20px; border-left: 1px solid var(--line-subtle); }
+.home-edu-fact dt, .home-edu-label { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.home-edu-fact dd { margin: 0; font-size: 1.25rem; letter-spacing: -0.01em; }
+.home-edu-awards { display: grid; gap: 10px; margin-top: 18px; }
 
 /* ================= LAB PAGES ================= */
 .sec-intro { color: var(--text-secondary); max-width: 62ch; margin-top: -8px; }
-
-@media (prefers-reduced-motion: reduce) { .home-lab-shot img { transition: none; } }
 
 /* Contact: round portrait beside the invitation */
 .sec-contact-intro { display: flex; align-items: center; gap: 16px; }

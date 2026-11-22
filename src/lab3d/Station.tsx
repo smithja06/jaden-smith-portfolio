@@ -66,8 +66,10 @@ export function Station({
 
       <Html position={[0, 0.2, 2.45]} center zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
         <div className={`lab3d-label ${hovered || selected ? 'is-hovered' : ''} ${anySelected && !selected ? 'is-dim' : ''}`} aria-hidden="true">
-          <span className="lab3d-letter">{def.letter}</span>
-          {!compactLabels && <span>{def.title}</span>}
+          <span className="lab3d-label-head">
+            <span className="lab3d-letter">{def.letter}</span>
+            {!compactLabels && <span>{def.title}</span>}
+          </span>
           {hovered && !selected && !compactLabels && <span className="lab3d-label-tip">{def.tooltip}</span>}
         </div>
       </Html>

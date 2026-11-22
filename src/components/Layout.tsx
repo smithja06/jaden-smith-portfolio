@@ -101,7 +101,8 @@ export function Layout() {
           </Suspense>
         </div>
       </main>
-      <Footer />
+      {/* The 3D lab fills the viewport; a footer under it only gets in the way. */}
+      {pathname !== '/lab' && <Footer />}
     </>
   );
 }
@@ -127,7 +128,7 @@ function Footer() {
             ))}
           </ul>
         </nav>
-        <p className="muted footer-copy">© {new Date().getFullYear()} {site.name}. Built with intention.</p>
+        <p className="muted footer-copy">© {new Date().getFullYear()} {site.name}</p>
       </div>
     </footer>
   );

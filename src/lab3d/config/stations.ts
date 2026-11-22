@@ -4,10 +4,13 @@
  * homepage bundle.
  *
  * Each station owns one kind of content and opens its own full page at
- * /lab/<id>, so nothing is repeated between them.
+ * /lab/<id>, so nothing is repeated between them. About is the exception:
+ * it opens the existing /about page, the same one the homepage links to.
  */
 
-export type StationId = 'experience' | 'projects' | 'skills' | 'education' | 'contact';
+export type StationId = 'about' | 'experience' | 'projects' | 'skills' | 'education' | 'contact';
+/** Stations whose full page is a /lab/<id> section page. */
+export type SectionStationId = Exclude<StationId, 'about'>;
 
 export interface StationDef {
   id: StationId;
@@ -27,8 +30,21 @@ export interface StationDef {
 
 export const stations: StationDef[] = [
   {
-    id: 'experience',
+    id: 'about',
     letter: '01',
+    title: 'About',
+    category: 'Profile',
+    tooltip: 'Who I am, what I work on and how I got here',
+    summary: 'Electrical & Biomedical Engineering at McMaster, building across software, AI and hardware for real people.',
+    highlights: [
+      'iBioMed student, AI / Machine Learning Engineer co-op at RBC',
+      'AI & software, embedded systems and human-centered design',
+      'Working with real patients in iBioMed made it personal',
+    ],
+  },
+  {
+    id: 'experience',
+    letter: '02',
     title: 'Experience',
     category: 'Career timeline',
     tooltip: 'RBC co-op, student design teams, leadership and work history',
@@ -41,7 +57,7 @@ export const stations: StationDef[] = [
   },
   {
     id: 'projects',
-    letter: '02',
+    letter: '03',
     title: 'Projects',
     category: 'Gallery',
     tooltip: 'Featured case studies, more projects and interactive experiments',
@@ -54,7 +70,7 @@ export const stations: StationDef[] = [
   },
   {
     id: 'skills',
-    letter: '03',
+    letter: '04',
     title: 'Skills',
     category: 'Workstation',
     tooltip: 'Technologies, linked to the work that used them',
@@ -67,7 +83,7 @@ export const stations: StationDef[] = [
   },
   {
     id: 'education',
-    letter: '04',
+    letter: '05',
     title: 'Education',
     category: 'Research desk',
     tooltip: 'McMaster iBioMed, coursework, awards and earlier schooling',
@@ -80,7 +96,7 @@ export const stations: StationDef[] = [
   },
   {
     id: 'contact',
-    letter: '05',
+    letter: '06',
     title: 'Contact',
     category: 'Comms terminal',
     tooltip: 'Email, GitHub and LinkedIn',
@@ -95,7 +111,7 @@ export const stations: StationDef[] = [
 ];
 
 /** Full-page route for each station. */
-export const stationPath = (id: StationId) => `/lab/${id}`;
+export const stationPath = (id: StationId) => (id === 'about' ? '/about' : `/lab/${id}`);
 
 export const stationById = (id: string | null | undefined) => stations.find((s) => s.id === id) ?? null;
 

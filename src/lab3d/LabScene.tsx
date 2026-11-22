@@ -15,8 +15,10 @@ import { ExperienceStation } from './stations/ExperienceStation';
 import { SkillsStation } from './stations/SkillsStation';
 import { EducationStation } from './stations/EducationStation';
 import { ContactStation } from './stations/ContactStation';
+import { AboutStation } from './stations/AboutStation';
 
 const pads: Record<StationId, PadVariant> = {
+  about: 'disc',
   experience: 'octagon',
   projects: 'hexagon',
   skills: 'square',
@@ -25,6 +27,7 @@ const pads: Record<StationId, PadVariant> = {
 };
 
 const visuals: Record<StationId, ComponentType<StationVisualProps>> = {
+  about: AboutStation,
   projects: ProjectsStation,
   experience: ExperienceStation,
   skills: SkillsStation,

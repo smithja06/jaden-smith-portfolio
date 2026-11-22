@@ -7,7 +7,7 @@ import { mats } from './materials/labMaterials';
  * station gets its own footprint and one small detail, so platforms read as
  * custom without competing with the objects on top.
  */
-export type PadVariant = 'octagon' | 'hexagon' | 'square' | 'tiered' | 'radar';
+export type PadVariant = 'disc' | 'octagon' | 'hexagon' | 'square' | 'tiered' | 'radar';
 
 // Cylinder vertices start at +z; ring vertices start at +x. This offset aligns them.
 const RING_ALIGN = -Math.PI / 2;
@@ -37,6 +37,17 @@ function Slabs({ segs, r, rot = 0 }: { segs: number; r: number; rot?: number }) 
 
 export function StationPad({ variant, ring }: Props) {
   switch (variant) {
+    // About — round, with a front arc that frames the portrait.
+    case 'disc':
+      return (
+        <group>
+          <Slabs segs={64} r={2.0} />
+          <Outline r={1.9} w={0.035} segs={64} y={0.152} material={ring} />
+          <mesh position-y={0.153} rotation-x={-Math.PI / 2} material={mats.edgeSoft}>
+            <ringGeometry args={[1.3, 1.33, 48, 1, Math.PI * 0.15, Math.PI * 0.7]} />
+          </mesh>
+        </group>
+      );
     // Experience — octagon with a raised rear plinth for the racks.
     case 'octagon':
       return (

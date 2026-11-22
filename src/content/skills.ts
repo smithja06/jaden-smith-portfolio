@@ -177,6 +177,20 @@ export const coreSkills = [
   'ESP32',
 ];
 
+/**
+ * The homepage overview: five or six of the most meaningful skills per group,
+ * in display order. Names must match the catalogue above (a test checks);
+ * the full list stays on the Skills page.
+ */
+export const homepageSkills: Record<string, string[]> = {
+  languages: ['Python', 'TypeScript', 'Java', 'C / C++', 'SQL', 'MATLAB'],
+  frontend: ['React', 'React Native', 'Three.js', 'iOS development', 'UI / UX design'],
+  backend: ['FastAPI', 'Spring Boot', 'Node.js', 'MongoDB Atlas', 'Docker', 'Git & GitHub'],
+  ai: ['AI agents', 'RAG', 'Machine learning', 'OpenCV', 'TensorFlow Lite', 'scikit-learn'],
+  embedded: ['ESP32', 'Raspberry Pi', 'Arduino', 'IMU (BNO055)', 'BLE', 'LTspice'],
+  'tools-leadership': ['CAD', 'Prototyping & integration', 'Human-centered design', 'Project management', 'Team leadership & recruiting'],
+};
+
 export const allSkills: Skill[] = [...skillGroups.flatMap((g) => g.skills), ...spokenLanguages];
 
 /** URL-safe id for a skill name, used in /lab/skills?skill=<id>. */
