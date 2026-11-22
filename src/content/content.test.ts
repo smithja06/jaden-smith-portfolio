@@ -12,6 +12,7 @@ import { featuredCards, featuredRefs, homepageCards, homepageExperienceIds } fro
 import { coreSkills } from './skills';
 import { projectsUsing, unknownTech } from './relations';
 import { site } from './site';
+import { pathMilestones } from './about';
 import { TODO_USER_CONTENT, isProvided, type Evidence } from './types';
 
 const json = JSON.stringify({ projects, experience, schools, awards, coursework, site });
@@ -423,5 +424,18 @@ describe('homepage skills overview', () => {
       for (const n of picks) expect(names, `${g.id}: ${n}`).toContain(n);
     }
     expect(Object.keys(homepageSkills).sort()).toEqual(skillGroups.map((g) => g.id).sort());
+  });
+});
+
+describe('About page path', () => {
+  it('links every milestone to records that exist, with one current step', () => {
+    expect(pathMilestones.length).toBeGreaterThanOrEqual(3);
+    expect(pathMilestones.length).toBeLessThanOrEqual(6);
+    for (const m of pathMilestones) {
+      for (const id of m.experience ?? []) expect(getExperience(id), `${m.id}: ${id}`).toBeDefined();
+      for (const id of m.projects ?? []) expect(getProject(id), `${m.id}: ${id}`).toBeDefined();
+      expect(m.text.length, m.id).toBeLessThan(220);
+    }
+    expect(pathMilestones.filter((m) => m.current)).toHaveLength(1);
   });
 });

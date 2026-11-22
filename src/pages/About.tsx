@@ -1,9 +1,10 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { site } from '../content/site';
-import { isProvided, type ExperienceEntry } from '../content/types';
-import { experienceInGroup } from '../content/experience';
-import { caseStudiesByIds } from '../content/projects';
+import { isProvided, type ExperienceEntry, type Project } from '../content/types';
+import { experienceHref, getExperience } from '../content/experience';
+import { getProject, projectHref } from '../content/projects';
+import { pathMilestones, type Milestone } from '../content/about';
 import { stationPath } from '../lab3d/config/stations';
 import { SignalField } from '../components/SignalField';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -52,31 +53,37 @@ function useTimelineProgress() {
 }
 
 /** One self-contained animated timeline: its own rail, its own progress. */
-function ProgressTimeline({ compact, children }: { compact?: boolean; children: ReactNode }) {
+function ProgressTimeline({ children }: { children: ReactNode }) {
   const ref = useTimelineProgress();
   return (
-    <div ref={ref} className={`atl ${compact ? 'atl-compact' : ''}`}>
+    <div ref={ref} className="atl">
       <div className="atl-rail" aria-hidden="true"><div className="atl-fill" /></div>
       <ol className="atl-list">{children}</ol>
     </div>
   );
 }
 
-/** A compact milestone for supporting roles: date, role · organization, one line. */
-function CompactMilestone({ entry: e }: { entry: ExperienceEntry }) {
-  const project = caseStudiesByIds(e.projects)[0];
+/** Short link label: an org's acronym if it has one, e.g. "(BMETT)" → "BMETT". */
+const shortOrg = (e: ExperienceEntry) => {
+  if (!isProvided(e.org)) return e.title;
+  const org = e.org.split(' — ')[0];
+  return org.match(/\(([^)]+)\)\s*$/)?.[1] ?? org;
+};
+
+/** Where a milestone points: its role pages and projects, by name. */
+function MilestoneLinks({ m }: { m: Milestone }) {
+  const roles = (m.experience ?? []).map(getExperience).filter((e): e is ExperienceEntry => !!e);
+  const work = (m.projects ?? []).map(getProject).filter((p): p is Project => !!p);
+  if (!roles.length && !work.length) return null;
   return (
-    <li className="atl-item">
-      <span className="atl-node" aria-hidden="true" />
-      <p className="atl-date mono">{isProvided(e.dates) ? e.dates : ''}</p>
-      <div className="atl-body">
-        <h4 className="atl-title">{e.title}{isProvided(e.org) && <span className="atl-org-inline"> · {e.org}</span>}</h4>
-        <p className="atl-sum">
-          {e.summary}
-          {project && <>{' '}<Link to={`/work/${project.id}`} className="inline-link">{project.title.split(' — ')[0]}</Link></>}
-        </p>
-      </div>
-    </li>
+    <p className="atl-links">
+      {roles.map((e) => (
+        <Link key={e.id} to={experienceHref(e)} className="inline-link">{shortOrg(e)}</Link>
+      ))}
+      {work.map((p) => (
+        <Link key={p.id} to={projectHref(p)} className="inline-link">{p.title.split(' — ')[0]}</Link>
+      ))}
+    </p>
   );
 }
 
@@ -118,54 +125,28 @@ export default function About() {
         </div>
       </Reveal>
 
-      <section className="about-section" aria-labelledby="exp">
+      {/* The story in five steps; every detail lives on Experience and Projects. */}
+      <section className="about-section" aria-labelledby="path">
         <div className="about-section-head">
-          <h2 id="exp" className="h-sub about-section-title">Experience</h2>
+          <h2 id="path" className="h-sub about-section-title">Path so far</h2>
           <Link to={stationPath('experience')} className="text-link">Full experience, with details <Arrow /></Link>
         </div>
-
-        {/* 01 — the four technical roles, full milestones. */}
-        <section className="ah-part" aria-labelledby="ah-pro">
-          <h3 id="ah-pro" className="ah-head"><span className="mono ah-num">01</span> Professional &amp; Technical Experience</h3>
-          <ProgressTimeline>
-            {experienceInGroup('technical').map((t, i) => {
-              const current = i === 0 && isProvided(t.dates) && /present/i.test(t.dates);
-              return (
-                <li key={t.id} className={`atl-item ${current ? 'is-current' : ''}`}>
-                  <span className="atl-node" aria-hidden="true" />
-                  <p className="atl-date mono">
-                    {isProvided(t.dates) ? t.dates : ''}
-                    {current && <span className="atl-now">Current</span>}
-                  </p>
-                  <div className="atl-body">
-                    <h4 className="atl-title">{t.title}</h4>
-                    {isProvided(t.org) && <p className="atl-org">{t.org}</p>}
-                    <p className="atl-sum">{t.summary}</p>
-                    <Link to={`/experience/${t.id}`} className="text-link atl-link">
-                      Details <Arrow /><span className="sr-only">: {t.title}{isProvided(t.org) ? `, ${t.org}` : ''}</span>
-                    </Link>
-                  </div>
-                </li>
-              );
-            })}
-          </ProgressTimeline>
-        </section>
-
-        {/* 02 — leadership, competitions and showcases: its own, more compact timeline. */}
-        <section className="ah-part" aria-labelledby="ah-lead">
-          <h3 id="ah-lead" className="ah-head"><span className="mono ah-num">02</span> Leadership &amp; Involvement</h3>
-          <ProgressTimeline compact>
-            {experienceInGroup('leadership').filter((e) => !e.seeAlso).map((e) => <CompactMilestone key={e.id} entry={e} />)}
-          </ProgressTimeline>
-        </section>
-
-        {/* 03 — other employment: its own compact timeline. */}
-        <section className="ah-part" aria-labelledby="ah-other">
-          <h3 id="ah-other" className="ah-head"><span className="mono ah-num">03</span> Additional Employment</h3>
-          <ProgressTimeline compact>
-            {experienceInGroup('other').map((e) => <CompactMilestone key={e.id} entry={e} />)}
-          </ProgressTimeline>
-        </section>
+        <ProgressTimeline>
+          {pathMilestones.map((m) => (
+            <li key={m.id} className={`atl-item ${m.current ? 'is-current' : ''}`}>
+              <span className="atl-node" aria-hidden="true" />
+              <p className="atl-date mono">
+                {m.date}
+                {m.current && <span className="atl-now">Current</span>}
+              </p>
+              <div className="atl-body">
+                <h3 className="atl-title">{m.title}</h3>
+                <p className="atl-sum">{m.text}</p>
+                <MilestoneLinks m={m} />
+              </div>
+            </li>
+          ))}
+        </ProgressTimeline>
       </section>
     </div>
   );
