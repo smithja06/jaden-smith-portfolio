@@ -27,10 +27,10 @@ export const aiSoftwareProjects: Project[] = [
     ownershipNote:
       'I built the simulator, rule tracker, discrepancy tracker, per-payment trace debugger, explainability view and the payment visualizations. The Java / Spring Boot routing engine itself is a team effort.',
     tech: ['Java', 'Spring Boot', 'Three.js', 'IBM MQ', 'Microsoft Entra ID'],
-    highlights: ['~99.9% rule-exit agreement across 9,500+ evaluated payments', '100+ routing discrepancies resolved'],
+    highlights: ['~99.9% rule-exit agreement across 15,000+ evaluated payments', '100+ routing discrepancies resolved'],
     metrics: [
-      { value: '~99.9%', label: 'rule-exit agreement', note: 'Comparative testing against production results across 9,500+ evaluated payments — a validation figure, not a production rollout.' },
-      { value: '9,500+', label: 'payments evaluated' },
+      { value: '~99.9%', label: 'rule-exit agreement', note: 'Comparative testing against production results across 15,000+ evaluated payments — a validation figure, not a production rollout.' },
+      { value: '15,000+', label: 'payments evaluated' },
       { value: '100+', label: 'discrepancies investigated and resolved' },
     ],
     restricted: true,
@@ -104,6 +104,7 @@ export const aiSoftwareProjects: Project[] = [
         'Rebuilt its feature set: rule tracing and management across more than 5,000 rules, rule uploads, and automated generation of correspondent files.',
         'Tested the rebuilt features against the legacy behaviour myself.',
       ],
+      future: ['SSO sign-in for the rebuilt application is in progress.'],
       validation: ['379 of 399 legacy features have been verified against the original application.'],
       limitations: ['No source, screenshots or exports can be shared.'],
     },
@@ -125,7 +126,7 @@ export const aiSoftwareProjects: Project[] = [
     tech: ['AI agents', 'Devin Cloud', 'Agent Skills', 'AI maturity assessment', 'Data visualization & dashboards'],
     highlights: ['100+ repositories audited', '~85% less assessment time'],
     metrics: [
-      { value: '8 · 81 · 5', label: 'pillars · criteria · maturity levels' },
+      { value: '10 · 81 · 5', label: 'pillars · criteria · maturity levels' },
       { value: '100+', label: 'repositories audited' },
       { value: '~85%', label: 'reduction in assessment time', note: 'From my own testing and comparison with manual assessment.' },
     ],
@@ -137,7 +138,7 @@ export const aiSoftwareProjects: Project[] = [
         'AI coding agents work well in some repositories and poorly in others. Teams needed a consistent way to tell which, why, and what to fix first.',
       ],
       contributions: [
-        'Designed the framework: 8 pillars, 81 criteria and 5 maturity levels.',
+        'Designed the framework: 10 pillars, 81 criteria and 5 maturity levels.',
         'Built automated assessments that produce findings, historical readiness tracking, HTML dashboards and remediation guidance.',
         'Built the Devin Cloud agents that run the audits (see AI Agents for Engineering Workflows).',
       ],
@@ -146,7 +147,7 @@ export const aiSoftwareProjects: Project[] = [
         nodes: [
           { id: 'repo', label: 'Repository', detail: 'Code, configuration and documentation.' },
           { id: 'audit', label: 'Agent audit', detail: 'Automated checks against 81 criteria.' },
-          { id: 'score', label: 'Maturity level', detail: 'Scored across 8 pillars into 5 levels.' },
+          { id: 'score', label: 'Maturity level', detail: 'Scored across 10 pillars into 5 levels.' },
           { id: 'out', label: 'Dashboards & fixes', detail: 'History, findings and remediation steps.' },
         ],
       },
@@ -156,7 +157,7 @@ export const aiSoftwareProjects: Project[] = [
       ],
       limitations: ['No internal dashboards or reports can be shared.'],
     },
-    todo: ['Original, sanitized diagram of the 8 pillars', 'Methodology for the time-saving figure'],
+    todo: ['Original, sanitized diagram of the 10 pillars', 'Methodology for the time-saving figure'],
   },
   {
     id: 'rbc-ai-sdlc-observability',
@@ -179,6 +180,7 @@ export const aiSoftwareProjects: Project[] = [
       problem: ['To improve AI-assisted development, teams first need to see where the tokens, cost and time actually go.'],
       implementation: [
         'The extension hooks into 16 points across 8 phases of the AI software-development lifecycle and records token usage, cost and duration, reported through Google Analytics 4.',
+        'It also writes a JSON history of the whole development process and generates an HTML report showing every metric, broken down per user story and per Spec Kit phase.',
         'Alongside this, I facilitated courses on spec-driven development within the organization.',
       ],
     },
@@ -239,6 +241,7 @@ export const aiSoftwareProjects: Project[] = [
       contributions: [
         'Repository audits that feed the Agent Readiness framework.',
         'Workflows for failure triage, vulnerability remediation, requirements analysis and architecture documentation.',
+        'All of these run as Devin Cloud automations, not by hand.',
       ],
       outcomes: ['These agents run the 100+ repository audits counted under the Agent Readiness framework; they are the same work, not an additional result.'],
     },

@@ -94,7 +94,7 @@ describe('RBC is Experience, not a project', () => {
   it('keeps the RBC experience entry intact and on the homepage', () => {
     const e = getExperience('rbc');
     expect(e?.metrics?.length).toBeGreaterThan(0);
-    expect(e?.initiatives).toHaveLength(7);
+    expect(e?.initiatives).toHaveLength(8);
     expect(homepageExperienceIds[0]).toBe('rbc');
   });
 });
@@ -225,8 +225,10 @@ describe('experience', () => {
     ]) expect(ids).toContain(id);
   });
 
-  it('lists all seven RBC initiatives', () => {
-    expect(getExperience('rbc')?.initiatives).toHaveLength(7);
+  it('lists all eight RBC initiatives, including the Spec Kit bug-fix extension', () => {
+    const inits = getExperience('rbc')?.initiatives ?? [];
+    expect(inits).toHaveLength(8);
+    expect(inits.find((i) => i.title === 'Spec Kit Bug-Fix Extension')?.ownership).toBe('sole');
   });
 
   it('gives each primary role its own page, and sends everything else somewhere real', () => {

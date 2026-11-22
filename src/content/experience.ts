@@ -22,7 +22,7 @@ export const experience: ExperienceEntry[] = [
     coreTech: ['Java', 'Spring Boot', 'Python', 'AI agents'],
     tech: ['Java', 'Spring Boot', 'Three.js', 'IBM MQ', 'Microsoft Entra ID', 'React', 'TypeScript', 'FastAPI', 'MongoDB Atlas', 'Python', 'Devin Cloud', 'Spec Kit', 'Google Analytics 4', 'REST APIs', 'AI agents'],
     metrics: [
-      { value: '~99.9%', label: 'rule-exit agreement · 9,500+ payments', note: 'Comparative testing against production results.' },
+      { value: '~99.9%', label: 'rule-exit agreement · 15,000+ payments', note: 'Comparative testing against production results.' },
       { value: '379 / 399', label: 'legacy features verified' },
       { value: '100+', label: 'repositories audited for agent readiness' },
     ],
@@ -48,7 +48,7 @@ export const experience: ExperienceEntry[] = [
           'IBM MQ integration and Microsoft Entra ID sign-in are in progress.',
         ],
         metrics: [
-          { value: '~99.9%', label: 'rule-exit agreement', note: 'Across 9,500+ payments, compared with production results. Validation, not a production rollout.' },
+          { value: '~99.9%', label: 'rule-exit agreement', note: 'Across 15,000+ payments, compared with production results. Validation, not a production rollout.' },
           { value: '100+', label: 'discrepancies resolved' },
         ],
         projects: ['rbc-payment-routing-simulation'],
@@ -57,14 +57,17 @@ export const experience: ExperienceEntry[] = [
         title: 'Legacy Banking Application Reverse Engineering',
         ownership: 'sole',
         summary: 'Recovered a compiled legacy rules application’s behaviour and rebuilt its features.',
-        points: ['Rule tracing and management across 5,000+ rules, rule uploads and automated correspondent-file generation.'],
+        points: [
+          'Rule tracing and management across 5,000+ rules, rule uploads and automated correspondent-file generation.',
+          'SSO sign-in for the rebuilt application is in progress.',
+        ],
         metrics: [{ value: '379 / 399', label: 'features verified against the original' }],
         projects: ['rbc-legacy-rules-reconstruction'],
       },
       {
         title: 'Agent Readiness Framework',
         ownership: 'sole',
-        summary: 'A framework scoring how ready repositories are for AI agents: 8 pillars, 81 criteria, 5 maturity levels.',
+        summary: 'A framework scoring how ready repositories are for AI agents: 10 pillars, 81 criteria, 5 maturity levels.',
         points: ['Historical findings, HTML dashboards and remediation guidance for each repository.'],
         metrics: [
           { value: '100+', label: 'repositories audited' },
@@ -76,14 +79,29 @@ export const experience: ExperienceEntry[] = [
         title: 'Devin Cloud Agents & Automation',
         ownership: 'sole',
         summary: 'Agents that run the readiness audits and automate engineering workflows.',
-        points: ['Failure triage, vulnerability remediation, requirements analysis and architecture documentation.'],
+        points: [
+          'All of these run as Devin Cloud automations, not by hand: repository audits for the Agent Readiness framework, failure triage, vulnerability remediation, requirements analysis and architecture documentation.',
+        ],
         projects: ['rbc-engineering-agents'],
+      },
+      {
+        title: 'Spec Kit Bug-Fix Extension',
+        ownership: 'sole',
+        summary: 'A Spec Kit extension that analyzes the bugs a user reports, applies a fix and documents each one, building a history so a diagnosed bug is never analyzed twice.',
+        points: [
+          'Produces a report for every bug: what was found, the proposed remediation, how the fix was applied and the files it changed.',
+          'Keeps a history of every bug it has handled, so a similar bug is not analyzed from scratch: the previously diagnosed process is reused.',
+        ],
       },
       {
         title: 'AI SDLC Instrumentation',
         ownership: 'team',
         ownershipNote: 'Individual scope still being documented.',
         summary: 'A Spec Kit extension with 16 hooks across 8 AI SDLC phases, collecting token, cost and duration data into Google Analytics 4.',
+        points: [
+          'Produces a JSON history of the whole development process.',
+          'Generates an HTML report with all the metrics, broken down per user story and per Spec Kit phase.',
+        ],
         projects: ['rbc-ai-sdlc-observability'],
       },
       {
