@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { GitHubIcon } from '../Icons';
 import { isProvided, type Evidence, type MediaItem, type Metric } from '../../content/types';
 
 /** Small status pill: '● Working prototype'. */
@@ -48,6 +49,19 @@ export function evidenceItems(e?: Evidence): { label: string; href: string }[] {
   return items;
 }
 
+const isGitHub = (href: string) => /^https:\/\/github\.com\//.test(href);
+
+/** "View on GitHub ↗" with the GitHub mark: small mono text, opens in a new tab. */
+export function RepoLink({ href, name, className = '' }: { href: string; name: string; className?: string }) {
+  return (
+    <a href={href} className={`repo-link ${className}`} target="_blank" rel="noreferrer" aria-label={`${name} on GitHub (opens in a new tab)`}>
+      <GitHubIcon />
+      <span className="repo-link-text">View on GitHub</span>
+      <span className="repo-link-arrow" aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
 export function EvidenceLinks({ evidence, className = 'evidence' }: { evidence?: Evidence; className?: string }) {
   const items = evidenceItems(evidence);
   if (!items.length) return null;
@@ -55,7 +69,9 @@ export function EvidenceLinks({ evidence, className = 'evidence' }: { evidence?:
     <ul className={className}>
       {items.map((l) => (
         <li key={l.href}>
-          {l.href.startsWith('/')
+          {l.label === evidenceLabels.repo && isGitHub(l.href)
+            ? <a href={l.href} className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer"><GitHubIcon /> View on GitHub <span aria-hidden="true">↗</span></a>
+            : l.href.startsWith('/')
             ? <Link to={l.href} className="btn btn-ghost btn-sm">{l.label}</Link>
             : <a href={l.href} className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer">{l.label} <span aria-hidden="true">↗</span></a>}
         </li>

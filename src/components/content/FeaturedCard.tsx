@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import type { FeaturedCard as Card } from '../../content/featured';
 import { ProjectArt } from '../art/ProjectArt';
 import { Arrow } from '../Icons';
-import { TechList } from './Meta';
+import { RepoLink, TechList } from './Meta';
 import { noBreakHyphens } from '../../lib/text';
 
 /**
@@ -40,6 +40,11 @@ export function FeaturedCard({
           </span>
         </div>
       </Link>
+      {card.repo && (
+        <div className="feat-repo">
+          <RepoLink href={card.repo} name={card.title} />
+        </div>
+      )}
     </article>
   );
 }

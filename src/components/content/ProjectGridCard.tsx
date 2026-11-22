@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { FeaturedCard } from '../../content/featured';
 import { Arrow } from '../Icons';
 import { noBreakHyphens } from '../../lib/text';
+import { RepoLink } from './Meta';
 
 const MAX_TAGS = 6;
 
@@ -38,11 +39,7 @@ export function ProjectGridCard({ card }: { card: FeaturedCard }) {
           {card.href.startsWith('/experience') ? 'Read about the role' : 'Read the case study'} <Arrow />
           <span className="sr-only">: {card.title}</span>
         </Link>
-        {card.repo && (
-          <a href={card.repo} className="pgc-repo" target="_blank" rel="noreferrer">
-            GitHub <span aria-hidden="true">↗</span><span className="sr-only"> repository for {card.title}</span>
-          </a>
-        )}
+        {card.repo && <RepoLink href={card.repo} name={card.title} className="pgc-repo" />}
       </div>
     </li>
   );

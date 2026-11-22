@@ -19,7 +19,7 @@ import { ProjectArt } from '../components/art/ProjectArt';
 import { SystemDiagram } from '../components/SystemDiagram';
 import { Arrow, ArrowLeft } from '../components/Icons';
 import { Reveal } from '../components/Reveal';
-import { MediaFigure, MediaGallery, MetricList, TechList, evidenceItems } from '../components/content/Meta';
+import { MediaFigure, MediaGallery, MetricList, RepoLink, TechList, evidenceItems } from '../components/content/Meta';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useProjectsReturn } from '../hooks/useProjectsReturn';
 import NotFound from './NotFound';
@@ -361,6 +361,7 @@ function ProjectDetail({ p }: { p: Project }) {
             <h1 className="h-section">{noBreakHyphens(p.title)}</h1>
             <p className="lead">{p.summary}</p>
             {core.length > 0 && <TechList tech={core} label="Core technologies" />}
+            {isProvided(p.evidence?.repo) && <RepoLink href={p.evidence!.repo as string} name={p.title} className="case-hero-repo" />}
             <dl className="case-meta">
               {meta.filter(([, v]) => v).map(([k, v]) => (
                 <div key={k}><dt className="mono">{k}</dt><dd>{v}</dd></div>

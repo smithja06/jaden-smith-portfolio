@@ -695,7 +695,7 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 .pgc-text { color: var(--text-secondary); font-size: 15px; line-height: 1.65; }
 .pgc-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
 .pgc-tags li { font-family: var(--font-mono); font-size: 11.5px; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--line-subtle); color: var(--text-muted); }
-.pgc-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line-subtle); }
+.pgc-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 12px; padding-top: 14px; border-top: 1px solid var(--line-subtle); }
 .pgc-link { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; color: var(--blue-soft); font-size: 14.5px; font-weight: 500; }
 /* The case-study link covers the whole card. */
 .pgc-link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
@@ -703,8 +703,26 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 .pgc-link:focus-visible::after { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 18px; }
 .pgc-link .arrow { transition: transform var(--dur-fast) var(--ease-out); }
 .pgc:hover .pgc-link .arrow { transform: translateX(3px); }
-.pgc-repo { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-family: var(--font-mono); font-size: 12.5px; color: var(--text-secondary); }
-.pgc-repo:hover { color: var(--text-primary); }
+.pgc-repo { position: relative; z-index: 1; min-height: 36px; }
+
+/* "View on GitHub ↗": GitHub mark + small mono label, as on project cards. */
+.repo-link { display: inline-flex; align-items: center; gap: 8px; width: fit-content; white-space: nowrap; font-family: var(--font-mono); font-size: 12.5px; color: var(--text-primary); }
+.repo-link .gh-icon { flex: none; }
+.repo-link-text { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; transition: text-decoration-color var(--dur-fast); }
+.repo-link:hover .repo-link-text { text-decoration-color: currentColor; }
+.repo-link-arrow { color: var(--text-muted); transition: transform var(--dur-fast) var(--ease-out); }
+.repo-link:hover .repo-link-arrow { transform: translateX(2px); }
+.btn .gh-icon { flex: none; }
+/* Repository link sits on the same line as "Read the case study", outside the card link. */
+.feat-card { position: relative; }
+.feat-repo { position: absolute; right: 26px; bottom: 26px; display: flex; align-items: center; min-height: 23px; }
+/* Narrow cards: no room beside the CTA, so it drops below a divider. */
+@media (max-width: 560px) {
+  .feat-card { flex-direction: column; }
+  .feat-repo { position: static; margin: 0 26px; padding: 14px 0 20px; border-top: 1px solid var(--line-subtle); }
+}
+.case-hero-repo { min-height: 32px; }
+@media (prefers-reduced-motion: reduce) { .repo-link-arrow { transition: none; } }
 @media (prefers-reduced-motion: reduce) { .pgc, .pgc-link .arrow { transition: none; } }
 
 /* Experience: three roles as an editorial list */

@@ -188,6 +188,11 @@ describe('featured', () => {
     for (const c of featuredCards()) expect(c.tech).toHaveLength(3);
   });
 
+  it('links custodyOS to its public GitHub repository', () => {
+    expect(getProject('custodyos')!.evidence?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');
+    expect(homepageCards().find((c) => c.key === 'custodyos')?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');
+  });
+
   it('shows MED-T, custodyOS and BMETT on the homepage', () => {
     expect(homepageCards().map((c) => c.key)).toEqual(['med-t-sensory-substitution', 'custodyos', 'bmett-acl-rehabilitation']);
     for (const c of homepageCards()) expect(c.badge.title.length).toBeGreaterThan(0);

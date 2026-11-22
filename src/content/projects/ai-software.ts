@@ -268,7 +268,7 @@ export const aiSoftwareProjects: Project[] = [
       { value: '1,024', label: 'embedding dimensions', detail: true },
     ],
     art: 'custody',
-    evidence: { repo: TODO_USER_CONTENT, demo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
+    evidence: { repo: 'https://github.com/smithja06/custody-os-mongodb-hackathon', demo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
     media: [],
     caseStudy: {
       built: [
