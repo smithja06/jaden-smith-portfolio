@@ -23,6 +23,7 @@ import { MediaFigure, MediaGallery, MetricList, TechList, evidenceItems } from '
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useProjectsReturn } from '../hooks/useProjectsReturn';
 import NotFound from './NotFound';
+import { noBreakHyphens } from '../lib/text';
 
 /** Outcomes shown under Results; anything beyond lives in the record. */
 const MAX_RESULTS = 3;
@@ -157,7 +158,7 @@ function Resources({ items }: { items: Resource[] }) {
         const body = (
           <>
             <span className="case-res-kind mono">{r.kind}</span>
-            <span className="case-res-title">{r.title}</span>
+            <span className="case-res-title">{noBreakHyphens(r.title)}</span>
             {r.text && <span className="case-res-text">{r.text}</span>}
             <span className="case-res-cta">{r.cta} {r.external ? <span aria-hidden="true">↗</span> : <Arrow />}</span>
           </>
@@ -357,7 +358,7 @@ function ProjectDetail({ p }: { p: Project }) {
         <header className={`case-hero ${heroImage || p.art ? 'has-media' : ''}`}>
           <div className="case-hero-copy">
             <p className="eyebrow">{categoryLabels[p.category]}</p>
-            <h1 className="h-section">{p.title}</h1>
+            <h1 className="h-section">{noBreakHyphens(p.title)}</h1>
             <p className="lead">{p.summary}</p>
             {core.length > 0 && <TechList tech={core} label="Core technologies" />}
             <dl className="case-meta">
@@ -424,7 +425,7 @@ function ModuleCard({ m, parentSim, decisions, parameters, extra }: { m: Project
     <section id={moduleAnchor(m.id)} className={`case-module ${open ? 'is-open' : ''}`} aria-labelledby={`${moduleAnchor(m.id)}-t`} tabIndex={-1}>
       <div className="case-module-head">
         <p className="case-module-kicker mono">Key subsystem{m.ownership ? ` · ${ownershipLabels[m.ownership]}` : ''}</p>
-        <h3 id={`${moduleAnchor(m.id)}-t`} className="case-module-title">{m.title}</h3>
+        <h3 id={`${moduleAnchor(m.id)}-t`} className="case-module-title">{noBreakHyphens(m.title)}</h3>
       </div>
       <div className="case-module-body">
         <p>{m.summary}</p>

@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import type { Project } from '../../content/types';
 import { archiveAnchor, statusLabels } from '../../content/projects';
 import { EvidenceLinks, MediaGallery, TechList } from './Meta';
+import { noBreakHyphens } from '../../lib/text';
 
 /**
  * Compact, expandable Technical-archive row. Closed: title, one line and
@@ -19,7 +20,7 @@ export function ArchiveRow({ project: p }: { project: Project }) {
   const head = (
     <>
       <span className="arch-main">
-        <span className="arch-title">{p.title}</span>
+        <span className="arch-title">{noBreakHyphens(p.title)}</span>
         <span className="arch-sum">{p.summary}</span>
       </span>
       <span className="arch-side">

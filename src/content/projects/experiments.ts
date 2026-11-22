@@ -48,7 +48,7 @@ export const experimentProjects: Project[] = [
       ],
       validation: ['Simulated in LTspice and tested with AC signals: ON resistance, OFF leakage, signal drop and behaviour under varying loads, compared with a single-transistor switch.'],
     },
-    todo: ['Confirm course code (2EI4 vs 2EI5)', 'Measurements, report'],
+    todo: ['Measurements, report'],
   },
   {
     id: 'center-tap-power-supply',

@@ -3,6 +3,7 @@ import type { FeaturedCard as Card } from '../../content/featured';
 import { ProjectArt } from '../art/ProjectArt';
 import { Arrow } from '../Icons';
 import { TechList } from './Meta';
+import { noBreakHyphens } from '../../lib/text';
 
 /**
  * Illustrated card for the Projects hub's Featured collection: illustration,
@@ -29,7 +30,7 @@ export function FeaturedCard({
         )}
         <div className="project-body">
           <span className="feat-category mono">{card.category}</span>
-          <H className="project-title">{card.title}</H>
+          <H className="project-title">{noBreakHyphens(card.title)}</H>
           <p className="project-text">{card.summary}</p>
           {card.result && <p className="feat-outcome">{card.result}</p>}
           <TechList tech={card.tech} />

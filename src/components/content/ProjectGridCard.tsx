@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { FeaturedCard } from '../../content/featured';
 import { Arrow } from '../Icons';
+import { noBreakHyphens } from '../../lib/text';
 
 const MAX_TAGS = 6;
 
@@ -15,7 +16,7 @@ export function ProjectGridCard({ card }: { card: FeaturedCard }) {
   const tags = card.tech.slice(0, MAX_TAGS);
   return (
     <li className="pgc">
-      <h3 className="pgc-title">{card.title}</h3>
+      <h3 className="pgc-title">{noBreakHyphens(card.title)}</h3>
       <p className="pgc-badge">
         <svg className="pgc-badge-icon" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
           <circle cx="7" cy="7" r="5.25" fill="none" stroke="currentColor" strokeWidth="1.3" />

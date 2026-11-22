@@ -4,6 +4,7 @@ import { Nav } from './Nav';
 import { site } from '../content/site';
 import { isProvided } from '../content/types';
 import { recallScroll, rememberScroll, type ScrollRestoreState } from '../hooks/scrollMemory';
+import { stations, stationPath } from '../lab3d/config/stations';
 
 /** Scrolls to `y` once the page is tall enough (lazy content may still be arriving). */
 function scrollWhenReady(y: number): () => void {
@@ -120,9 +121,9 @@ function Footer() {
         </div>
         <nav aria-label="Footer">
           <ul className="footer-links">
-            <li><Link to="/lab/projects">Projects</Link></li>
+            {/* Same sections, order and destinations as the top nav, then the Lab. */}
+            {stations.map((s) => <li key={s.id}><Link to={stationPath(s.id)}>{s.title}</Link></li>)}
             <li><Link to="/lab">Lab</Link></li>
-            <li><Link to="/about">About</Link></li>
             {site.socials.filter((s) => isProvided(s.href)).map((s) => (
               <li key={s.label}><a href={s.href as string} target="_blank" rel="noreferrer">{s.label}</a></li>
             ))}

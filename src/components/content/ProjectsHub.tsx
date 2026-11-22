@@ -15,6 +15,7 @@ import { useHubLinkState } from '../../hooks/useProjectsReturn';
 import { Arrow } from '../Icons';
 import { FeaturedCard } from './FeaturedCard';
 import { ArchiveRow } from './ArchiveItem';
+import { noBreakHyphens } from '../../lib/text';
 
 type Filter = 'all' | ProjectCategory;
 
@@ -167,7 +168,7 @@ function MoreCard({ project: p, linkState }: { project: Project; linkState: obje
   return (
     <li className="more-card">
       <p className="more-context mono">{p.context}</p>
-      <h3 className="more-title">{p.title}</h3>
+      <h3 className="more-title">{noBreakHyphens(p.title)}</h3>
       <p className="more-text">{p.summary}</p>
       <Link to={`/work/${p.id}`} state={linkState} className="more-link">
         Case study <Arrow /><span className="sr-only">: {p.title}</span>
