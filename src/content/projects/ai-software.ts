@@ -269,7 +269,26 @@ export const aiSoftwareProjects: Project[] = [
     ],
     art: 'custody',
     evidence: { repo: 'https://github.com/smithja06/custody-os-mongodb-hackathon', demo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
-    media: [],
+    media: [
+      {
+        kind: 'image',
+        placement: 'hero',
+        src: '/media/projects/custodyos/control-center.webp',
+        width: 1920,
+        height: 936,
+        alt: 'The custodyOS Control Center mid-transfer: a request to move sample TS-1042 from Freezer B to Sequencing Station 3, the route drawn on a map of the lab and paused as Blocked, a "Confirm this transfer" panel reading the request aloud before anything irreversible happens, and an activity log of the agent’s checked steps.',
+      },
+      {
+        kind: 'video',
+        placement: 'results',
+        src: '/media/projects/custodyos/demo.mp4',
+        poster: '/media/projects/custodyos/demo-poster.webp',
+        width: 1920,
+        height: 1080,
+        title: 'custodyOS — Demo walkthrough',
+        alt: 'One-minute walkthrough of custodyOS: a voice request to move a lab sample, policy checks and confirmation, scanner-verified hand-offs, a supervisor approving restricted evidence, revoking the agent’s grant mid-move, recovery, and querying the audit ledger.',
+      },
+    ],
     caseStudy: {
       built: [
         'Built the entire frontend, including the interactive custody simulator.',

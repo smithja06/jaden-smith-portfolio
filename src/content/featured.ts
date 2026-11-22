@@ -30,6 +30,8 @@ export interface FeaturedCard {
   badge: { title: string; sub?: string };
   category: string;
   art?: ArtKey;
+  /** The project's hero screenshot or photo; shown instead of the illustration. */
+  image?: { src: string; alt: string; width?: number; height?: number };
   /** One verified result, when the record has one. */
   result?: string;
   tech: string[];
@@ -57,6 +59,10 @@ export function featuredCards(): FeaturedCard[] {
       badge: splitContext(p.context),
       category: categoryLabels[p.category],
       art: p.art,
+      image: (() => {
+        const m = p.media?.find((x) => x.placement === 'hero' && x.kind === 'image');
+        return m ? { src: m.src, alt: m.alt, width: m.width, height: m.height } : undefined;
+      })(),
       result: p.highlights?.[0],
       tech: coreTechOf(p).slice(0, 3),
       repo: isProvided(p.evidence?.repo) ? p.evidence!.repo : undefined,

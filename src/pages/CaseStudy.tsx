@@ -209,6 +209,8 @@ function ProjectDetail({ p }: { p: Project }) {
   // Media sits beside the work it documents; only unplaced items fall through to Explore.
   const media = p.media ?? [];
   const heroImage = media.find((m) => m.placement === 'hero' && m.kind === 'image');
+  // Wide screenshots get the larger column and open full size; photos keep the default.
+  const heroWide = !!heroImage?.width && !!heroImage.height && heroImage.width / heroImage.height >= 1.5;
   const placed = (where: 'how' | 'results') => media.filter((m) => m.placement === where).map((m) => <MediaFigure key={m.src} m={m} className="case-figure" />);
 
   const meta: [string, string | undefined][] = [
@@ -355,7 +357,7 @@ function ProjectDetail({ p }: { p: Project }) {
           <ArrowLeft /> All Projects
         </Link>
 
-        <header className={`case-hero ${heroImage || p.art ? 'has-media' : ''}`}>
+        <header className={`case-hero ${heroImage || p.art ? 'has-media' : ''} ${heroWide ? 'is-wide-media' : ''}`}>
           <div className="case-hero-copy">
             <p className="eyebrow">{categoryLabels[p.category]}</p>
             <h1 className="h-section">{noBreakHyphens(p.title)}</h1>
@@ -370,7 +372,13 @@ function ProjectDetail({ p }: { p: Project }) {
           </div>
           {heroImage ? (
             <figure className="case-hero-media is-photo" style={heroImage.width && heroImage.height ? { aspectRatio: `${heroImage.width} / ${heroImage.height}` } : undefined}>
-              <img src={heroImage.src} alt={heroImage.alt} width={heroImage.width} height={heroImage.height} decoding="async" fetchPriority="high" />
+              {heroWide ? (
+                <a href={heroImage.src} target="_blank" rel="noreferrer" className="case-hero-zoom" aria-label={`${heroImage.alt} (opens full size in a new tab)`}>
+                  <img src={heroImage.src} alt="" width={heroImage.width} height={heroImage.height} decoding="async" fetchPriority="high" />
+                </a>
+              ) : (
+                <img src={heroImage.src} alt={heroImage.alt} width={heroImage.width} height={heroImage.height} decoding="async" fetchPriority="high" />
+              )}
             </figure>
           ) : p.art ? (
             <div className="case-hero-media case-art">

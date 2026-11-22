@@ -273,7 +273,11 @@
 .case-study .case-hero .lead { max-width: 56ch; }
 @media (min-width: 1000px) {
   .case-study .case-hero.has-media { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 56px; }
+  /* Wide screenshots need room to stay legible: the image takes the larger share. */
+  .case-study .case-hero.has-media.is-wide-media { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; }
 }
+.case-hero-zoom { display: block; width: 100%; height: 100%; cursor: zoom-in; }
+.case-hero-zoom:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
 .case-hero-media {
   position: relative; margin: 0; aspect-ratio: 4 / 3; border-radius: var(--radius-card); overflow: hidden;
   border: 1px solid var(--line-subtle); background: var(--bg-ink);
@@ -283,6 +287,7 @@
   .case-hero-media { aspect-ratio: 16 / 9; }
   /* Real photos keep their own ratio (set inline); stacked, they stay modest. */
   .case-hero-media.is-photo { max-width: 560px; }
+  .is-wide-media .case-hero-media.is-photo { max-width: none; }
 }
 
 /* Secondary metadata: a quiet 2×2 of facts under a hairline, not a stack of boxes. */
@@ -713,6 +718,12 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; curso
 .repo-link-arrow { color: var(--text-muted); transition: transform var(--dur-fast) var(--ease-out); }
 .repo-link:hover .repo-link-arrow { transform: translateX(2px); }
 .btn .gh-icon { flex: none; }
+/* A real screenshot in place of the illustration: shown whole, never cropped. */
+.project-art.is-photo { display: grid; place-items: center; background: var(--bg-ink); }
+.project-art.is-photo img { display: block; width: 100%; height: 100%; object-fit: contain; transition: transform 400ms var(--ease-out); }
+.project-card:hover .project-art.is-photo img { transform: scale(1.025); }
+@media (prefers-reduced-motion: reduce) { .project-art.is-photo img { transition: none; } }
+
 /* Repository link sits on the same line as "Read the case study", outside the card link. */
 .feat-card { position: relative; }
 .feat-repo { position: absolute; right: 26px; bottom: 26px; display: flex; align-items: center; min-height: 23px; }

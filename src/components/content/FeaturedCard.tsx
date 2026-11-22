@@ -22,7 +22,11 @@ export function FeaturedCard({
   return (
     <article className="project-card is-featured feat-card">
       <Link to={card.href} state={linkState} className="project-card-link">
-        {card.art && (
+        {card.image ? (
+          <div className="project-art is-photo">
+            <img src={card.image.src} alt={card.image.alt} width={card.image.width} height={card.image.height} loading="lazy" decoding="async" />
+          </div>
+        ) : card.art && (
           <div className="project-art">
             <ProjectArt art={card.art} />
             <span className="concept-badge project-art-badge">Illustration</span>

@@ -188,6 +188,13 @@ describe('featured', () => {
     for (const c of featuredCards()) expect(c.tech).toHaveLength(3);
   });
 
+  it('shows a custodyOS screenshot on its featured card and the demo video in Results', () => {
+    const media = getProject('custodyos')!.media ?? [];
+    expect(media.find((m) => m.placement === 'hero')?.src).toBe('/media/projects/custodyos/control-center.webp');
+    expect(media.find((m) => m.kind === 'video')?.placement).toBe('results');
+    expect(featuredCards().find((c) => c.key === 'custodyos')?.image?.src).toBe('/media/projects/custodyos/control-center.webp');
+  });
+
   it('links custodyOS to its public GitHub repository', () => {
     expect(getProject('custodyos')!.evidence?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');
     expect(homepageCards().find((c) => c.key === 'custodyos')?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');
