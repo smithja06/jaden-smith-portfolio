@@ -75,9 +75,9 @@ export type CourseTopic =
   | {
       title: string;
       /**
-       * Official course code, shown after the title. Never invent one: until
-       * the official list arrives these are placeholders in the form
-       * 'MOCK ####' (see MOCK_CODE), which a test reports.
+       * Official course code, shown after the title. Never invent one; a
+       * placeholder must use the form 'MOCK ####' (see MOCK_CODE), which a
+       * test rejects.
        */
       code?: string;
       /** One short line, if it adds something the title doesn't. */
@@ -88,7 +88,7 @@ export type CourseTopic =
       hidden?: boolean;
     };
 
-/** Placeholder course codes, to be replaced with official ones. */
+/** Placeholder course-code form. None should remain: a test fails on any. */
 export const MOCK_CODE = /^MOCK \d{4}$/;
 
 export interface CourseArea {
@@ -108,24 +108,19 @@ export const coursework: CourseArea[] = [
     id: 'software',
     label: 'Software & algorithms',
     topics: [
-      { title: 'Data Structures and Algorithms', code: 'MOCK 1001' },
-      { title: 'Python programming', code: 'MOCK 1002' },
-      { title: 'Data integration', code: 'MOCK 1003' },
+      { title: 'Data Structures and Algorithms', code: 'COMPENG 2SI3' },
+      { title: 'Principles of Programming (C/C++)', code: 'COMPENG 2SH4' },
+      { title: 'Python Programming', code: 'IBEHS 1P10' },
     ],
   },
   {
-    // Formerly two areas: "Electrical engineering" and "Electronics & circuits".
     id: 'electrical',
     label: 'Electrical engineering & circuits',
     topics: [
-      { title: 'Circuits & Systems', code: 'MOCK 2001' },
-      { title: 'Microelectronics', code: 'MOCK 2002' },
-      { title: 'Microcontroller systems and serial communication', code: 'MOCK 2003' },
-      // Lab topics below move to their project archive entries once the official list arrives.
-      'CMOS transmission gates and CD4007 switching',
-      'Op-amp integrators and differentiators',
-      'Rectifier and power-supply design',
-      'Analog measurement',
+      { title: 'Introduction to Circuit Analysis', code: 'ELECENG 2CI4' },
+      { title: 'Circuits & Systems', code: 'ELECENG 2CJ4' },
+      { title: 'Electronic Devices and Circuits I', code: 'ELECENG 2EI4' },
+      { title: 'Electromagnetics I', code: 'ELECENG 2FH4' },
     ],
     projects: ['cmos-transmission-gate', 'center-tap-power-supply', 'op-amp-integrator-differentiator'],
   },
@@ -133,21 +128,17 @@ export const coursework: CourseArea[] = [
     id: 'math',
     label: 'Mathematics & statistics',
     topics: [
-      { title: 'Probability and statistics', code: 'MOCK 3001' },
-      { title: 'Numerical methods in MATLAB', code: 'MOCK 3002' },
+      { title: 'Engineering Mathematics II (Linear Algebra)', code: 'MATH 1ZC3' },
+      { title: 'Engineering Mathematics III', code: 'MATH 2Z03' },
+      { title: 'Statistical Methods in Biomedical Engineering', code: 'IBEHS 3S03' },
     ],
   },
   {
-    // Formerly two areas: "Engineering design" and "Biomedical engineering".
     id: 'biomedical',
     label: 'Biomedical engineering & design',
     topics: [
-      { title: 'iBioMed design projects (DP-3, DP-4)', code: 'MOCK 4001' },
-      { title: 'Prototyping and CAD', code: 'MOCK 4002' },
-      { title: 'Assistive technology', code: 'MOCK 4003' },
-      { title: 'Rehabilitation', code: 'MOCK 4004' },
-      { title: 'Designing for patient needs', code: 'MOCK 4005' },
-      { title: 'Implant design', code: 'MOCK 4006' },
+      { title: 'iBioMed Design Projects', code: 'IBEHS 1P10' },
+      { title: 'Design Projects II — Genetic Engineering', code: 'IBEHS 2PB2 / 2PA2' },
     ],
     projects: ['spinealign-posture-feedback', 'cycle-buddy', 'hip-implant-design-case', 'ostoflow'],
   },

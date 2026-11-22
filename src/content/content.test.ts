@@ -297,10 +297,9 @@ describe('skills', () => {
 });
 
 describe('education & contact', () => {
-  it('keeps every coursework topic and project link after consolidation', () => {
+  it('lists only the official courses, with every project link kept', () => {
     const titles = coursework.flatMap((c) => c.topics.map((t) => (typeof t === 'string' ? t : t.title)));
-    // 20 originally; Materials testing (not taken) and the cost-accounting record removed.
-    expect(titles).toHaveLength(18);
+    expect(titles).toHaveLength(12);
     expect(titles).not.toContain('Materials testing');
     expect(new Set(titles).size).toBe(titles.length);
     const linked = coursework.flatMap((c) => c.projects ?? []);
@@ -317,11 +316,14 @@ describe('education & contact', () => {
     expect(titles.some((t) => /materials testing|cost accounting/i.test(t))).toBe(false);
   });
 
-  it('reports placeholder course codes until official ones replace them', () => {
-    const mocks = coursework.flatMap((c) => c.topics).filter((t) => typeof t !== 'string' && t.code && MOCK_CODE.test(t.code));
-    // Not a failure: a visible count so placeholders aren't forgotten. Replace with official codes, then this drops to 0.
-    console.info(`Placeholder course codes still in use: ${mocks.length}`);
-    for (const t of coursework.flatMap((c) => c.topics)) if (typeof t !== 'string' && t.code) expect(t.code.trim()).not.toBe('');
+  it('gives every course an official code, with no placeholders left', () => {
+    for (const t of coursework.flatMap((c) => c.topics)) {
+      expect(typeof t, String(t)).toBe('object');
+      if (typeof t === 'string') continue;
+      expect(t.code?.trim(), t.title).toBeTruthy();
+      expect(MOCK_CODE.test(t.code!), t.title).toBe(false);
+      expect(t.code, t.title).toMatch(/^(COMPENG|ELECENG|IBEHS|MATH) \d[A-Z0-9]{3}( \/ \d[A-Z0-9]{3})?$/);
+    }
   });
 
   it('separates university awards from high-school ones', () => {
