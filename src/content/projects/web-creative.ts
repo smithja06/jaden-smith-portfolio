@@ -21,7 +21,16 @@ export const webCreativeProjects: Project[] = [
     related: ['cobalt-lab-portfolio'],
     art: 'brthday',
     evidence: { repo: TODO_USER_CONTENT, demo: TODO_USER_CONTENT },
-    media: [],
+    media: [
+      {
+        kind: 'image',
+        placement: 'hero',
+        src: '/media/projects/brthday-interactive-commerce/rack.webp',
+        width: 1920,
+        height: 1012,
+        alt: 'The brthday storefront: "This month’s picks" shown as seven garments hanging from a clothing rack (a hoodie, a striped rugby shirt, a quarter-zip, sweatpants and three T-shirts), with arrow buttons to move along the rack.',
+      },
+    ],
     caseStudy: {
       built: [
         'Designed the visual identity and the clothing-rack interaction model.',
@@ -64,7 +73,16 @@ export const webCreativeProjects: Project[] = [
     related: ['vision-matrix-simulator', 'signal-playground', 'brthday-interactive-commerce'],
     art: 'cobalt',
     evidence: { repo: TODO_USER_CONTENT },
-    media: [],
+    media: [
+      {
+        kind: 'image',
+        placement: 'hero',
+        src: '/media/projects/cobalt-lab-portfolio/lab-overview.webp',
+        width: 1920,
+        height: 910,
+        alt: 'The Cobalt Lab 3D overview: six numbered stations (About, Experience, Projects, Skills, Education and Contact) arranged around a glowing central core on a dark grid, with a station list on the left and view controls at the top right.',
+      },
+    ],
     simulation: { id: 'vision-matrix', label: 'Open an experiment' },
     caseStudy: {
       problem: ['A portfolio has to work for a recruiter with two minutes and an engineer who wants depth. Most sites choose one.'],
