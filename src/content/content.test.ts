@@ -195,6 +195,13 @@ describe('featured', () => {
     expect(featuredCards().find((c) => c.key === 'custodyos')?.image?.src).toBe('/media/projects/custodyos/control-center.webp');
   });
 
+  it('links the Swift co-op apps to their folders in the co-op repository', () => {
+    const repo = 'https://github.com/smithja06/swift-coop-portfolio';
+    expect(getProject('ar-shopping-ios')!.evidence?.repo).toBe(`${repo}/tree/main/02-Brthday-iOS-App`);
+    expect(getProject('other-swift-apps')!.evidence?.other?.map((o) => o.label)).toEqual(['QuestionBot', 'ColorMix', 'BouncyBall']);
+    expect(experience.find((e) => e.id === 'swift-coop')!.evidence?.repo).toBe(repo);
+  });
+
   it('links custodyOS to its public GitHub repository', () => {
     expect(getProject('custodyos')!.evidence?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');
     expect(homepageCards().find((c) => c.key === 'custodyos')?.repo).toBe('https://github.com/smithja06/custody-os-mongodb-hackathon');

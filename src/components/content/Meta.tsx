@@ -69,8 +69,8 @@ export function EvidenceLinks({ evidence, className = 'evidence' }: { evidence?:
     <ul className={className}>
       {items.map((l) => (
         <li key={l.href}>
-          {l.label === evidenceLabels.repo && isGitHub(l.href)
-            ? <a href={l.href} className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer"><GitHubIcon /> View on GitHub <span aria-hidden="true">↗</span></a>
+          {isGitHub(l.href)
+            ? <a href={l.href} className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer"><GitHubIcon /> {l.label === evidenceLabels.repo ? 'View on GitHub' : `${l.label} on GitHub`} <span aria-hidden="true">↗</span></a>
             : l.href.startsWith('/')
             ? <Link to={l.href} className="btn btn-ghost btn-sm">{l.label}</Link>
             : <a href={l.href} className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer">{l.label} <span aria-hidden="true">↗</span></a>}

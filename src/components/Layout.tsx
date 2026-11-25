@@ -1,10 +1,8 @@
 import { Suspense, useEffect, useLayoutEffect, useRef } from 'react';
-import { Link, Outlet, useLocation, useNavigationType } from 'react-router-dom';
+import { Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { Nav } from './Nav';
 import { site } from '../content/site';
-import { isProvided } from '../content/types';
 import { recallScroll, rememberScroll, type ScrollRestoreState } from '../hooks/scrollMemory';
-import { stations, stationPath } from '../lab3d/config/stations';
 
 /** Scrolls to `y` once the page is tall enough (lazy content may still be arriving). */
 function scrollWhenReady(y: number): () => void {
@@ -108,28 +106,20 @@ export function Layout() {
   );
 }
 
+/** Minimal footer: name and year on the left, Back to top on the right. */
 function Footer() {
+  const toTop = () => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    document.getElementById('main')?.focus({ preventScroll: true });
+  };
   return (
     <footer className="footer">
       <div className="container footer-inner">
-        <div className="footer-id">
-          <span className="nav-mono" aria-hidden="true">{site.initials}</span>
-          <div>
-            <p className="footer-name">{site.name}</p>
-            <p className="muted">{site.descriptor}</p>
-          </div>
-        </div>
-        <nav aria-label="Footer">
-          <ul className="footer-links">
-            {/* Same sections, order and destinations as the top nav, then the Lab. */}
-            {stations.map((s) => <li key={s.id}><Link to={stationPath(s.id)}>{s.title}</Link></li>)}
-            <li><Link to="/lab">Lab</Link></li>
-            {site.socials.filter((s) => isProvided(s.href)).map((s) => (
-              <li key={s.label}><a href={s.href as string} target="_blank" rel="noreferrer">{s.label}</a></li>
-            ))}
-          </ul>
-        </nav>
-        <p className="muted footer-copy">© {new Date().getFullYear()} {site.name}</p>
+        <p className="footer-copy">© {new Date().getFullYear()} {site.name}</p>
+        <button type="button" className="footer-top" onClick={toTop}>
+          Back to top <span aria-hidden="true">↑</span>
+        </button>
       </div>
     </footer>
   );

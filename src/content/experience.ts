@@ -190,6 +190,7 @@ export const experience: ExperienceEntry[] = [
     coreTech: ['Swift', 'Augmented reality', 'Firebase Authentication'],
     tech: ['Swift', 'iOS development', 'Augmented reality', 'Firebase Authentication'],
     projects: ['ar-shopping-ios', 'other-swift-apps'],
+    evidence: { repo: 'https://github.com/smithja06/swift-coop-portfolio' },
   },
 
   /* ---------------- Leadership, student teams & competitions ---------------- */

@@ -155,7 +155,7 @@ export const webCreativeProjects: Project[] = [
     highlights: ['Presented to Apple judges'],
     experience: ['swift-coop'],
     related: ['other-swift-apps'],
-    evidence: { repo: TODO_USER_CONTENT, video: TODO_USER_CONTENT },
+    evidence: { repo: 'https://github.com/smithja06/swift-coop-portfolio/tree/main/02-Brthday-iOS-App', video: TODO_USER_CONTENT },
     media: [],
     caseStudy: {
       implementation: ['Built during the Apple-partnered Swift co-op program, working in sprints with technical and business mentors.'],
@@ -167,7 +167,7 @@ export const webCreativeProjects: Project[] = [
     listing: 'archive',
     inventory: 28,
     title: 'Swift iOS Apps',
-    summary: 'Three further iOS apps built in Swift during the co-op program, alongside the AR shopping app.',
+    summary: 'Three further iOS apps built in Swift during the co-op program, alongside the AR shopping app: QuestionBot, ColorMix and BouncyBall.',
     context: 'App Development with Swift Co-op',
     dates: 'Feb – Jun 2023',
     category: 'web-creative',
@@ -175,6 +175,19 @@ export const webCreativeProjects: Project[] = [
     tech: ['Swift', 'iOS development'],
     experience: ['swift-coop'],
     related: ['ar-shopping-ios'],
-    todo: ['Recover names and details from the local Xcode folder; add each app as its own project'],
+    caseStudy: {
+      implementation: [
+        'QuestionBot: a UIKit app that answers typed questions, with my own replies for when, where, who, what and why questions, greetings and the time of day.',
+        'ColorMix: a UIKit colour mixer. Red, green and blue switches and sliders set the mix, and a preview square shows the result.',
+        'BouncyBall: a physics game where you drop a ball through a funnel and bounce it off barriers to hit every target. I wrote the game logic; the shape and scene engine came with the course.',
+      ],
+    },
+    evidence: {
+      other: [
+        { label: 'QuestionBot', href: 'https://github.com/smithja06/swift-coop-portfolio/tree/main/01-Swift-Coop-Mini-Apps/QuestionBot' },
+        { label: 'ColorMix', href: 'https://github.com/smithja06/swift-coop-portfolio/tree/main/01-Swift-Coop-Mini-Apps/ColorMix' },
+        { label: 'BouncyBall', href: 'https://github.com/smithja06/swift-coop-portfolio/tree/main/01-Swift-Coop-Mini-Apps/BouncyBall' },
+      ],
+    },
   },
 ];

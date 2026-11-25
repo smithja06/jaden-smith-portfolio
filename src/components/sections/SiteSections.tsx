@@ -223,6 +223,11 @@ export function ContactSection(_props: SectionProps) {
           </ul>
         )}
       </div>
+      {isProvided(site.resumeUrl) && (
+        <a className="btn btn-primary sec-resume" href={site.resumeUrl} download={site.resumeFilename}>
+          Download résumé <span aria-hidden="true">↓</span>
+        </a>
+      )}
     </div>
   );
 }

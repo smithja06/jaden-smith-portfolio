@@ -120,6 +120,7 @@ a.sec-email:hover { color: var(--blue-soft); }
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
   padding-top: 24px; border-top: 1px solid var(--line-subtle);
 }
+.sec-resume { justify-self: start; gap: 10px; }
 .sec-socials { list-style: none; display: flex; flex-wrap: wrap; gap: 12px 32px; }
 .sec-socials li { display: flex; align-items: center; gap: 12px; }
 .sec-socials .mono { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
